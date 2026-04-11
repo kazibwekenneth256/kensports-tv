@@ -39,12 +39,15 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .fr select option{background:var(--bg2);}
 .sub-btn{width:100%;background:var(--accent);color:#000;border:none;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;padding:12px;border-radius:10px;cursor:pointer;text-transform:uppercase;letter-spacing:1px;}
 .sub-btn:hover{opacity:.9;}
+.sub-btn:disabled{opacity:.5;cursor:not-allowed;}
 .highlight{color:var(--accent);font-weight:600;}
 .section p{font-size:13px;color:var(--text2);line-height:1.8;}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#000;padding:10px 22px;border-radius:30px;font-size:13px;font-weight:600;z-index:9999;transition:transform .3s;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);}
+.toast.err{background:var(--live);color:#fff;}
 .footer-note{text-align:center;font-size:12px;color:var(--text2);margin-top:24px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;}
-@media(max-width:480px){.contact-grid{grid-template-columns:1fr 1fr;}}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes sp{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
@@ -60,23 +63,23 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 
 <div class="content">
   <div class="page-title"><i class="fas fa-envelope" style="margin-right:10px;"></i>Contact Us</div>
-  <div class="page-sub">We'd love to hear from you! Reach out to us through any of the channels below.</div>
+  <div class="page-sub">We'd love to hear from you! Reach out through any channel below.</div>
 
   <div class="contact-grid">
-    <a href="mailto:contact@kensportstv.com" class="contact-card">
+    <a href="mailto:kensportstv@gmail.com" class="contact-card">
       <div class="contact-icon"><i class="fas fa-envelope"></i></div>
       <div class="contact-label">Email</div>
-      <div class="contact-value">contact@kensportstv.com</div>
+      <div class="contact-value">kensportstv@gmail.com</div>
     </a>
-    <a href="https://t.me/kensportstv" target="_blank" class="contact-card">
+    <a href="https://t.me/+256702381857" target="_blank" class="contact-card">
       <div class="contact-icon"><i class="fab fa-telegram"></i></div>
       <div class="contact-label">Telegram</div>
-      <div class="contact-value">@kensportstv</div>
+      <div class="contact-value">+256 702 381 857</div>
     </a>
-    <a href="https://wa.me/256700000000" target="_blank" class="contact-card">
+    <a href="https://wa.me/256702381857" target="_blank" class="contact-card">
       <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
       <div class="contact-label">WhatsApp</div>
-      <div class="contact-value">+256 700 000 000</div>
+      <div class="contact-value">+256 702 381 857</div>
     </a>
     <a href="#" class="contact-card">
       <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
@@ -99,19 +102,24 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <label>Subject</label>
       <select id="contactSubject">
         <option value="">Select a subject...</option>
-        <option value="stream">Report a broken stream</option>
-        <option value="request">Request a channel/match</option>
-        <option value="ads">Advertising enquiry</option>
-        <option value="bug">Report a bug</option>
-        <option value="dmca">DMCA / Copyright issue</option>
-        <option value="other">Other</option>
+        <option value="Report a broken stream">Report a broken stream</option>
+        <option value="Request a channel or match">Request a channel/match</option>
+        <option value="Advertising enquiry">Advertising enquiry</option>
+        <option value="Report a bug">Report a bug</option>
+        <option value="DMCA Copyright issue">DMCA / Copyright issue</option>
+        <option value="Other">Other</option>
       </select>
     </div>
     <div class="fr">
       <label>Message</label>
       <textarea id="contactMessage" placeholder="Write your message here..."></textarea>
     </div>
-    <button class="sub-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i> Send Message</button>
+    <button class="sub-btn" id="sendBtn" onclick="sendMessage()">
+      <i class="fas fa-paper-plane"></i> Send Message
+    </button>
+    <p style="font-size:11px;color:var(--text2);margin-top:10px;text-align:center;">
+      Messages go directly to kensportstv@gmail.com
+    </p>
   </div>
 
   <div class="section">
@@ -143,26 +151,69 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <div class="toast" id="toast"></div>
 
 <script>
+var FORMSPREE_ID = 'YOUR_FORM_ID'; // Replace with your Formspree ID
+
 function sendMessage() {
   var name = document.getElementById('contactName').value.trim();
   var email = document.getElementById('contactEmail').value.trim();
   var subject = document.getElementById('contactSubject').value;
   var message = document.getElementById('contactMessage').value.trim();
-  if (!name || !email || !subject || !message) {
-    showToast('Please fill in all fields!');
+
+  if (!name) { showToast('Please enter your name!', true); return; }
+  if (!email) { showToast('Please enter your email!', true); return; }
+  if (!subject) { showToast('Please select a subject!', true); return; }
+  if (!message) { showToast('Please write a message!', true); return; }
+
+  if (FORMSPREE_ID === 'YOUR_FORM_ID') {
+    // Fallback — open email client directly
+    var mailtoLink = 'mailto:kensportstv@gmail.com'
+      + '?subject=' + encodeURIComponent('[KenSports TV] ' + subject)
+      + '&body=' + encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\nMessage:\n' + message);
+    window.open(mailtoLink);
+    showToast('Opening your email app... ✅');
     return;
   }
-  showToast('Message sent! We will reply soon ✅');
-  document.getElementById('contactName').value = '';
-  document.getElementById('contactEmail').value = '';
-  document.getElementById('contactSubject').value = '';
-  document.getElementById('contactMessage').value = '';
+
+  var btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Sending...';
+
+  fetch('https://formspree.io/f/' + FORMSPREE_ID, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      name: name,
+      email: email,
+      subject: '[KenSports TV] ' + subject,
+      message: message
+    })
+  })
+  .then(function(r) {
+    if (r.ok) {
+      showToast('Message sent! We will reply soon ✅');
+      document.getElementById('contactName').value = '';
+      document.getElementById('contactEmail').value = '';
+      document.getElementById('contactSubject').value = '';
+      document.getElementById('contactMessage').value = '';
+    } else {
+      showToast('Error sending! Try WhatsApp instead.', true);
+    }
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+  })
+  .catch(function() {
+    showToast('Error! Try WhatsApp: +256702381857', true);
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+  });
 }
-function showToast(msg) {
+
+function showToast(msg, isErr) {
   var t = document.getElementById('toast');
   t.textContent = msg;
+  t.className = 'toast' + (isErr ? ' err' : '');
   t.classList.add('show');
-  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  setTimeout(function(){ t.classList.remove('show'); }, 4000);
 }
 </script>
 
