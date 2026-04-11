@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>About Us - KenSports TV</title>
+<meta name="description" content="About KenSports TV - Uganda's #1 free sports streaming platform. Watch live football, cricket, rugby and more.">
+<meta name="theme-color" content="#0d1117">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--accent:#00d4ff;--live:#ff3a3a;--text:#e6edf3;--text2:#8b949e;--border:#21262d;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;padding-bottom:40px;}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:54px;}
+.nav-logo{display:flex;align-items:center;gap:8px;}
+.nav-logo-text{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--accent);}
+.nav-logo-text span{color:var(--text);}
+.back-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;text-decoration:none;transition:all .2s;}
+.back-btn:hover{color:var(--accent);border-color:var(--accent);}
+.content{max-width:720px;margin:0 auto;padding:80px 20px 40px;}
+.hero{text-align:center;padding:30px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;margin-bottom:20px;}
+.hero-logo{margin-bottom:16px;}
+.hero h1{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;text-transform:uppercase;margin-bottom:8px;}
+.hero h1 span{color:var(--accent);}
+.hero p{font-size:14px;color:var(--text2);line-height:1.7;}
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--live);margin-right:6px;animation:bl 1s infinite;}
+@keyframes bl{0%,100%{opacity:1;}50%{opacity:0;}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;}
+.stat-num{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--accent);}
+.stat-label{font-size:11px;color:var(--text2);margin-top:4px;}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:16px;}
+.section h2{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.section h2 i{color:var(--accent);font-size:16px;}
+.section p{font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:8px;}
+.section p:last-child{margin-bottom:0;}
+.section ul{padding-left:16px;margin-top:6px;}
+.section ul li{font-size:13px;color:var(--text2);line-height:2;}
+.highlight{color:var(--accent);font-weight:600;}
+.sports-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px;}
+.sport-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center;}
+.sport-item .icon{font-size:24px;margin-bottom:4px;}
+.sport-item .label{font-size:11px;color:var(--text2);}
+.footer-note{text-align:center;font-size:12px;color:var(--text2);margin-top:24px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+  <div class="nav-logo">
+    <svg width="30" height="30" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#0d1117" stroke="#00d4ff" stroke-width="2"/><path d="M12 14L12 26L23 20Z" fill="#00d4ff"/><circle cx="29" cy="13" r="4" fill="#ff3a3a"/><circle cx="29" cy="13" r="2" fill="#fff"/></svg>
+    <div class="nav-logo-text">Ken<span>Sports</span> TV</div>
+  </div>
+  <div style="width:36px;"></div>
+</nav>
+
+<div class="content">
+
+  <div class="hero">
+    <div class="hero-logo">
+      <svg width="70" height="70" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#0d1117" stroke="#00d4ff" stroke-width="2"/><path d="M12 14L12 26L23 20Z" fill="#00d4ff"/><circle cx="29" cy="13" r="4" fill="#ff3a3a"/><circle cx="29" cy="13" r="2" fill="#fff"/></svg>
+    </div>
+    <h1>Ken<span>Sports</span> TV</h1>
+    <p><span class="live-dot"></span>Uganda's #1 Free Live Sports Streaming Platform 🇺🇬</p>
+    <p style="margin-top:8px;">Watch Football · Cricket · Rugby · Boxing · Basketball · Motorsport</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">100+</div>
+      <div class="stat-label">Live Channels</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">7</div>
+      <div class="stat-label">Sports Categories</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">FREE</div>
+      <div class="stat-label">Always Free</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2><i class="fas fa-star"></i>Who We Are</h2>
+    <p><span class="highlight">KenSports TV</span> is Uganda's number one free sports streaming platform, built with passion for Ugandan sports fans. We believe every sports fan in Uganda deserves access to live sports without paying expensive subscription fees.</p>
+    <p>Our platform brings you live football, cricket, rugby, boxing, basketball, motorsport and much more — all completely free, no registration required.</p>
+  </div>
+
+  <div class="section">
+    <h2><i class="fas fa-bullseye"></i>Our Mission</h2>
+    <p>Our mission is simple — to make live sports accessible to every Ugandan, regardless of their financial situation. We believe sports unites people, and we want to be the platform that brings Ugandans together to enjoy the sports they love.</p>
+    <p>From the <span class="highlight">Uganda Premier League</span> to the <span class="highlight">English Premier League</span>, from <span class="highlight">IPL Cricket</span> to <span class="highlight">NBA Basketball</span> — KenSports TV has it all for free.</p>
+  </div>
+
+  <div class="section">
+    <h2><i class="fas fa-futbol"></i>Sports We Cover</h2>
+    <div class="sports-grid">
+      <div class="sport-item"><div class="icon">⚽</div><div class="label">Football</div></div>
+      <div class="sport-item"><div class="icon">🏏</div><div class="label">Cricket</div></div>
+      <div class="sport-item"><div class="icon">🏉</div><div class="label">Rugby</div></div>
+      <div class="sport-item"><div class="icon">🥊</div><div class="label">Boxing</div></div>
+      <div class="sport-item"><div class="icon">🏀</div><div class="label">Basketball</div></div>
+      <div class="sport-item"><div class="icon">🏎️</div><div class="label">Motorsport</div></div>
+      <div class="sport-item"><div class="icon">🤼</div><div class="label">Wrestling</div></div>
+      <div class="sport-item"><div class="icon">🎾</div><div class="label">Tennis</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2><i class="fas fa-check-circle"></i>What Makes Us Different</h2>
+    <ul>
+      <li>✅ Completely free — no subscription needed</li>
+      <li>✅ No registration or sign-up required</li>
+      <li>✅ Works on phone, PC and Smart TV</li>
+      <li>✅ Multiple stream servers for reliability</li>
+      <li>✅ Live match scores and updates</li>
+      <li>✅ Match highlights and replays</li>
+      <li>✅ Fast loading, optimized for Uganda internet</li>
+      <li>✅ Install as an app on your phone</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2><i class="fas fa-map-marker-alt"></i>Based in Uganda 🇺🇬</h2>
+    <p>KenSports TV is proudly built in <span class="highlight">Kampala, Uganda</span>. We understand the needs of Ugandan sports fans and we are committed to providing the best free sports streaming experience in the country.</p>
+    <p>We are proud to support Ugandan sports including <span class="highlight">FUFA Big League</span>, <span class="highlight">Uganda Premier League</span>, and all international sports competitions.</p>
+  </div>
+
+  <div class="section">
+    <h2><i class="fas fa-exclamation-triangle"></i>Disclaimer</h2>
+    <p>KenSports TV does not host any video content on its own servers. All streams are links to publicly available content found on the internet. We are not responsible for the availability or content of third-party streams.</p>
+    <p>If you have any concerns about content on our platform, please <a href="contact.html" style="color:var(--accent);">contact us</a>.</p>
+  </div>
+
+  <div class="footer-note">
+    © 2026 KenSports TV — Uganda's #1 Free Sports Streaming Platform 🇺🇬<br>
+    <a href="index.html" style="color:var(--accent);text-decoration:none;">← Back to Home</a> &nbsp;|&nbsp;
+    <a href="privacy.html" style="color:var(--accent);text-decoration:none;">Privacy Policy</a> &nbsp;|&nbsp;
+    <a href="contact.html" style="color:var(--accent);text-decoration:none;">Contact</a>
+  </div>
+</div>
+
+</body>
+</html>

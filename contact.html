@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Contact Us - KenSports TV</title>
+<meta name="description" content="Contact KenSports TV - Uganda's #1 free sports streaming platform.">
+<meta name="theme-color" content="#0d1117">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--accent:#00d4ff;--live:#ff3a3a;--text:#e6edf3;--text2:#8b949e;--border:#21262d;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;padding-bottom:40px;}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:54px;}
+.nav-logo{display:flex;align-items:center;gap:8px;}
+.nav-logo-text{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--accent);}
+.nav-logo-text span{color:var(--text);}
+.back-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;text-decoration:none;transition:all .2s;}
+.back-btn:hover{color:var(--accent);border-color:var(--accent);}
+.content{max-width:720px;margin:0 auto;padding:80px 20px 40px;}
+.page-title{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.page-sub{font-size:13px;color:var(--text2);margin-bottom:28px;}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.contact-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;text-decoration:none;transition:border-color .2s;}
+.contact-card:hover{border-color:var(--accent);}
+.contact-icon{width:48px;height:48px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--accent);}
+.contact-label{font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;font-weight:600;}
+.contact-value{font-size:13px;color:var(--text);font-weight:500;}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:16px;}
+.section h2{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.section h2 i{color:var(--accent);font-size:16px;}
+.fr{margin-bottom:14px;}
+.fr label{display:block;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.fr input,.fr select,.fr textarea{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;padding:10px 14px;border-radius:8px;outline:none;transition:border-color .2s;}
+.fr input:focus,.fr select:focus,.fr textarea:focus{border-color:var(--accent);}
+.fr textarea{height:100px;resize:none;}
+.fr select option{background:var(--bg2);}
+.sub-btn{width:100%;background:var(--accent);color:#000;border:none;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;padding:12px;border-radius:10px;cursor:pointer;text-transform:uppercase;letter-spacing:1px;}
+.sub-btn:hover{opacity:.9;}
+.highlight{color:var(--accent);font-weight:600;}
+.section p{font-size:13px;color:var(--text2);line-height:1.8;}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#000;padding:10px 22px;border-radius:30px;font-size:13px;font-weight:600;z-index:9999;transition:transform .3s;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.footer-note{text-align:center;font-size:12px;color:var(--text2);margin-top:24px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;}
+@media(max-width:480px){.contact-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+  <div class="nav-logo">
+    <svg width="30" height="30" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#0d1117" stroke="#00d4ff" stroke-width="2"/><path d="M12 14L12 26L23 20Z" fill="#00d4ff"/><circle cx="29" cy="13" r="4" fill="#ff3a3a"/><circle cx="29" cy="13" r="2" fill="#fff"/></svg>
+    <div class="nav-logo-text">Ken<span>Sports</span> TV</div>
+  </div>
+  <div style="width:36px;"></div>
+</nav>
+
+<div class="content">
+  <div class="page-title"><i class="fas fa-envelope" style="margin-right:10px;"></i>Contact Us</div>
+  <div class="page-sub">We'd love to hear from you! Reach out to us through any of the channels below.</div>
+
+  <div class="contact-grid">
+    <a href="mailto:contact@kensportstv.com" class="contact-card">
+      <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+      <div class="contact-label">Email</div>
+      <div class="contact-value">contact@kensportstv.com</div>
+    </a>
+    <a href="https://t.me/kensportstv" target="_blank" class="contact-card">
+      <div class="contact-icon"><i class="fab fa-telegram"></i></div>
+      <div class="contact-label">Telegram</div>
+      <div class="contact-value">@kensportstv</div>
+    </a>
+    <a href="https://wa.me/256700000000" target="_blank" class="contact-card">
+      <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
+      <div class="contact-label">WhatsApp</div>
+      <div class="contact-value">+256 700 000 000</div>
+    </a>
+    <a href="#" class="contact-card">
+      <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+      <div class="contact-label">Location</div>
+      <div class="contact-value">Kampala, Uganda 🇺🇬</div>
+    </a>
+  </div>
+
+  <div class="section">
+    <h2><i class="fas fa-paper-plane"></i>Send Us a Message</h2>
+    <div class="fr">
+      <label>Your Name</label>
+      <input type="text" id="contactName" placeholder="Enter your name"/>
+    </div>
+    <div class="fr">
+      <label>Email Address</label>
+      <input type="email" id="contactEmail" placeholder="Enter your email"/>
+    </div>
+    <div class="fr">
+      <label>Subject</label>
+      <select id="contactSubject">
+        <option value="">Select a subject...</option>
+        <option value="stream">Report a broken stream</option>
+        <option value="request">Request a channel/match</option>
+        <option value="ads">Advertising enquiry</option>
+        <option value="bug">Report a bug</option>
+        <option value="dmca">DMCA / Copyright issue</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="fr">
+      <label>Message</label>
+      <textarea id="contactMessage" placeholder="Write your message here..."></textarea>
+    </div>
+    <button class="sub-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i> Send Message</button>
+  </div>
+
+  <div class="section">
+    <h2><i class="fas fa-question-circle"></i>Frequently Asked Questions</h2>
+    <p><span class="highlight">Q: Is KenSports TV completely free?</span><br>
+    Yes! KenSports TV is 100% free. No subscription, no registration, no payment required.</p>
+    <br>
+    <p><span class="highlight">Q: Why is a stream not working?</span><br>
+    Streams can go offline due to server issues. Try clicking another server button or check back later. We update streams regularly.</p>
+    <br>
+    <p><span class="highlight">Q: Can I request a channel or match?</span><br>
+    Yes! Use the contact form above and select "Request a channel/match" to make your request.</p>
+    <br>
+    <p><span class="highlight">Q: How do I install KenSports TV on my phone?</span><br>
+    Open KenSports TV in your browser → tap the menu → select "Add to Home Screen". It works like a real app!</p>
+    <br>
+    <p><span class="highlight">Q: Is KenSports TV available on Smart TV?</span><br>
+    Yes! Open the KenSports TV link in your Smart TV browser and it works perfectly on big screens.</p>
+  </div>
+
+  <div class="footer-note">
+    © 2026 KenSports TV — Uganda's #1 Free Sports Streaming Platform 🇺🇬<br>
+    <a href="index.html" style="color:var(--accent);text-decoration:none;">← Back to Home</a> &nbsp;|&nbsp;
+    <a href="privacy.html" style="color:var(--accent);text-decoration:none;">Privacy Policy</a> &nbsp;|&nbsp;
+    <a href="about.html" style="color:var(--accent);text-decoration:none;">About Us</a>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function sendMessage() {
+  var name = document.getElementById('contactName').value.trim();
+  var email = document.getElementById('contactEmail').value.trim();
+  var subject = document.getElementById('contactSubject').value;
+  var message = document.getElementById('contactMessage').value.trim();
+  if (!name || !email || !subject || !message) {
+    showToast('Please fill in all fields!');
+    return;
+  }
+  showToast('Message sent! We will reply soon ✅');
+  document.getElementById('contactName').value = '';
+  document.getElementById('contactEmail').value = '';
+  document.getElementById('contactSubject').value = '';
+  document.getElementById('contactMessage').value = '';
+}
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+</script>
+
+</body>
+</html>
