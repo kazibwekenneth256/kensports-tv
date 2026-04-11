@@ -181,8 +181,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .p-icon-btn{background:none;border:none;color:rgba(255,255,255,.8);font-size:17px;cursor:pointer;padding:2px;}
 
 .player-body{flex:1;display:flex;flex-direction:column;background:#000;overflow:hidden;}
-.player-err{text-align:center;padding:40px 20px;display:none;flex-direction:column;align-items:center;gap:10px;}
-.player-err.show{display:flex;}
+.player-err{text-align:center;padding:40px 20px;display:none;flex-direction:column;align-items:center;gap:10px;background:#000;}
 .player-err i{font-size:44px;color:var(--text2);}
 .player-err p{color:var(--text2);font-size:13px;}
 
@@ -706,7 +705,7 @@ CREATE POLICY "pub" ON ks_settings FOR ALL USING (true) WITH CHECK (true);
 <div class="toast" id="toast"></div>
 
 <script>
-let sb=null,allMatches=[],allChannels=[],allHighlights=[],curSport='all',curTab='all',curStreams=[],hlsInst=null;
+let sb=null,allMatches=[],allChannels=[],allHighlights=[],curSport='all',curTab='all',curStreams=[],hlsInst=null,isLiveStream=false,ctrlTimer=null;
 const EMOJIS={football:'⚽',cricket:'🏏',rugby:'🏉',boxing:'🥊',motorsport:'🏎️',wrestling:'🤼',basketball:'🏀',general:'📺'};
 
 window.onload=async()=>{
@@ -875,7 +874,7 @@ function renderCats(){
 }
 
 // ===== PLAYER (Smart Live/VOD) =====
-let curStreams=[],hlsInst=null,isLiveStream=false,ctrlTimer=null;
+let isLiveStream=false,ctrlTimer=null;
 
 function openPlayer(title,streams,isLive){
   isLiveStream=isLive;
@@ -890,7 +889,7 @@ function openPlayer(title,streams,isLive){
   document.getElementById('pTimeLabel').style.display=isLive?'none':'block';
   document.getElementById('pLiveIndicator').style.display=isLive?'flex':'none';
   document.getElementById('playerOverlay').classList.add('active');
-  document.getElementById('playerErr').classList.remove('show');
+  document.getElementById('playerErr').style.display='none';
   document.getElementById('srvBtns').innerHTML=streams.map((s,i)=>`<button class="srv-btn ${i===0?'active':''}" onclick="switchSrv(${i})">Server ${i+1}</button>`).join('');
   loadStream(streams[0]);
 }
@@ -915,7 +914,7 @@ function switchSrv(idx){
 
 function loadStream(url){
   const v=document.getElementById('videoEl');
-  document.getElementById('playerErr').classList.remove('show');
+  document.getElementById('playerErr').style.display='none';
   document.getElementById('pPlayIcon').className='fas fa-pause';
   if(hlsInst){hlsInst.destroy();hlsInst=null;}
   v.removeAttribute('src');
@@ -938,7 +937,7 @@ function loadStream(url){
 }
 
 function showPlayerErr(){
-  document.getElementById('playerErr').classList.add('show');
+  document.getElementById('playerErr').style.display='flex';
   document.getElementById('pPlayIcon').className='fas fa-play';
 }
 
