@@ -565,12 +565,10 @@ var EMOJIS = {football:'⚽',cricket:'🏏',rugby:'🏉',boxing:'🥊',motorspor
 
 // ===== INIT =====
 window.onload = function() {
-  var url = localStorage.getItem('ks_url');
-  var key = localStorage.getItem('ks_key');
-  if (!url || !key) {
-    document.getElementById('setupScreen').classList.add('active');
-    return;
-  }
+  var url = 'https://qbyisxlqpuwowbtrying.supabase.co';
+  var key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFieWlzeGxxcHV3b3didHJ5aW5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NzczNDMsImV4cCI6MjA5MTE1MzM0M30.D5SKyI3Ay5uFoVvxEOYIKKPnSORxwYoP0PPqdB1OTao';
+  localStorage.setItem('ks_url', url);
+  localStorage.setItem('ks_key', key);
   initApp(url, key);
 };
 
