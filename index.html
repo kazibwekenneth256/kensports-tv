@@ -78,7 +78,12 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .hamburger{display:flex;flex-direction:column;gap:4px;justify-content:center;align-items:center;cursor:pointer;width:36px;height:36px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;}
 .hamburger span{display:block;width:16px;height:2px;background:var(--text);border-radius:2px;}
 
-.ticker{background:var(--bg3);border-bottom:1px solid var(--border);height:32px;overflow:hidden;display:flex;align-items:center;margin-top:54px;}
+/* 1xBET BANNER STRIP */
+.bet-banner-strip{margin-top:54px;display:block;width:100%;background:#000;text-align:center;border-bottom:2px solid #f5a623;overflow:hidden;line-height:0;}
+.bet-banner-strip a{display:block;width:100%;}
+.bet-banner-strip img{width:100%;max-width:728px;height:auto;display:inline-block;vertical-align:bottom;}
+
+.ticker{background:var(--bg3);border-bottom:1px solid var(--border);height:32px;overflow:hidden;display:flex;align-items:center;}
 .ticker-track{display:flex;align-items:center;white-space:nowrap;animation:tick 40s linear infinite;font-size:12px;color:var(--accent);font-weight:500;gap:40px;padding-left:100%;}
 @keyframes tick{0%{transform:translateX(0);}100%{transform:translateX(-200%);}}
 .tick-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--live);margin-right:8px;animation:bl 1s infinite;}
@@ -338,6 +343,13 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div class="nav-btn" onclick="openPwd()"><i class="fas fa-cog"></i></div>
   </div>
 </nav>
+
+<!-- 1xBET BANNER STRIP (right below navbar) -->
+<div class="bet-banner-strip">
+  <a href="https://reffpa.com/L?tag=d_5470802m_1599c_&site=5470802&ad=1599" target="_blank" rel="noopener">
+    <img src="Media37445__en728x90.gif" alt="1xBet - Join Us With Barca - Bet Now" />
+  </a>
+</div>
 
 <!-- TICKER -->
 <div class="ticker">
@@ -956,18 +968,6 @@ function fmtDate(d){try{return new Date(d).toLocaleDateString('en-UG',{day:'nume
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function toast(msg,isErr){var t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(isErr?' err':'');t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3000);}
 </script>
-
-<!-- 1xBet Affiliate Banner -->
-<a href="https://reffpa.com/L?tag=d_5470802m_1599c_&site=5470802&ad=1599" target="_blank" style="position:fixed;bottom:65px;left:0;right:0;background:linear-gradient(135deg,#1a1a2e,#16213e);border-top:2px solid #f5a623;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;z-index:99;text-decoration:none;">
-  <div style="display:flex;align-items:center;gap:8px;">
-    <span style="font-size:20px;">🎰</span>
-    <div>
-      <div style="font-family:Rajdhani,sans-serif;font-size:14px;font-weight:700;color:#f5a623;">BET ON SPORTS WITH 1xBET!</div>
-      <div style="font-size:11px;color:#aaa;">Uganda's #1 betting — Register FREE &amp; Get Bonus</div>
-    </div>
-  </div>
-  <div style="background:#f5a623;color:#000;font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;padding:6px 14px;border-radius:6px;flex-shrink:0;">BET NOW</div>
-</a>
 
 </body>
 </html>
