@@ -132,17 +132,67 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .float-ad a{display:block;}
 .float-ad img{width:80px;height:80px;object-fit:cover;display:block;}
 
-/* ===== LIVE SCORE TICKER (NEW) ===== */
-.score-ticker{background:linear-gradient(90deg,#060d1a,#0d1117,#060d1a);border-bottom:2px solid rgba(255,58,58,.3);height:38px;overflow:hidden;display:flex;align-items:center;position:relative;}
-.score-ticker-label{position:absolute;left:0;top:0;bottom:0;background:var(--live);color:#fff;font-size:9px;font-weight:700;padding:0 10px;display:flex;align-items:center;z-index:2;letter-spacing:1.5px;gap:4px;flex-shrink:0;}
-.score-ticker-label .pulse{width:6px;height:6px;border-radius:50%;background:#fff;animation:bl .7s infinite;}
-.score-track{display:flex;align-items:center;white-space:nowrap;animation:scoretick 25s linear infinite;font-size:12px;gap:28px;padding-left:100%;margin-left:50px;}
-.score-item{display:flex;align-items:center;gap:6px;color:var(--text2);}
-.score-item .teams{color:var(--text);font-weight:600;}
-.score-item .score-val{color:var(--accent);font-weight:700;font-family:'Rajdhani',sans-serif;font-size:15px;background:rgba(0,212,255,.08);padding:1px 6px;border-radius:4px;}
-.score-item .score-time{color:var(--live);font-size:9px;font-weight:700;background:rgba(255,58,58,.15);padding:1px 5px;border-radius:3px;animation:bl .8s infinite;}
-.score-sep{color:rgba(255,255,255,.15);font-size:16px;margin:0 4px;}
-@keyframes scoretick{0%{transform:translateX(0);}100%{transform:translateX(-100%);}}
+/* ===== GOAL NOTIFICATION ===== */
+.goal-notif{
+  position:fixed;top:60px;left:0;right:0;
+  z-index:490;padding:10px 12px;
+  cursor:pointer;
+}
+.goal-notif-inner{
+  background:linear-gradient(135deg,#0a1a00,#1a3a00);
+  border:2px solid #00ff44;
+  border-radius:16px;
+  padding:14px 16px;
+  display:flex;align-items:center;gap:12px;
+  box-shadow:0 0 30px rgba(0,255,68,.4),0 4px 20px rgba(0,0,0,.6);
+  animation:goalPop .4s cubic-bezier(.175,.885,.32,1.275);
+  position:relative;overflow:hidden;
+}
+.goal-notif-inner::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 30% 50%,rgba(0,255,68,.1),transparent 60%);
+}
+@keyframes goalPop{
+  0%{transform:scale(.5) translateY(-50px);opacity:0;}
+  60%{transform:scale(1.05) translateY(0);opacity:1;}
+  100%{transform:scale(1) translateY(0);opacity:1;}
+}
+.goal-notif-ball{
+  font-size:36px;
+  animation:ballSpin .6s ease-out;
+  flex-shrink:0;
+}
+@keyframes ballSpin{
+  0%{transform:rotate(0deg) scale(0);}
+  60%{transform:rotate(360deg) scale(1.2);}
+  100%{transform:rotate(360deg) scale(1);}
+}
+.goal-notif-body{flex:1;min-width:0;}
+.goal-notif-title{
+  font-family:'Rajdhani',sans-serif;
+  font-size:22px;font-weight:700;
+  color:#00ff44;letter-spacing:2px;
+  line-height:1;margin-bottom:4px;
+  animation:goalFlash .3s infinite alternate;
+}
+@keyframes goalFlash{0%{opacity:1;}100%{opacity:.6;}}
+.goal-notif-score{
+  font-family:'Rajdhani',sans-serif;
+  font-size:18px;font-weight:700;
+  color:#fff;letter-spacing:1px;
+  margin-bottom:2px;
+}
+.goal-notif-sub{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;}
+.goal-notif-close{
+  background:rgba(255,255,255,.1);border:none;
+  color:#fff;width:28px;height:28px;
+  border-radius:50%;cursor:pointer;
+  font-size:12px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ===== SCORE TICKER (kept for admin but hidden from display) ===== */
+.score-ticker{display:none!important;}
 
 /* ===== NEWS TICKER ===== */
 .ticker{background:var(--bg3);border-bottom:1px solid var(--border);height:30px;overflow:hidden;display:flex;align-items:center;}
@@ -343,13 +393,38 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   cursor:default;
 }
 
-/* ===== STREAM LOADING SCREEN ===== */
+/* ===== SCORE NOTIFICATION ===== */
+.score-notif{
+  position:fixed;top:64px;left:12px;right:12px;
+  background:linear-gradient(135deg,#1a0000,#2d0000);
+  border:2px solid var(--live);
+  border-radius:14px;padding:12px 16px;
+  z-index:450;display:none;
+  align-items:center;gap:12px;
+  box-shadow:0 4px 24px rgba(255,58,58,.4);
+  animation:slideDown .3s ease;
+}
+.score-notif.show{display:flex;}
+.score-notif-icon{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--live);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+  animation:bl .6s infinite;
+}
+.score-notif-body{flex:1;min-width:0;}
+.score-notif-title{font-size:11px;font-weight:700;color:var(--live);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+.score-notif-scores{display:flex;flex-wrap:wrap;gap:6px;}
+.score-notif-item{background:rgba(255,58,58,.15);border:1px solid rgba(255,58,58,.3);border-radius:8px;padding:4px 10px;font-size:12px;color:#fff;font-weight:600;}
+.score-notif-close{background:none;border:none;color:rgba(255,255,255,.4);font-size:16px;cursor:pointer;flex-shrink:0;padding:4px;}
+
+/* Fix stream loading to always show over grey player */
 .stream-loading{
   position:absolute;inset:0;
   background:#000;
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
-  gap:16px;z-index:5;
+  gap:16px;z-index:20;
   transition:opacity .4s;
 }
 .stream-loading.hidden{opacity:0;pointer-events:none;}
@@ -670,10 +745,17 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   </a>
 </div>
 
-<!-- LIVE SCORE TICKER (NEW) -->
-<div class="score-ticker" id="scoreTicker" style="display:none;">
-  <div class="score-ticker-label"><span class="pulse"></span>LIVE</div>
-  <div class="score-track" id="scoreTrack"></div>
+<!-- GOAL NOTIFICATION POPUP -->
+<div class="goal-notif" id="goalNotif" style="display:none;" onclick="closeGoalNotif()">
+  <div class="goal-notif-inner">
+    <div class="goal-notif-ball">⚽</div>
+    <div class="goal-notif-body">
+      <div class="goal-notif-title" id="goalNotifTitle">GOOOAL! 🔥</div>
+      <div class="goal-notif-score" id="goalNotifScore">Barcelona 1 - 0 Atletico</div>
+      <div class="goal-notif-sub" id="goalNotifSub">Tap to dismiss</div>
+    </div>
+    <button class="goal-notif-close" onclick="closeGoalNotif()">✕</button>
+  </div>
 </div>
 
 <!-- NEWS TICKER -->
@@ -999,14 +1081,36 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         <button class="sub-btn" onclick="saveTicker()"><i class="fas fa-save"></i> Save Ticker</button>
       </div>
 
-      <!-- LIVE SCORES TICKER TAB (NEW) -->
+      <!-- GOAL ALERT TAB -->
       <div id="admScores" style="display:none;">
-        <div class="link-tip"><strong>📊 Live Score Ticker:</strong><br>Add live scores that scroll at the top. Format: <strong>TeamA vs TeamB | 2-1 | 67'</strong><br>One score per line. Updates instantly on save.</div>
-        <div class="section-label">Score Ticker Entries (one per line)</div>
-        <div class="fr"><textarea id="scoresText" style="height:160px;" placeholder="Man City vs Arsenal | 2-1 | 67'&#10;Barcelona vs Real Madrid | 0-0 | 34'&#10;Uganda vs Kenya | 1-0 | HT&#10;India vs Pakistan | 245/6 | 38.2 ov"></textarea></div>
-        <button class="sub-btn" onclick="saveScores()"><i class="fas fa-save"></i> Save Score Ticker</button>
+        <div class="link-tip"><strong>⚽ Goal Alert System:</strong><br>
+        Type the goal update and tap <strong>Send Alert!</strong><br>
+        All users will see a popup with sound + vibration! 🔔</div>
+        <div class="section-label">⚽ Send Goal Alert</div>
+        <div class="fr">
+          <label>Team that scored</label>
+          <input type="text" id="goalTeam" placeholder="e.g. Barcelona"/>
+        </div>
+        <div class="fr">
+          <label>Score (e.g. 1-0, 2-1)</label>
+          <input type="text" id="goalScore" placeholder="e.g. 1-0"/>
+        </div>
+        <div class="fr">
+          <label>Minute (optional)</label>
+          <input type="text" id="goalMinute" placeholder="e.g. 67'"/>
+        </div>
+        <button class="sub-btn" style="background:linear-gradient(135deg,#00c853,#007a2e);" onclick="sendGoalAlert()">
+          ⚽ SEND GOAL ALERT!
+        </button>
         <div class="divider"></div>
-        <p style="font-size:12px;color:var(--text2);">Leave empty to hide the score ticker bar.</p>
+        <div class="section-label">📢 Send Custom Alert</div>
+        <div class="fr">
+          <label>Custom message</label>
+          <input type="text" id="customAlert" placeholder="e.g. HALF TIME! Barcelona 1-0 Atletico"/>
+        </div>
+        <button class="sub-btn" style="background:linear-gradient(135deg,#ff3a3a,#990000);" onclick="sendCustomAlert()">
+          📢 SEND ALERT!
+        </button>
       </div>
 
       <!-- APK PLANNING TAB (NEW) -->
@@ -1245,6 +1349,7 @@ window.onload=function(){
       clearInterval(waitForSupabase);
       initApp(url,key);
       setInterval(function(){loadMatches();},60000);
+      startGoalPolling();
     } else if(tries>20){
       clearInterval(waitForSupabase);
       showDbError('Failed to load. Check internet connection and refresh.');
@@ -1551,30 +1656,92 @@ function renderHL(){
   }).join('');
 }
 
-function updateScoreTicker(lines){
-  var ticker=document.getElementById('scoreTicker');
-  var track=document.getElementById('scoreTrack');
-  if(!lines||!lines.length){if(ticker)ticker.style.display='none';return;}
-  if(ticker)ticker.style.display='flex';
-  var html=lines.map(function(line){
-    var parts=line.split('|');
-    var teams=(parts[0]||'').trim();
-    var score=(parts[1]||'').trim();
-    var time=(parts[2]||'').trim();
-    return '<div class="score-item"><span class="teams">'+esc(teams)+'</span>'
-      +(score?'<span class="score-val">'+esc(score)+'</span>':'')
-      +(time?'<span class="score-time">'+esc(time)+'</span>':'')+'</div>'
-      +'<span class="score-sep">·</span>';
-  }).join('');
-  if(track)track.innerHTML=html+html;
+// ===== GOAL ALERT SYSTEM =====
+var goalCheckTimer=null,lastGoalId='';
+
+function sendGoalAlert(){
+  var team=document.getElementById('goalTeam').value.trim();
+  var score=document.getElementById('goalScore').value.trim();
+  var minute=document.getElementById('goalMinute').value.trim();
+  if(!team||!score){toast('Enter team and score!',true);return;}
+  var title='GOOOAL! ⚽ '+team.toUpperCase()+'!';
+  var scoreText=team+' '+score+(minute?' ('+minute+')':'');
+  saveAlert(title,scoreText);
 }
-function saveScores(){
-  var text=document.getElementById('scoresText').value.trim();
-  sb.from('ks_settings').upsert({key:'scores',value:text},{onConflict:'key'}).then(function(res){
+function sendCustomAlert(){
+  var msg=document.getElementById('customAlert').value.trim();
+  if(!msg){toast('Enter a message!',true);return;}
+  saveAlert('🔔 KenSports TV',msg);
+}
+function saveAlert(title,score){
+  var alert={id:Date.now().toString(),title:title,score:score,time:Date.now()};
+  sb.from('ks_settings').upsert({key:'goal_alert',value:JSON.stringify(alert)},{onConflict:'key'}).then(function(res){
     if(res.error){toast('Error: '+res.error.message,true);return;}
-    toast('Score ticker saved! ✅');updateScoreTicker(text.split('\n').filter(Boolean));
+    toast('Alert sent! ⚽🔥');
+    // Clear fields
+    ['goalTeam','goalScore','goalMinute','customAlert'].forEach(function(id){
+      var el=document.getElementById(id);if(el)el.value='';
+    });
+    // Show on own screen too
+    showGoalNotif(title,score);
   });
 }
+function showGoalNotif(title,score){
+  var notif=document.getElementById('goalNotif');
+  document.getElementById('goalNotifTitle').textContent=title;
+  document.getElementById('goalNotifScore').textContent=score;
+  if(notif)notif.style.display='block';
+  // Vibrate
+  if(navigator.vibrate)navigator.vibrate([300,100,300,100,500]);
+  // Sound
+  playGoalSound();
+  // Auto hide after 8 seconds
+  setTimeout(function(){closeGoalNotif();},8000);
+}
+function closeGoalNotif(){
+  var notif=document.getElementById('goalNotif');
+  if(notif)notif.style.display='none';
+}
+function playGoalSound(){
+  try{
+    var ctx=new (window.AudioContext||window.webkitAudioContext)();
+    // Play exciting goal sound tones
+    var times=[0,.15,.3,.45,.6];
+    var freqs=[523,659,784,1047,1319];
+    times.forEach(function(t,i){
+      var osc=ctx.createOscillator();
+      var gain=ctx.createGain();
+      osc.connect(gain);gain.connect(ctx.destination);
+      osc.frequency.value=freqs[i];
+      osc.type='sine';
+      gain.gain.setValueAtTime(0.3,ctx.currentTime+t);
+      gain.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+t+0.14);
+      osc.start(ctx.currentTime+t);
+      osc.stop(ctx.currentTime+t+0.15);
+    });
+  }catch(e){}
+}
+// Poll for new goal alerts every 15 seconds
+function startGoalPolling(){
+  if(goalCheckTimer)clearInterval(goalCheckTimer);
+  goalCheckTimer=setInterval(function(){
+    if(!sb)return;
+    sb.from('ks_settings').select('value').eq('key','goal_alert').maybeSingle().then(function(res){
+      if(!res.data||!res.data.value)return;
+      try{
+        var alert=JSON.parse(res.data.value);
+        // Only show if it's new (within last 30 seconds) and not already shown
+        if(alert.id!==lastGoalId&&(Date.now()-alert.time)<30000){
+          lastGoalId=alert.id;
+          showGoalNotif(alert.title,alert.score);
+          addNotification('live',alert.title,alert.score);
+        }
+      }catch(e){}
+    }).catch(function(){});
+  },15000);
+}
+function updateScoreTicker(){} // kept for compatibility
+function saveScores(){} // kept for compatibility
 
 // ===== FILTER / NAV =====
 function filterSport(sport,el){curSport=sport;document.querySelectorAll('.sport-cat').forEach(function(c){c.classList.remove('active');});el.classList.add('active');renderMatches();renderChannels();}
