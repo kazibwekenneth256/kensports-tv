@@ -977,24 +977,36 @@ function getStreamTypeLabel(url){
 window.onload=function(){
   var url='https://qbyisxlqpuwowbtrying.supabase.co';
   var key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFieWlzeGxxcHV3b3didHJ5aW5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NzczNDMsImV4cCI6MjA5MTE1MzM0M30.D5SKyI3Ay5uFoVvxEOYIKKPnSORxwYoP0PPqdB1OTao';
-  localStorage.setItem('ks_url',url);localStorage.setItem('ks_key',key);
-  initApp(url,key);
+  localStorage.setItem('ks_url',url);
+  localStorage.setItem('ks_key',key);
   updateFavUI();
   updateNotifBadge();
-  // Add welcome notification on first load
   if(!localStorage.getItem('ks_welcomed')){
     localStorage.setItem('ks_welcomed','1');
     addNotification('info','👋 Welcome to KenSports TV!','Uganda\'s #1 free sports streaming platform');
   }
-  // Refresh matches every 60 seconds to catch new live matches
-  setInterval(function(){loadMatches();},60000);
+  // Wait for supabase to be ready
+  var tries=0;
+  var waitForSupabase=setInterval(function(){
+    tries++;
+    if(window.supabase){
+      clearInterval(waitForSupabase);
+      initApp(url,key);
+      setInterval(function(){loadMatches();},60000);
+    } else if(tries>20){
+      clearInterval(waitForSupabase);
+      showDbError('Failed to load. Check internet connection and refresh.');
+    }
+  },200);
 };
 function initApp(url,key){
-  sb=window.supabase.createClient(url,key);
-  var su=document.getElementById('sUrl'),sk=document.getElementById('sKey');
-  if(su)su.value=url;if(sk)sk.value=key;
-  var md=document.getElementById('mDate');if(md)md.value=new Date().toISOString().split('T')[0];
-  loadMatches();loadChannels();loadHighlights();loadSettings();
+  try{
+    sb=window.supabase.createClient(url,key);
+    var su=document.getElementById('sUrl'),sk=document.getElementById('sKey');
+    if(su)su.value=url;if(sk)sk.value=key;
+    var md=document.getElementById('mDate');if(md)md.value=new Date().toISOString().split('T')[0];
+    loadMatches();loadChannels();loadHighlights();loadSettings();
+  }catch(e){showDbError('Connection error: '+e.message);}
 }
 function saveSetup(){
   var url=document.getElementById('setupUrl').value.trim(),key=document.getElementById('setupKey').value.trim();
@@ -1037,10 +1049,16 @@ function loadSettings(){
   }).catch(function(){});
 }
 function handleDbError(error){
-  if(error.code==='42P01'){document.getElementById('matchesContainer').innerHTML='<div class="empty"><div class="empty-icon"><i class="fas fa-database" style="font-size:40px;color:var(--text2);"></i></div><h3>Tables Not Created</h3><p>Go to Admin → Settings for SQL setup</p></div>';}
+  if(error.code==='42P01'){
+    document.getElementById('matchesContainer').innerHTML='<div class="empty"><div class="empty-icon"><i class="fas fa-database" style="font-size:40px;color:var(--text2);"></i></div><h3>Tables Not Created</h3><p>Go to Admin → Settings for SQL setup</p></div>';
+  } else {
+    showDbError(error.message);
+  }
 }
 function showDbError(msg){
-  document.getElementById('matchesContainer').innerHTML='<div class="empty"><div class="empty-icon">⚠️</div><h3>Connection Error</h3><p>'+msg+'</p></div>';
+  document.getElementById('matchesContainer').innerHTML=
+    '<div class="empty"><div class="empty-icon">⚠️</div><h3>Connection Error</h3><p style="margin-bottom:16px;">'+msg+'</p>'
+    +'<button onclick="location.reload()" style="background:var(--accent);color:#000;border:none;padding:10px 24px;border-radius:10px;font-family:Rajdhani,sans-serif;font-size:15px;font-weight:700;cursor:pointer;">🔄 Retry</button></div>';
 }
 
 // ===== BUILD MATCH CARD =====
