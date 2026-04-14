@@ -1350,24 +1350,22 @@ function getViews(mid){return viewsCache[mid]||0;}
 function fmtViews(n){if(n>=1000)return(n/1000).toFixed(1)+'K';return String(n);}
 function incViews(mid){
   if(!sb||!mid)return;
-  // Increment in Supabase
-  sb.rpc('increment_views',{match_id:String(mid)}).catch(function(){});
-  // Update local cache immediately
-  viewsCache[mid]=(viewsCache[mid]||0)+1;
-  // Update displayed view count on card
-  var cards=document.querySelectorAll('[data-mid="'+mid+'"] .view-count');
-  cards.forEach(function(c){c.innerHTML='<i class="fas fa-eye"></i>'+fmtViews(viewsCache[mid]);});
+  try{
+    sb.rpc('increment_views',{match_id:String(mid)}).catch(function(){});
+    viewsCache[mid]=(viewsCache[mid]||0)+1;
+  }catch(e){}
 }
 function loadViews(){
   if(!sb)return;
-  sb.from('ks_views').select('match_id,views').then(function(res){
-    if(!res.data)return;
-    res.data.forEach(function(row){
-      viewsCache[row.match_id]=row.views||0;
-    });
-    // Re-render matches to show updated views
-    renderMatches();
-  }).catch(function(){});
+  try{
+    sb.from('ks_views').select('match_id,views').then(function(res){
+      if(!res||!res.data)return;
+      res.data.forEach(function(row){
+        viewsCache[row.match_id]=row.views||0;
+      });
+      renderMatches();
+    }).catch(function(){});
+  }catch(e){}
 }
 
 // ===== WHATSAPP SHARE =====
@@ -2198,7 +2196,15 @@ function installApp(){if(!deferredPrompt)return;deferredPrompt.prompt();deferred
 window.addEventListener('appinstalled',function(){document.getElementById('installBar').classList.remove('show');toast('App installed! 🎉');});
 function fmtDate(d){try{return new Date(d).toLocaleDateString('en-UG',{day:'numeric',month:'short'});}catch(e){return d;}}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
-function toast(msg,isErr){var t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(isErr?' err':'');t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3000);}
+function toast(msg,isErr){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast'+(isErr?' err':'');
+  t.classList.add('show');
+  // Make sure toast doesn't block clicks
+  t.style.pointerEvents='none';
+  setTimeout(function(){t.classList.remove('show');},3000);
+}
 </script>
 </body>
 </html>
