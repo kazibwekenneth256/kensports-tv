@@ -33,22 +33,21 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XX2K9N2SSE"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XX2K9N2SSE');</script>
 
-<!-- ===== BLOCK ALL POPUPS & NEW TABS ===== -->
 <script>
-// Block window.open completely
+// Block window.open completely except affiliate
 window.open = function(url, target, features) {
-  console.log('Blocked popup:', url);
+  if(url && url.indexOf('reffpa.com') !== -1) {
+    return window.__origOpen ? window.__origOpen(url, '_blank', features) : null;
+  }
   return null;
 };
-// Block all link clicks that try to open new tabs
+// Block new tab links from non-affiliate sources
 document.addEventListener('click', function(e) {
   var el = e.target;
-  // Walk up DOM tree to find anchor tag
   while (el && el.tagName !== 'A') { el = el.parentElement; }
   if (el && el.tagName === 'A') {
     var href = el.getAttribute('href');
     var target = el.getAttribute('target');
-    // Only block if it tries to open new tab/window and is NOT our affiliate link
     if (target === '_blank' && href && href.indexOf('reffpa.com') === -1 && href.indexOf('kensports') === -1) {
       e.preventDefault();
       e.stopPropagation();
@@ -56,10 +55,6 @@ document.addEventListener('click', function(e) {
     }
   }
 }, true);
-// Block beforeunload redirects from iframes
-window.addEventListener('message', function(e) {
-  // Ignore messages from iframes trying to navigate
-}, false);
 </script>
 
 <style>
@@ -172,20 +167,35 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .player-body{flex:1;display:flex;align-items:center;justify-content:center;background:#000;overflow:hidden;position:relative;}
 #videoEl{width:100%;max-height:56vh;background:#000;display:block;}
 
-/* IFRAME WRAPPER - blocks ad clicks */
-.iframe-wrap{position:relative;width:100%;height:56vh;display:none;}
+/* IFRAME WRAPPER */
+.iframe-wrap{position:relative;width:100%;height:56vh;display:none;background:#000;}
 #iframeEl{width:100%;height:100%;border:none;background:#000;display:block;}
-/* Top shield blocks the ad banner that usually appears at top of embed */
+
+/* 
+  TOP shield — hides & blocks ONLY the top ad bar (44px).
+  The rest of the iframe (including the unmute button) is fully clickable.
+*/
 .iframe-top-shield{
-  position:absolute;top:0;left:0;right:0;height:60px;
-  z-index:10;background:transparent;
+  position:absolute;
+  top:0;left:0;right:0;
+  height:44px;
+  z-index:10;
+  background:var(--bg2);
   pointer-events:all;
+  cursor:default;
 }
-/* Bottom shield blocks bottom ad bar */
+
+/*
+  BOTTOM shield — hides & blocks ONLY the bottom ad bar (44px).
+*/
 .iframe-bottom-shield{
-  position:absolute;bottom:0;left:0;right:0;height:50px;
-  z-index:10;background:transparent;
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:44px;
+  z-index:10;
+  background:var(--bg2);
   pointer-events:all;
+  cursor:default;
 }
 
 .player-err{text-align:center;padding:40px 20px;display:none;flex-direction:column;align-items:center;gap:10px;position:absolute;inset:0;justify-content:center;background:#000;}
@@ -448,17 +458,17 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   <div class="player-body">
     <!-- HLS Video -->
     <video id="videoEl" controls autoplay playsinline style="width:100%;max-height:56vh;background:#000;display:none;"></video>
-    <!-- Embed iframe with ad shields -->
+    <!-- Embed iframe -->
     <div class="iframe-wrap" id="iframeWrap">
       <iframe id="iframeEl"
-        sandbox="allow-scripts allow-same-origin allow-presentation allow-forms allow-popups-to-escape-sandbox"
+        sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
         allow="autoplay;fullscreen;encrypted-media"
-        allowfullscreen
-        style="width:100%;height:100%;border:none;background:#000;display:block;">
+        allowfullscreen>
       </iframe>
-      <!-- shields block top/bottom ad clicks -->
-      <div class="iframe-top-shield" onclick="return false;"></div>
-      <div class="iframe-bottom-shield" onclick="return false;"></div>
+      <!-- Only blocks top 44px ad bar -->
+      <div class="iframe-top-shield"></div>
+      <!-- Only blocks bottom 44px ad bar -->
+      <div class="iframe-bottom-shield"></div>
     </div>
     <!-- Error -->
     <div class="player-err" id="playerErr">
@@ -583,89 +593,58 @@ CREATE POLICY "pub" ON ks_settings FOR ALL USING (true) WITH CHECK (true);
 var sb=null,allMatches=[],allChannels=[],allHighlights=[],curSport='all',curTab='all',curStreams=[],hlsInst=null,deferredPrompt=null;
 var EMOJIS={football:'⚽',cricket:'🏏',rugby:'🏉',boxing:'🥊',motorsport:'🏎️',wrestling:'🤼',basketball:'🏀',general:'📺'};
 
-// ===== BLOCK ALL POPUPS FROM IFRAMES =====
-// Override window.open so iframes cannot open new tabs
-var _origOpen = window.open;
-window.open = function(url, name, features) {
-  // Only allow our affiliate link
-  if(url && url.indexOf('reffpa.com') !== -1) {
-    return _origOpen.call(window, url, '_blank', features);
-  }
-  // Block everything else
-  return null;
-};
-
-// Block any navigation attempt from inside iframes
-window.addEventListener('blur', function() {
-  // When window loses focus (ad tried to open something), refocus
-  setTimeout(function() {
-    var ifr = document.getElementById('iframeEl');
-    if(ifr && ifr.style.display !== 'none') {
-      // Don't do anything - just prevent the ad from stealing focus
-    }
-  }, 100);
-});
-
 // ===== DETECT STREAM TYPE =====
 function isEmbed(url) {
   if(!url) return false;
-  if(url.indexOf('.m3u8') !== -1 || url.indexOf('.m3u') !== -1) return false;
-  if(url.indexOf('.ts') !== -1) return false;
-  var embedDomains = ['embed','iframe','dlhd','livetv','streameast','sportsurge','weakstreams','youtube.com/embed','youtu.be','sportzzonline','sportembeds','embedme','vipstand','keylime'];
-  for(var i=0; i<embedDomains.length; i++) {
-    if(url.indexOf(embedDomains[i]) !== -1) return true;
-  }
-  var hasExt = url.match(/\.(m3u8|m3u|ts|mp4|webm|ogg)(\?|$)/i);
-  return !hasExt;
+  if(url.match(/\.(m3u8|m3u|ts)(\?|$)/i)) return false;
+  var embedDomains=['embed','iframe','dlhd','livetv','streameast','sportsurge','weakstreams','youtube.com/embed','youtu.be','sportzzonline','sportembeds','embedme','vipstand','keylime'];
+  for(var i=0;i<embedDomains.length;i++){if(url.indexOf(embedDomains[i])!==-1)return true;}
+  return !url.match(/\.(m3u8|m3u|ts|mp4|webm|ogg)(\?|$)/i);
 }
-
-function getStreamTypeLabel(url) {
-  return isEmbed(url) ? '<span class="srv-type-badge embed">EMBED</span>' : '<span class="srv-type-badge m3u8">HLS</span>';
+function getStreamTypeLabel(url){
+  return isEmbed(url)?'<span class="srv-type-badge embed">EMBED</span>':'<span class="srv-type-badge m3u8">HLS</span>';
 }
 
 // ===== INIT =====
-window.onload = function() {
-  var url = 'https://qbyisxlqpuwowbtrying.supabase.co';
-  var key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFieWlzeGxxcHV3b3didHJ5aW5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NzczNDMsImV4cCI6MjA5MTE1MzM0M30.D5SKyI3Ay5uFoVvxEOYIKKPnSORxwYoP0PPqdB1OTao';
-  localStorage.setItem('ks_url', url);
-  localStorage.setItem('ks_key', key);
-  initApp(url, key);
+window.onload=function(){
+  var url='https://qbyisxlqpuwowbtrying.supabase.co';
+  var key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFieWlzeGxxcHV3b3didHJ5aW5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NzczNDMsImV4cCI6MjA5MTE1MzM0M30.D5SKyI3Ay5uFoVvxEOYIKKPnSORxwYoP0PPqdB1OTao';
+  localStorage.setItem('ks_url',url);localStorage.setItem('ks_key',key);
+  initApp(url,key);
 };
-
-function initApp(url, key) {
-  sb = window.supabase.createClient(url, key);
-  var su=document.getElementById('sUrl'), sk=document.getElementById('sKey');
-  if(su) su.value=url; if(sk) sk.value=key;
-  var md=document.getElementById('mDate'); if(md) md.value=new Date().toISOString().split('T')[0];
-  loadMatches(); loadChannels(); loadHighlights(); loadSettings();
+function initApp(url,key){
+  sb=window.supabase.createClient(url,key);
+  var su=document.getElementById('sUrl'),sk=document.getElementById('sKey');
+  if(su)su.value=url;if(sk)sk.value=key;
+  var md=document.getElementById('mDate');if(md)md.value=new Date().toISOString().split('T')[0];
+  loadMatches();loadChannels();loadHighlights();loadSettings();
 }
-
-function saveSetup() {
-  var url=document.getElementById('setupUrl').value.trim(), key=document.getElementById('setupKey').value.trim();
+function saveSetup(){
+  var url=document.getElementById('setupUrl').value.trim(),key=document.getElementById('setupKey').value.trim();
   if(!url||!key){toast('Fill in both fields',true);return;}
-  localStorage.setItem('ks_url',url); localStorage.setItem('ks_key',key);
+  localStorage.setItem('ks_url',url);localStorage.setItem('ks_key',key);
   document.getElementById('setupScreen').classList.remove('active');
-  initApp(url,key); toast('Connected! ✅');
+  initApp(url,key);toast('Connected! ✅');
 }
 
 // ===== LOAD =====
-function loadMatches() {
+function loadMatches(){
   sb.from('ks_matches').select('*').order('match_date',{ascending:true}).then(function(res){
     if(res.error){handleDbError(res.error);return;}
-    allMatches=res.data||[]; updateBadges(); renderMatches(); renderHL();
+    allMatches=res.data||[];updateBadges();renderMatches();renderHL();
   }).catch(function(e){showDbError(e.message);});
 }
-function loadChannels() {
+function loadChannels(){
   sb.from('ks_channels').select('*').order('created_at',{ascending:false}).then(function(res){
-    if(res.error)return; allChannels=res.data||[]; renderChannels();
+    if(res.error)return;allChannels=res.data||[];renderChannels();
   }).catch(function(){});
 }
-function loadHighlights() {
+function loadHighlights(){
   sb.from('ks_highlights').select('*').order('created_at',{ascending:false}).then(function(res){
-    if(res.error)return; allHighlights=res.data||[]; renderHL();
+    if(res.error)return;allHighlights=res.data||[];renderHL();
   }).catch(function(){});
 }
-function loadSettings() {
+function loadSettings(){
   sb.from('ks_settings').select('*').then(function(res){
     if(!res.data)return;
     res.data.forEach(function(s){
@@ -673,37 +652,37 @@ function loadSettings() {
     });
   }).catch(function(){});
 }
-function handleDbError(error) {
+function handleDbError(error){
   if(error.code==='42P01'){document.getElementById('matchesContainer').innerHTML='<div class="empty"><div class="empty-icon"><i class="fas fa-database" style="font-size:40px;color:var(--text2);"></i></div><h3>Tables Not Created</h3><p>Go to Admin → Settings for SQL setup</p></div>';}
 }
-function showDbError(msg) {
+function showDbError(msg){
   document.getElementById('matchesContainer').innerHTML='<div class="empty"><div class="empty-icon">⚠️</div><h3>Connection Error</h3><p>'+msg+'</p></div>';
 }
 
 // ===== RENDER =====
-function updateBadges() {
+function updateBadges(){
   ['all','football','cricket','rugby','boxing','motorsport','wrestling','basketball'].forEach(function(cat){
     var el=document.getElementById('b-'+cat);
-    if(el) el.textContent=cat==='all'?allMatches.length:allMatches.filter(function(m){return m.sport===cat;}).length;
+    if(el)el.textContent=cat==='all'?allMatches.length:allMatches.filter(function(m){return m.sport===cat;}).length;
   });
   document.getElementById('c-all').textContent=allMatches.length;
   document.getElementById('c-live').textContent=allMatches.filter(function(m){return m.status==='live';}).length;
   document.getElementById('c-upcoming').textContent=allMatches.filter(function(m){return m.status==='upcoming';}).length;
   document.getElementById('c-recent').textContent=allMatches.filter(function(m){return m.status==='recent';}).length;
 }
-function getFiltered() {
+function getFiltered(){
   var m=allMatches;
-  if(curSport!=='all') m=m.filter(function(x){return x.sport===curSport;});
-  if(curTab!=='all') m=m.filter(function(x){return x.status===curTab;});
+  if(curSport!=='all')m=m.filter(function(x){return x.sport===curSport;});
+  if(curTab!=='all')m=m.filter(function(x){return x.status===curTab;});
   return m;
 }
-function renderMatches() {
-  var matches=getFiltered(), container=document.getElementById('matchesContainer');
+function renderMatches(){
+  var matches=getFiltered(),container=document.getElementById('matchesContainer');
   if(!matches.length){container.innerHTML='<div class="empty"><div class="empty-icon"><i class="fas fa-calendar-times" style="font-size:40px;color:var(--text2);"></i></div><h3>No Matches</h3><p>No '+(curTab==='all'?'':curTab)+' matches found</p></div>';return;}
   var html=matches.map(function(m){
     var live=m.status==='live';
     var streams=[m.stream1,m.stream2,m.stream3].filter(Boolean);
-    var sj=esc(JSON.stringify(streams)), t=esc(m.team1+' vs '+m.team2);
+    var sj=esc(JSON.stringify(streams)),t=esc(m.team1+' vs '+m.team2);
     var l1=m.logo1?'<img src="'+esc(m.logo1)+'" onerror="this.outerHTML=\'<div class=mteam-ph>'+(EMOJIS[m.sport]||'⚽')+'</div>\'" />':'<div class="mteam-ph">'+(EMOJIS[m.sport]||'⚽')+'</div>';
     var l2=m.logo2?'<img src="'+esc(m.logo2)+'" onerror="this.outerHTML=\'<div class=mteam-ph>'+(EMOJIS[m.sport]||'⚽')+'</div>\'" />':'<div class="mteam-ph">'+(EMOJIS[m.sport]||'⚽')+'</div>';
     var ll=m.league_logo?'<img src="'+esc(m.league_logo)+'" onerror="this.style.display=\'none\'" />':'<i class="fas fa-trophy" style="font-size:12px;"></i>';
@@ -714,17 +693,17 @@ function renderMatches() {
   }).join('');
   container.innerHTML='<div class="matches-list">'+html+'</div>';
 }
-function renderChannels() {
+function renderChannels(){
   var grid=document.getElementById('channelsGrid');
   var chs=allChannels;
-  if(curSport!=='all') chs=chs.filter(function(c){return c.category===curSport;});
+  if(curSport!=='all')chs=chs.filter(function(c){return c.category===curSport;});
   if(!chs.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1;padding:30px;"><div class="empty-icon"><i class="fas fa-tv" style="font-size:36px;color:var(--text2);"></i></div><h3>No Channels</h3></div>';return;}
   grid.innerHTML=chs.map(function(ch){
     var lh=ch.logo?'<img src="'+esc(ch.logo)+'" class="ch-logo" onerror="this.outerHTML=\'<div class=ch-ph>'+(ch.emoji||'📺')+'</div>\'" />':'<div class="ch-ph">'+(ch.emoji||'📺')+'</div>';
     return '<div class="ch-card" onclick="playChannel(\''+esc(ch.name)+'\',\''+esc(ch.stream_url||'')+'\')">'+'<div class="ch-dot"></div>'+lh+'<div class="ch-name">'+esc(ch.name)+'</div></div>';
   }).join('');
 }
-function renderHL() {
+function renderHL(){
   var grid=document.getElementById('hlGrid');
   var items=allHighlights.length>0?allHighlights:allMatches.filter(function(m){return m.status==='recent'&&m.stream1;});
   if(!items.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1;"><div class="empty-icon"><i class="fas fa-film" style="font-size:40px;color:var(--text2);"></i></div><h3>No Highlights</h3><p>Add highlights in Admin</p></div>';return;}
@@ -734,7 +713,7 @@ function renderHL() {
     var sub=isHL?(item.description||item.category):(item.league||'');
     var stream=isHL?item.stream_url:item.stream1;
     var thumb=isHL?item.thumbnail:item.logo1;
-    var sj=esc(JSON.stringify([stream].filter(Boolean))), t=esc(title);
+    var sj=esc(JSON.stringify([stream].filter(Boolean))),t=esc(title);
     var th=thumb?'<img src="'+esc(thumb)+'" onerror="this.style.display=\'none\'" />':'<div class="hl-thumb-ph">'+(EMOJIS[item.sport||item.category]||'⚽')+'</div>';
     return '<div class="hl-card" onclick="playMatch(\''+t+'\',\''+sj+'\')">'
       +'<div class="hl-thumb">'+th+'<div class="hl-play"><i class="fas fa-play"></i></div></div>'
@@ -753,7 +732,7 @@ function showPage(page){
   if(page==='categories')renderCats();
   if(page==='highlights')renderHL();
 }
-function renderCats() {
+function renderCats(){
   var cats=['football','cricket','rugby','boxing','motorsport','wrestling','basketball'];
   var html=cats.map(function(cat){
     var cm=allMatches.filter(function(m){return m.sport===cat;});
@@ -772,20 +751,20 @@ function renderCats() {
   document.getElementById('catsContent').innerHTML=html||'<div class="empty"><div class="empty-icon">📺</div><h3>No Content Yet</h3><p>Add matches and channels in Admin</p></div>';
 }
 
-// ===== PLAYER WITH AD BLOCKING =====
-function playMatch(title,sj) {
-  try {
+// ===== PLAYER =====
+function playMatch(title,sj){
+  try{
     var decoded=sj.replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
     var streams=JSON.parse(decoded);
     if(!streams||!streams.length){toast('No stream available',true);return;}
-    curStreams=streams; openPlayer(title,streams,false);
-  } catch(e){toast('Error loading stream',true);}
+    curStreams=streams;openPlayer(title,streams,false);
+  }catch(e){toast('Error loading stream',true);}
 }
-function playChannel(name,url) {
+function playChannel(name,url){
   if(!url){toast('No stream URL',true);return;}
-  curStreams=[url]; openPlayer(name,[url],true);
+  curStreams=[url];openPlayer(name,[url],true);
 }
-function openPlayer(title,streams,isLive) {
+function openPlayer(title,streams,isLive){
   document.getElementById('playerTitle').textContent=title;
   document.getElementById('playerLiveBadge').style.display=isLive?'inline-flex':'none';
   document.getElementById('playerOverlay').classList.add('active');
@@ -794,37 +773,33 @@ function openPlayer(title,streams,isLive) {
   }).join('');
   loadStream(streams[0]);
 }
-function switchSrv(idx) {
+function switchSrv(idx){
   document.querySelectorAll('.srv-btn').forEach(function(b,i){b.classList.toggle('active',i===idx);});
   loadStream(curStreams[idx]);
 }
-function loadStream(url) {
+function loadStream(url){
   var v=document.getElementById('videoEl');
   var ifrWrap=document.getElementById('iframeWrap');
   var ifr=document.getElementById('iframeEl');
   var err=document.getElementById('playerErr');
-  // Hide all
-  v.style.display='none'; ifrWrap.style.display='none'; err.style.display='none';
-  ifr.src='about:blank'; v.src='';
+  v.style.display='none';ifrWrap.style.display='none';err.style.display='none';
+  ifr.src='about:blank';v.src='';
   if(hlsInst){hlsInst.destroy();hlsInst=null;}
   if(!url){showPlayerErr();return;}
-  if(isEmbed(url)) {
-    // EMBED MODE - with ad blocking
+  if(isEmbed(url)){
     ifrWrap.style.display='block';
-    // Small delay to ensure blank loaded first
-    setTimeout(function(){ ifr.src=url; }, 50);
+    setTimeout(function(){ifr.src=url;},50);
   } else {
-    // HLS MODE
     v.style.display='block';
     if(Hls.isSupported()){
       hlsInst=new Hls({enableWorker:false,lowLatencyMode:true});
-      hlsInst.loadSource(url); hlsInst.attachMedia(v);
+      hlsInst.loadSource(url);hlsInst.attachMedia(v);
       hlsInst.on(Hls.Events.MANIFEST_PARSED,function(){v.play().catch(function(){});});
       hlsInst.on(Hls.Events.ERROR,function(e,d){if(d.fatal)showPlayerErr();});
     } else if(v.canPlayType('application/vnd.apple.mpegurl')){
-      v.src=url; v.play().catch(function(){});
+      v.src=url;v.play().catch(function(){});
     } else {
-      v.src=url; v.play().catch(function(){showPlayerErr();});
+      v.src=url;v.play().catch(function(){showPlayerErr();});
     }
     v.onerror=function(){showPlayerErr();};
   }
@@ -836,9 +811,8 @@ function showPlayerErr(){
 }
 function closePlayer(){
   document.getElementById('playerOverlay').classList.remove('active');
-  var v=document.getElementById('videoEl');
-  var ifr=document.getElementById('iframeEl');
-  v.pause(); v.src=''; ifr.src='about:blank';
+  var v=document.getElementById('videoEl'),ifr=document.getElementById('iframeEl');
+  v.pause();v.src='';ifr.src='about:blank';
   document.getElementById('iframeWrap').style.display='none';
   if(hlsInst){hlsInst.destroy();hlsInst=null;}
 }
@@ -857,7 +831,7 @@ function doSearch(q){
   var ms=allMatches.filter(function(m){return(m.team1+m.team2+(m.league||'')).toLowerCase().indexOf(ql)!==-1;});
   var cs=allChannels.filter(function(c){return c.name.toLowerCase().indexOf(ql)!==-1;});
   var html=ms.map(function(m){
-    var sj=esc(JSON.stringify([m.stream1,m.stream2,m.stream3].filter(Boolean))), t=esc(m.team1+' vs '+m.team2);
+    var sj=esc(JSON.stringify([m.stream1,m.stream2,m.stream3].filter(Boolean))),t=esc(m.team1+' vs '+m.team2);
     return '<div onclick="playMatch(\''+t+'\',\''+sj+'\');closeSearch()" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;cursor:pointer;"><div style="font-size:13px;font-weight:600;">'+esc(m.team1)+' vs '+esc(m.team2)+'</div><div style="font-size:11px;color:var(--text2);">'+esc(m.league||'')+' · '+m.status+'</div></div>';
   }).concat(cs.map(function(c){
     var logo=c.logo?'<img src="'+esc(c.logo)+'" style="width:32px;height:32px;object-fit:contain;border-radius:4px;">':'<span style="font-size:22px;">'+(c.emoji||'📺')+'</span>';
