@@ -324,7 +324,44 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   pointer-events:all;
   cursor:default;
 }
-/* NO bottom shield — unmute button must be clickable */
+
+/* ===== STREAM LOADING SCREEN ===== */
+.stream-loading{
+  position:absolute;inset:0;
+  background:#000;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:16px;z-index:5;
+  transition:opacity .4s;
+}
+.stream-loading.hidden{opacity:0;pointer-events:none;}
+.stream-loading-logo{
+  width:80px;height:80px;
+  background:linear-gradient(135deg,#0d1a3a,#0a0f1a);
+  border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid rgba(0,212,255,.3);
+  box-shadow:0 0 30px rgba(0,212,255,.2);
+  animation:logopulse 2s ease-in-out infinite;
+}
+@keyframes logopulse{0%,100%{box-shadow:0 0 20px rgba(0,212,255,.2);}50%{box-shadow:0 0 40px rgba(0,212,255,.5);}}
+.stream-loading-logo svg{width:44px;height:44px;}
+.stream-loading-text{
+  font-family:'Rajdhani',sans-serif;
+  font-size:18px;font-weight:700;
+  color:#fff;letter-spacing:2px;
+  text-transform:uppercase;
+}
+.stream-loading-sub{font-size:12px;color:rgba(255,255,255,.4);letter-spacing:1px;}
+.stream-loading-dots{display:flex;gap:8px;margin-top:4px;}
+.stream-loading-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent);opacity:.3;
+  animation:dotpulse2 1.4s infinite;
+}
+.stream-loading-dot:nth-child(2){animation-delay:.2s;}
+.stream-loading-dot:nth-child(3){animation-delay:.4s;}
+@keyframes dotpulse2{0%,100%{opacity:.3;transform:scale(1);}50%{opacity:1;transform:scale(1.3);}}
 
 .player-err{text-align:center;padding:40px 20px;display:none;flex-direction:column;align-items:center;gap:12px;position:absolute;inset:0;justify-content:center;background:#000;}
 .player-err i{font-size:48px;color:var(--text2);}
@@ -711,6 +748,24 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         allow="autoplay;fullscreen;encrypted-media"
         allowfullscreen></iframe>
       <div class="iframe-top-shield"></div>
+    </div>
+    <!-- Loading Screen -->
+    <div class="stream-loading" id="streamLoading">
+      <div class="stream-loading-logo">
+        <svg viewBox="0 0 40 40" fill="none">
+          <circle cx="20" cy="20" r="19" fill="#0a0f1a" stroke="#00d4ff" stroke-width="1.5"/>
+          <path d="M15 13L15 27L27 20Z" fill="#00d4ff"/>
+          <circle cx="30" cy="12" r="4" fill="#ff3a3a"/>
+          <circle cx="30" cy="12" r="2" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="stream-loading-text">KenSports TV</div>
+      <div class="stream-loading-sub">Loading stream...</div>
+      <div class="stream-loading-dots">
+        <div class="stream-loading-dot"></div>
+        <div class="stream-loading-dot"></div>
+        <div class="stream-loading-dot"></div>
+      </div>
     </div>
     <div class="player-err" id="playerErr">
       <i class="fas fa-satellite-dish"></i>
@@ -1541,23 +1596,40 @@ function loadStream(url){
   var ifrWrap=document.getElementById('iframeWrap');
   var ifr=document.getElementById('iframeEl');
   var err=document.getElementById('playerErr');
+  var loading=document.getElementById('streamLoading');
   v.style.display='none';ifrWrap.style.display='none';err.style.display='none';
   ifr.src='about:blank';v.src='';
   if(hlsInst){hlsInst.destroy();hlsInst=null;}
+  // Show loading screen
+  if(loading){loading.style.display='flex';loading.classList.remove('hidden');}
   if(!url){showPlayerErr();return;}
   if(isEmbed(url)){
-    ifrWrap.style.display='flex';setTimeout(function(){ifr.src=url;},50);
+    ifrWrap.style.display='flex';
+    setTimeout(function(){
+      ifr.src=url;
+      // Hide loading after 2.5s — iframe has loaded by then
+      setTimeout(function(){
+        if(loading)loading.classList.add('hidden');
+        setTimeout(function(){if(loading)loading.style.display='none';},400);
+      },2500);
+    },50);
   } else {
     v.style.display='block';
     if(Hls.isSupported()){
       hlsInst=new Hls({enableWorker:false,lowLatencyMode:true});
       hlsInst.loadSource(url);hlsInst.attachMedia(v);
-      hlsInst.on(Hls.Events.MANIFEST_PARSED,function(){v.play().catch(function(){});});
+      hlsInst.on(Hls.Events.MANIFEST_PARSED,function(){
+        v.play().catch(function(){});
+        if(loading)loading.classList.add('hidden');
+        setTimeout(function(){if(loading)loading.style.display='none';},400);
+      });
       hlsInst.on(Hls.Events.ERROR,function(e,d){if(d.fatal)showPlayerErr();});
     } else if(v.canPlayType('application/vnd.apple.mpegurl')){
       v.src=url;v.play().catch(function(){});
+      if(loading)loading.classList.add('hidden');
     } else {
       v.src=url;v.play().catch(function(){showPlayerErr();});
+      if(loading)loading.classList.add('hidden');
     }
     v.onerror=function(){showPlayerErr();};
   }
