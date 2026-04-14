@@ -34,22 +34,36 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XX2K9N2SSE');</script>
 
 <script>
+// Save original open for affiliate ads only
+window.__origOpen = window.open.bind(window);
+
+// Block window.open except for affiliate and WhatsApp
 window.open = function(url, target, features) {
-  if(url && url.indexOf('reffpa.com') !== -1) {
-    return window.__origOpen ? window.__origOpen(url, '_blank', features) : null;
-  }
+  if(!url) return null;
+  if(url.indexOf('reffpa.com') !== -1) return window.__origOpen(url, '_blank', features);
+  if(url.indexOf('wa.me') !== -1) return window.__origOpen(url, '_blank', features);
   return null;
 };
+
+// Block unwanted _blank links from embed iframes ONLY
+// Allow clicks on our own UI elements freely
 document.addEventListener('click', function(e) {
   var el = e.target;
   while (el && el.tagName !== 'A') { el = el.parentElement; }
   if (el && el.tagName === 'A') {
-    var href = el.getAttribute('href');
-    var target = el.getAttribute('target');
-    if (target === '_blank' && href && href.indexOf('reffpa.com') === -1 && href.indexOf('kensports') === -1) {
-      e.preventDefault();
-      e.stopPropagation();
-      return false;
+    var href = el.getAttribute('href') || '';
+    var target = el.getAttribute('target') || '';
+    // Only block _blank links that come from INSIDE the iframe area
+    var iframeWrap = document.getElementById('iframeWrap');
+    var playerOverlay = document.getElementById('playerOverlay');
+    var isInsidePlayer = playerOverlay && playerOverlay.contains(el);
+    if(isInsidePlayer && target === '_blank') {
+      // Allow only affiliate
+      if(href.indexOf('reffpa.com') === -1 && href.indexOf('wa.me') === -1) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
     }
   }
 }, true);
@@ -489,11 +503,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div class="sb-item" onclick="closeSidebar();showPage('highlights')"><span class="sb-item-icon"><i class="fas fa-play-circle"></i></span><span class="sb-item-label">Highlights</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-item gold" onclick="closeSidebar();showPage('favorites')"><span class="sb-item-icon"><i class="fas fa-star"></i></span><span class="sb-item-label">My Favorites</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-divider"></div>
-    <div class="sb-item" onclick="closeSidebar();window.open('contact.html','_self')"><span class="sb-item-icon"><i class="fas fa-envelope"></i></span><span class="sb-item-label">Contact Us</span><span class="sb-item-arrow">›</span></div>
+    <div class="sb-item" onclick="closeSidebar();location.href='contact.html'"><span class="sb-item-icon"><i class="fas fa-envelope"></i></span><span class="sb-item-label">Contact Us</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-item" onclick="closeSidebar();location.reload()"><span class="sb-item-icon"><i class="fas fa-sync-alt"></i></span><span class="sb-item-label">Update App</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-divider"></div>
-    <div class="sb-item" onclick="closeSidebar();window.open('about.html','_self')"><span class="sb-item-icon"><i class="fas fa-bell"></i></span><span class="sb-item-label">Notice</span><span class="sb-item-arrow">›</span></div>
-    <div class="sb-item" onclick="closeSidebar();window.open('privacy.html','_self')"><span class="sb-item-icon">©</span><span class="sb-item-label">Copyright</span><span class="sb-item-arrow">›</span></div>
+    <div class="sb-item" onclick="closeSidebar();location.href='about.html'"><span class="sb-item-icon"><i class="fas fa-bell"></i></span><span class="sb-item-label">Notice</span><span class="sb-item-arrow">›</span></div>
+    <div class="sb-item" onclick="closeSidebar();location.href='privacy.html'"><span class="sb-item-icon">©</span><span class="sb-item-label">Copyright</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-divider"></div>
     <div class="sb-item red" onclick="closeSidebar()"><span class="sb-item-icon"><i class="fas fa-sign-out-alt"></i></span><span class="sb-item-label">Exit</span><span class="sb-item-arrow">›</span></div>
   </div>
@@ -643,7 +657,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   <div class="player-body">
     <video id="videoEl" controls autoplay playsinline style="width:100%;max-height:56vh;background:#000;display:none;"></video>
     <div class="iframe-wrap" id="iframeWrap">
-      <iframe id="iframeEl" sandbox="allow-scripts allow-same-origin allow-presentation allow-forms" allow="autoplay;fullscreen;encrypted-media" allowfullscreen></iframe>
+      <iframe id="iframeEl"
+        sandbox="allow-scripts allow-same-origin allow-presentation"
+        allow="autoplay;fullscreen;encrypted-media"
+        allowfullscreen></iframe>
       <div class="iframe-top-shield"></div>
       <div class="iframe-bottom-shield"></div>
     </div>
