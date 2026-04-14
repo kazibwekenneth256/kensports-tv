@@ -291,31 +291,62 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 /* ===== PLAYER ===== */
 .player-overlay{position:fixed;inset:0;background:#000;z-index:500;display:none;flex-direction:column;}
 .player-overlay.active{display:flex;}
-.player-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;}
-.player-hdr-left{display:flex;align-items:center;gap:10px;min-width:0;}
-.live-badge-hdr{background:var(--live);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;animation:bl 1s infinite;flex-shrink:0;}
-.player-title{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;text-transform:uppercase;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.player-hdr-right{display:flex;gap:8px;align-items:center;flex-shrink:0;}
-.player-fav-btn{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);color:var(--gold);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+
+/* Player header - compact & clean */
+.player-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:linear-gradient(180deg,rgba(0,0,0,.95),rgba(0,0,0,.7));border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;min-height:48px;}
+.player-hdr-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1;}
+.live-badge-hdr{background:var(--live);color:#fff;font-size:9px;font-weight:700;padding:3px 7px;border-radius:4px;animation:bl 1s infinite;flex-shrink:0;letter-spacing:.5px;}
+.player-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.player-hdr-right{display:flex;gap:6px;align-items:center;flex-shrink:0;}
+.player-fav-btn{background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.3);color:var(--gold);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
 .player-fav-btn.active{background:var(--gold);color:#000;}
-.player-close{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
-.player-body{flex:1;display:flex;align-items:center;justify-content:center;background:#000;overflow:hidden;position:relative;}
-#videoEl{width:100%;max-height:56vh;background:#000;display:block;}
-.iframe-wrap{position:relative;width:100%;height:56vh;display:none;background:#000;}
+.player-fs-btn{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);color:var(--accent);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.player-fs-btn:active{background:var(--accent);color:#000;}
+.player-close{background:rgba(255,58,58,.15);border:1px solid rgba(255,58,58,.3);color:#ff6b6b;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.player-close:active{background:var(--live);color:#fff;}
+
+/* Player body - fills all available space */
+.player-body{flex:1;display:flex;align-items:stretch;justify-content:center;background:#000;overflow:hidden;position:relative;min-height:0;}
+
+/* HLS video - fills full height */
+#videoEl{width:100%;height:100%;background:#000;display:block;object-fit:contain;}
+
+/* Embed iframe - full height, NO shields blocking unmute */
+.iframe-wrap{position:relative;width:100%;height:100%;display:none;background:#000;flex:1;}
 #iframeEl{width:100%;height:100%;border:none;background:#000;display:block;}
-.iframe-top-shield{position:absolute;top:0;left:0;right:0;height:44px;z-index:10;background:var(--bg2);pointer-events:all;cursor:default;}
-.iframe-bottom-shield{position:absolute;bottom:0;left:0;right:0;height:44px;z-index:10;background:var(--bg2);pointer-events:all;cursor:default;}
-.player-err{text-align:center;padding:40px 20px;display:none;flex-direction:column;align-items:center;gap:10px;position:absolute;inset:0;justify-content:center;background:#000;}
-.player-err i{font-size:44px;color:var(--text2);}
+
+/* Thin top shield - only covers very top ad bar (24px not 44px) */
+.iframe-top-shield{
+  position:absolute;top:0;left:0;right:0;
+  height:24px;
+  z-index:10;
+  background:#000;
+  pointer-events:all;
+  cursor:default;
+}
+/* NO bottom shield — unmute button must be clickable */
+
+.player-err{text-align:center;padding:40px 20px;display:none;flex-direction:column;align-items:center;gap:12px;position:absolute;inset:0;justify-content:center;background:#000;}
+.player-err i{font-size:48px;color:var(--text2);}
 .player-err p{color:var(--text2);font-size:13px;}
-.player-servers{padding:10px 14px 8px;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0;}
-.srv-title{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;}
-.srv-btns{display:flex;gap:8px;flex-wrap:wrap;}
-.srv-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:12px;font-weight:600;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;}
+.player-err-retry{background:var(--accent);color:#000;border:none;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;padding:8px 20px;border-radius:8px;cursor:pointer;}
+
+/* Server buttons - improved look */
+.player-servers{padding:8px 12px 10px;background:linear-gradient(0deg,rgba(0,0,0,.95),rgba(0,0,0,.7));border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+.srv-title{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.srv-btns{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+.srv-btns::-webkit-scrollbar{display:none;}
+.srv-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-size:12px;font-weight:600;padding:7px 14px;border-radius:20px;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:4px;}
 .srv-btn.active{background:var(--accent);border-color:var(--accent);color:#000;}
-.srv-type-badge{font-size:9px;padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700;}
-.srv-type-badge.m3u8{background:rgba(0,212,255,.2);color:var(--accent);}
-.srv-type-badge.embed{background:rgba(255,165,0,.2);color:orange;}
+.srv-type-badge{font-size:9px;padding:1px 5px;border-radius:10px;font-weight:700;}
+.srv-type-badge.m3u8{background:rgba(0,212,255,.25);color:var(--accent);}
+.srv-type-badge.embed{background:rgba(255,165,0,.25);color:orange;}
+
+/* Fullscreen mode */
+.player-overlay.fullscreen .player-hdr{display:none;}
+.player-overlay.fullscreen .player-servers{display:none;}
+.player-overlay.fullscreen .player-body{position:fixed;inset:0;z-index:600;}
+.player-overlay.fullscreen #videoEl{object-fit:cover;}
 
 /* ===== SIDEBAR ===== */
 .sb-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;}
@@ -651,26 +682,27 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     </div>
     <div class="player-hdr-right">
       <button class="player-fav-btn" id="playerFavBtn" onclick="togglePlayerFav()" title="Save to favorites"><i class="fas fa-star"></i></button>
-      <button class="player-close" onclick="closePlayer()"><i class="fas fa-times"></i></button>
+      <button class="player-fs-btn" onclick="toggleFullscreen()" title="Fullscreen"><i class="fas fa-expand" id="fsIcon"></i></button>
+      <button class="player-close" onclick="closePlayer()" title="Close"><i class="fas fa-times"></i></button>
     </div>
   </div>
   <div class="player-body">
-    <video id="videoEl" controls autoplay playsinline style="width:100%;max-height:56vh;background:#000;display:none;"></video>
+    <video id="videoEl" controls autoplay playsinline style="display:none;"></video>
     <div class="iframe-wrap" id="iframeWrap">
       <iframe id="iframeEl"
         sandbox="allow-scripts allow-same-origin allow-presentation"
         allow="autoplay;fullscreen;encrypted-media"
         allowfullscreen></iframe>
       <div class="iframe-top-shield"></div>
-      <div class="iframe-bottom-shield"></div>
     </div>
     <div class="player-err" id="playerErr">
       <i class="fas fa-satellite-dish"></i>
       <p>Stream unavailable.<br>Try another server below.</p>
+      <button class="player-err-retry" onclick="switchSrv(0)">🔄 Retry Server 1</button>
     </div>
   </div>
   <div class="player-servers">
-    <div class="srv-title">Stream Servers — Tap to switch if one fails</div>
+    <div class="srv-title">Servers — swipe &amp; tap to switch</div>
     <div class="srv-btns" id="srvBtns"></div>
   </div>
 </div>
@@ -1397,7 +1429,7 @@ function loadStream(url){
   if(hlsInst){hlsInst.destroy();hlsInst=null;}
   if(!url){showPlayerErr();return;}
   if(isEmbed(url)){
-    ifrWrap.style.display='block';setTimeout(function(){ifr.src=url;},50);
+    ifrWrap.style.display='flex';setTimeout(function(){ifr.src=url;},50);
   } else {
     v.style.display='block';
     if(Hls.isSupported()){
@@ -1418,12 +1450,41 @@ function showPlayerErr(){
   document.getElementById('iframeWrap').style.display='none';
   document.getElementById('playerErr').style.display='flex';
 }
+function toggleFullscreen(){
+  var overlay=document.getElementById('playerOverlay');
+  var icon=document.getElementById('fsIcon');
+  var isFs=overlay.classList.contains('fullscreen');
+  if(isFs){
+    overlay.classList.remove('fullscreen');
+    if(icon)icon.className='fas fa-expand';
+    if(document.exitFullscreen)document.exitFullscreen().catch(function(){});
+    else if(document.webkitExitFullscreen)document.webkitExitFullscreen();
+  } else {
+    overlay.classList.add('fullscreen');
+    if(icon)icon.className='fas fa-compress';
+    var v=document.getElementById('videoEl');
+    var ifrWrap=document.getElementById('iframeWrap');
+    var target=v.style.display!=='none'?v:ifrWrap;
+    if(target.requestFullscreen)target.requestFullscreen().catch(function(){});
+    else if(target.webkitRequestFullscreen)target.webkitRequestFullscreen();
+  }
+}
+document.addEventListener('fullscreenchange',function(){
+  if(!document.fullscreenElement){
+    var overlay=document.getElementById('playerOverlay');
+    if(overlay)overlay.classList.remove('fullscreen');
+    var icon=document.getElementById('fsIcon');
+    if(icon)icon.className='fas fa-expand';
+  }
+});
 function closePlayer(){
-  document.getElementById('playerOverlay').classList.remove('active');
+  var overlay=document.getElementById('playerOverlay');
+  overlay.classList.remove('active','fullscreen');
   var v=document.getElementById('videoEl'),ifr=document.getElementById('iframeEl');
   v.pause();v.src='';ifr.src='about:blank';
   document.getElementById('iframeWrap').style.display='none';
   if(hlsInst){hlsInst.destroy();hlsInst=null;}
+  if(document.exitFullscreen)document.exitFullscreen().catch(function(){});
 }
 
 // ===== SIDEBAR =====
