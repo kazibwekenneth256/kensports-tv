@@ -117,14 +117,15 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .float-ad img{width:80px;height:80px;object-fit:cover;display:block;}
 
 /* ===== LIVE SCORE TICKER (NEW) ===== */
-.score-ticker{background:linear-gradient(90deg,#0a1628,#0d1117,#0a1628);border-bottom:1px solid rgba(0,212,255,.2);height:36px;overflow:hidden;display:flex;align-items:center;position:relative;}
-.score-ticker::before{content:'LIVE';position:absolute;left:0;top:0;bottom:0;background:var(--live);color:#fff;font-size:9px;font-weight:700;padding:0 8px;display:flex;align-items:center;z-index:2;letter-spacing:1px;}
-.score-track{display:flex;align-items:center;white-space:nowrap;animation:scoretick 60s linear infinite;font-size:12px;gap:32px;padding-left:calc(100% + 50px);margin-left:44px;}
+.score-ticker{background:linear-gradient(90deg,#060d1a,#0d1117,#060d1a);border-bottom:2px solid rgba(255,58,58,.3);height:38px;overflow:hidden;display:flex;align-items:center;position:relative;}
+.score-ticker-label{position:absolute;left:0;top:0;bottom:0;background:var(--live);color:#fff;font-size:9px;font-weight:700;padding:0 10px;display:flex;align-items:center;z-index:2;letter-spacing:1.5px;gap:4px;flex-shrink:0;}
+.score-ticker-label .pulse{width:6px;height:6px;border-radius:50%;background:#fff;animation:bl .7s infinite;}
+.score-track{display:flex;align-items:center;white-space:nowrap;animation:scoretick 25s linear infinite;font-size:12px;gap:28px;padding-left:100%;margin-left:50px;}
 .score-item{display:flex;align-items:center;gap:6px;color:var(--text2);}
 .score-item .teams{color:var(--text);font-weight:600;}
-.score-item .score-val{color:var(--accent);font-weight:700;font-family:'Rajdhani',sans-serif;font-size:14px;}
-.score-item .score-live{color:var(--live);font-size:9px;font-weight:700;animation:bl 1s infinite;}
-.score-sep{color:var(--border);font-size:18px;}
+.score-item .score-val{color:var(--accent);font-weight:700;font-family:'Rajdhani',sans-serif;font-size:15px;background:rgba(0,212,255,.08);padding:1px 6px;border-radius:4px;}
+.score-item .score-time{color:var(--live);font-size:9px;font-weight:700;background:rgba(255,58,58,.15);padding:1px 5px;border-radius:3px;animation:bl .8s infinite;}
+.score-sep{color:rgba(255,255,255,.15);font-size:16px;margin:0 4px;}
 @keyframes scoretick{0%{transform:translateX(0);}100%{transform:translateX(-100%);}}
 
 /* ===== NEWS TICKER ===== */
@@ -363,7 +364,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <div class="setup-screen" id="setupScreen">
   <div class="setup-box">
     <div class="setup-logo">
-      <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#0d1117" stroke="#00d4ff" stroke-width="2"/><path d="M12 14L12 26L23 20Z" fill="#00d4ff"/><circle cx="29" cy="13" r="4" fill="#ff3a3a"/><circle cx="29" cy="13" r="2" fill="#fff"/></svg>
+      <svg width="44" height="44" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="19" fill="#0a0f1a" stroke="#00d4ff" stroke-width="1.5"/>
+        <circle cx="20" cy="20" r="15" fill="none" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+        <path d="M15 13L15 27L27 20Z" fill="#00d4ff"/>
+        <circle cx="30" cy="12" r="5" fill="#ff3a3a"/>
+        <circle cx="30" cy="12" r="2.5" fill="#fff"/>
+        <circle cx="30" cy="12" r="5" fill="none" stroke="rgba(255,58,58,0.4)" stroke-width="2"/>
+      </svg>
       <div class="setup-logo-text">Ken<span>Sports</span> TV</div>
     </div>
     <div class="setup-sub">Connect your Supabase database</div>
@@ -404,8 +412,15 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <div class="sidebar" id="sidebar">
   <div class="sb-head">
     <div class="sb-head-logo">
-      <svg width="28" height="28" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#0d1117" stroke="#00d4ff" stroke-width="2"/><path d="M12 14L12 26L23 20Z" fill="#00d4ff"/><circle cx="29" cy="13" r="4" fill="#ff3a3a"/><circle cx="29" cy="13" r="2" fill="#fff"/></svg>
-      <div class="sb-head-title">Ken<span>Sports</span> TV</div>
+      <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="19" fill="#0a0f1a" stroke="#00d4ff" stroke-width="1.5"/>
+        <circle cx="20" cy="20" r="15" fill="none" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+        <path d="M15 13L15 27L27 20Z" fill="#00d4ff"/>
+        <circle cx="30" cy="12" r="5" fill="#ff3a3a"/>
+        <circle cx="30" cy="12" r="2.5" fill="#fff"/>
+        <circle cx="30" cy="12" r="5" fill="none" stroke="rgba(255,58,58,0.4)" stroke-width="2"/>
+      </svg>
+      <div class="sb-head-title">Ken<span>Sports</span> <span style="color:var(--live);">TV</span></div>
     </div>
     <button class="sb-close" onclick="closeSidebar()"><i class="fas fa-times"></i></button>
   </div>
@@ -440,8 +455,18 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   <div style="display:flex;align-items:center;gap:10px;">
     <div class="hamburger" onclick="openSidebar()"><span></span><span></span><span></span></div>
     <div class="nav-logo">
-      <svg width="30" height="30" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" fill="#0d1117" stroke="#00d4ff" stroke-width="2"/><path d="M12 14L12 26L23 20Z" fill="#00d4ff"/><circle cx="29" cy="13" r="4" fill="#ff3a3a"/><circle cx="29" cy="13" r="2" fill="#fff"/></svg>
-      <div class="nav-logo-text">Ken<span>Sports</span> TV</div>
+      <svg width="34" height="34" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="19" fill="#0a0f1a" stroke="#00d4ff" stroke-width="1.5"/>
+        <circle cx="20" cy="20" r="15" fill="none" stroke="rgba(0,212,255,0.15)" stroke-width="1"/>
+        <!-- Play triangle -->
+        <path d="M15 13L15 27L27 20Z" fill="#00d4ff"/>
+        <!-- Live dot -->
+        <circle cx="30" cy="12" r="5" fill="#ff3a3a"/>
+        <circle cx="30" cy="12" r="2.5" fill="#fff"/>
+        <!-- Glow ring on live dot -->
+        <circle cx="30" cy="12" r="5" fill="none" stroke="rgba(255,58,58,0.4)" stroke-width="2"/>
+      </svg>
+      <div class="nav-logo-text">Ken<span>Sports</span> <span style="color:var(--live);font-size:14px;font-weight:700;">TV</span></div>
     </div>
   </div>
   <div class="nav-actions">
@@ -462,38 +487,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 </div>
 
 <!-- LIVE SCORE TICKER (NEW) -->
-<div class="score-ticker">
-  <div class="score-track" id="scoreTrack">
-    <div class="score-item"><span class="teams">Man City vs Arsenal</span><span class="score-val">2 - 1</span><span class="score-live">● 67'</span></div>
-    <span class="score-sep">|</span>
-    <div class="score-item"><span class="teams">Barcelona vs Real Madrid</span><span class="score-val">0 - 0</span><span class="score-live">● 34'</span></div>
-    <span class="score-sep">|</span>
-    <div class="score-item"><span class="teams">Uganda vs Kenya</span><span class="score-val">1 - 0</span><span class="score-live">● HT</span></div>
-    <span class="score-sep">|</span>
-    <div class="score-item"><span class="teams">India vs Pakistan</span><span class="score-val">245/6</span><span class="score-live">● 38.2 ov</span></div>
-    <span class="score-sep">|</span>
-    <div class="score-item"><span class="teams">Liverpool vs Chelsea</span><span class="score-val">1 - 1</span><span class="score-live">● 89'</span></div>
-    <span class="score-sep">|</span>
-    <div class="score-item"><span class="teams">Man City vs Arsenal</span><span class="score-val">2 - 1</span><span class="score-live">● 67'</span></div>
-    <span class="score-sep">|</span>
-    <div class="score-item"><span class="teams">Barcelona vs Real Madrid</span><span class="score-val">0 - 0</span><span class="score-live">● 34'</span></div>
-  </div>
+<div class="score-ticker" id="scoreTicker" style="display:none;">
+  <div class="score-ticker-label"><span class="pulse"></span>LIVE</div>
+  <div class="score-track" id="scoreTrack"></div>
 </div>
 
 <!-- NEWS TICKER -->
-<div class="ticker">
-  <div class="ticker-track" id="tickerTrack">
-    <span><span class="tick-dot"></span>Welcome to KenSports TV 🇺🇬</span>
-    <span><span class="tick-dot"></span>Uganda's #1 Free Sports Streaming Platform</span>
-    <span><span class="tick-dot"></span>Watch Live Football • Cricket • Rugby • Boxing</span>
-    <span><span class="tick-dot"></span>Free Forever — No subscription needed!</span>
-    <span><span class="tick-dot"></span>⭐ Bookmark your favourite matches!</span>
-    <span><span class="tick-dot"></span>Welcome to KenSports TV 🇺🇬</span>
-    <span><span class="tick-dot"></span>Uganda's #1 Free Sports Streaming Platform</span>
-    <span><span class="tick-dot"></span>Watch Live Football • Cricket • Rugby • Boxing</span>
-    <span><span class="tick-dot"></span>Free Forever — No subscription needed!</span>
-    <span><span class="tick-dot"></span>⭐ Bookmark your favourite matches!</span>
-  </div>
+<div class="ticker" id="newsTicker" style="display:none;">
+  <div class="ticker-track" id="tickerTrack"></div>
 </div>
 
 <!-- SPORT CATEGORIES -->
@@ -984,23 +985,26 @@ function renderHL(){
   }).join('');
 }
 
-// ===== SCORE TICKER =====
 function updateScoreTicker(lines){
-  if(!lines||!lines.length){document.querySelector('.score-ticker').style.display='none';return;}
-  document.querySelector('.score-ticker').style.display='flex';
+  var ticker=document.getElementById('scoreTicker');
+  var track=document.getElementById('scoreTrack');
+  if(!lines||!lines.length){if(ticker)ticker.style.display='none';return;}
+  if(ticker)ticker.style.display='flex';
   var html=lines.map(function(line){
     var parts=line.split('|');
     var teams=(parts[0]||'').trim();
     var score=(parts[1]||'').trim();
     var time=(parts[2]||'').trim();
-    return '<div class="score-item"><span class="teams">'+esc(teams)+'</span>'+(score?'<span class="score-val">'+esc(score)+'</span>':'')+(time?'<span class="score-live">● '+esc(time)+'</span>':'')+'</div><span class="score-sep">|</span>';
+    return '<div class="score-item"><span class="teams">'+esc(teams)+'</span>'
+      +(score?'<span class="score-val">'+esc(score)+'</span>':'')
+      +(time?'<span class="score-time">'+esc(time)+'</span>':'')+'</div>'
+      +'<span class="score-sep">·</span>';
   }).join('');
-  var track=document.getElementById('scoreTrack');
   if(track)track.innerHTML=html+html;
 }
 function saveScores(){
   var text=document.getElementById('scoresText').value.trim();
-  sb.from('ks_settings').upsert({key:'scores',value:text}).then(function(res){
+  sb.from('ks_settings').upsert({key:'scores',value:text},{onConflict:'key'}).then(function(res){
     if(res.error){toast('Error: '+res.error.message,true);return;}
     toast('Score ticker saved! ✅');updateScoreTicker(text.split('\n').filter(Boolean));
   });
@@ -1282,15 +1286,18 @@ function delChannel(id){if(!confirm('Delete this channel?'))return;sb.from('ks_c
 function delHighlight(id){if(!confirm('Delete this highlight?'))return;sb.from('ks_highlights').delete().eq('id',id).then(function(){toast('Deleted');loadHighlights();loadAdmHighlights();});}
 function saveTicker(){
   var text=document.getElementById('tickerText').value.trim();
-  sb.from('ks_settings').upsert({key:'ticker',value:text}).then(function(res){
+  sb.from('ks_settings').upsert({key:'ticker',value:text},{onConflict:'key'}).then(function(res){
     if(res.error){toast('Error: '+res.error.message,true);return;}
     toast('Ticker saved! ✅');updateTicker(text.split('\n').filter(Boolean));
   });
 }
 function updateTicker(msgs){
-  if(!msgs||!msgs.length)return;
-  var html=msgs.map(function(m){return'<span><span class="tick-dot"></span>'+m+'</span>';}).join('');
-  document.getElementById('tickerTrack').innerHTML=html+html;
+  var ticker=document.getElementById('newsTicker');
+  var track=document.getElementById('tickerTrack');
+  if(!msgs||!msgs.length){if(ticker)ticker.style.display='none';return;}
+  if(ticker)ticker.style.display='flex';
+  var html=msgs.map(function(m){return'<span><span class="tick-dot"></span>'+esc(m)+'</span>';}).join('');
+  if(track)track.innerHTML=html+html;
 }
 function changePwd(){
   var oldVal=document.getElementById('oldPwd').value,newVal=document.getElementById('newPwd').value,confVal=document.getElementById('confPwd').value;
