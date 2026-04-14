@@ -34,6 +34,94 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XX2K9N2SSE');</script>
 <!-- Google AdSense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4488257288683442" crossorigin="anonymous"></script>
+<!-- Firebase Push Notifications -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js"></script>
+<script>
+// Initialize Firebase
+const firebaseApp = firebase.initializeApp({
+  apiKey: "AIzaSyBPG64VEQ7q_ivfJ2O2LVWQB0kpvS992hc",
+  authDomain: "kensportstv-9f7af.firebaseapp.com",
+  projectId: "kensportstv-9f7af",
+  storageBucket: "kensportstv-9f7af.firebasestorage.app",
+  messagingSenderId: "23049908827",
+  appId: "1:23049908827:web:f34ed8df5b81fbd6fe857e",
+  measurementId: "G-GDS4LRTPP5"
+});
+const messaging = firebase.messaging();
+const VAPID_KEY = "BLOJThTbTdqZxFQE7tY4GiEXZmgBgOEs9lYOME82j_TpXik7mumU8G1yZeN2iK726R-s3p9f8tPnqQnSfaf0A1Y";
+
+// Request notification permission and get FCM token
+function initPushNotifications(){
+  if(!('Notification' in window)){return;}
+  if(!('serviceWorker' in navigator)){return;}
+  navigator.serviceWorker.register('/firebase-sw.js').then(function(reg){
+    if(Notification.permission === 'granted'){
+      getFCMToken(reg);
+    } else if(Notification.permission !== 'denied'){
+      // Show permission prompt after 3 seconds
+      setTimeout(function(){
+        showPushPrompt();
+      }, 3000);
+    }
+  }).catch(function(e){console.log('SW error:',e);});
+}
+
+function getFCMToken(reg){
+  messaging.getToken({vapidKey: VAPID_KEY, serviceWorkerRegistration: reg}).then(function(token){
+    if(token){
+      // Save token to Supabase
+      saveFCMToken(token);
+      localStorage.setItem('ks_fcm_token', token);
+    }
+  }).catch(function(e){console.log('FCM token error:',e);});
+}
+
+function saveFCMToken(token){
+  if(!window.sb) return;
+  // Save to ks_settings with unique key per device
+  var deviceKey = 'fcm_' + btoa(token).substring(0, 20);
+  window.sb.from('ks_settings').upsert({key: deviceKey, value: token},{onConflict:'key'}).catch(function(){});
+}
+
+function showPushPrompt(){
+  var prompt = document.getElementById('pushPrompt');
+  if(prompt) prompt.style.display = 'flex';
+}
+
+function acceptPush(){
+  var prompt = document.getElementById('pushPrompt');
+  if(prompt) prompt.style.display = 'none';
+  Notification.requestPermission().then(function(permission){
+    if(permission === 'granted'){
+      navigator.serviceWorker.ready.then(function(reg){
+        getFCMToken(reg);
+        toast('Notifications enabled! 🔔');
+      });
+    }
+  });
+}
+
+function declinePush(){
+  var prompt = document.getElementById('pushPrompt');
+  if(prompt) prompt.style.display = 'none';
+  localStorage.setItem('ks_push_declined', '1');
+}
+
+// Handle foreground messages
+messaging.onMessage(function(payload){
+  console.log('Foreground message:', payload);
+  const data = payload.data || {};
+  const title = data.title || payload.notification?.title || 'KenSports TV';
+  const body = data.body || payload.notification?.body || '';
+  // Show in-app notification
+  showGoalNotif({
+    title: title,
+    body: body,
+    cfg: {color:'#00d4ff', bg:'#000d1a', border:'#00d4ff', icon:'🔔'}
+  });
+});
+</script>
 
 <script>
 // Save original open for affiliate ads only
@@ -758,6 +846,19 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   </a>
 </div>
 
+<!-- PUSH NOTIFICATION PROMPT -->
+<div id="pushPrompt" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;z-index:490;background:linear-gradient(135deg,#0d1a3a,#0a0f1a);border:1px solid rgba(0,212,255,.3);border-radius:16px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.6);align-items:center;gap:12px;">
+  <div style="font-size:28px;">🔔</div>
+  <div style="flex:1;">
+    <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;margin-bottom:2px;">Enable Notifications</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.5);">Get goal alerts & match updates even when app is closed!</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:6px;">
+    <button onclick="acceptPush()" style="background:var(--accent);color:#000;border:none;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;padding:7px 14px;border-radius:8px;cursor:pointer;">Allow</button>
+    <button onclick="declinePush()" style="background:transparent;color:rgba(255,255,255,.4);border:none;font-size:11px;cursor:pointer;">No thanks</button>
+  </div>
+</div>
+
 <!-- GOAL NOTIFICATION POPUP -->
 <div class="goal-notif" id="goalNotif" style="display:none;position:fixed;top:60px;left:0;right:0;z-index:9999;padding:10px 12px;" onclick="closeGoalNotif()">
   <div class="goal-notif-inner">
@@ -1128,7 +1229,16 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         <div class="divider"></div>
         <div class="section-label">📢 Custom Alert</div>
         <div class="fr"><input type="text" id="customAlert" placeholder="Type custom message..."/></div>
-        <button class="event-btn" style="width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);margin-bottom:4px;" onclick="sendEvent('custom')">📢 Send Custom</button>
+        <div class="divider"></div>
+        <div class="section-label">📲 Push Notification to ALL Users</div>
+        <div class="link-tip">Send push notification to all users even when app is closed! 🔔</div>
+        <div class="fr"><label>Notification Title</label>
+          <input type="text" id="pushTitle" placeholder="e.g. 🔴 LIVE NOW! Barcelona vs Atletico"/></div>
+        <div class="fr"><label>Message</label>
+          <input type="text" id="pushBody" placeholder="e.g. Match started! Watch free on KenSports TV"/></div>
+        <button class="sub-btn" style="background:linear-gradient(135deg,#00d4ff,#0066bb);color:#000;" onclick="sendPushToAll()">
+          📲 SEND PUSH TO ALL USERS!
+        </button>
       </div>
 
       <!-- APK PLANNING TAB (NEW) -->
@@ -1368,6 +1478,11 @@ window.onload=function(){
       initApp(url,key);
       setInterval(function(){loadMatches();},60000);
       startGoalPolling();
+      startPushPolling();
+      // Init push notifications
+      if(!localStorage.getItem('ks_push_declined')){
+        setTimeout(function(){initPushNotifications();},2000);
+      }
     } else if(tries>20){
       clearInterval(waitForSupabase);
       showDbError('Failed to load. Check internet connection and refresh.');
@@ -1824,8 +1939,52 @@ function startGoalPolling(){
     }).catch(function(){});
   },15000);
 }
-function updateScoreTicker(){}
-function saveScores(){}
+// ===== SEND PUSH TO ALL USERS =====
+function sendPushToAll(){
+  var title = document.getElementById('pushTitle').value.trim();
+  var body = document.getElementById('pushBody').value.trim();
+  if(!title||!body){toast('Enter title and message!',true);return;}
+  // Save to Supabase - clients will pick it up via polling
+  var push = {id:Date.now().toString(), title:title, body:body, time:Date.now()};
+  sb.from('ks_settings').upsert({key:'push_notification',value:JSON.stringify(push)},{onConflict:'key'}).then(function(res){
+    if(res.error){toast('Error: '+res.error.message,true);return;}
+    toast('Push sent to all users! 📲🔥');
+    document.getElementById('pushTitle').value='';
+    document.getElementById('pushBody').value='';
+  });
+}
+
+// Poll for push notifications
+var lastPushId='';
+function startPushPolling(){
+  setInterval(function(){
+    if(!sb)return;
+    sb.from('ks_settings').select('value').eq('key','push_notification').maybeSingle().then(function(res){
+      if(!res.data||!res.data.value)return;
+      try{
+        var push=JSON.parse(res.data.value);
+        if(push.id!==lastPushId&&(Date.now()-push.time)<60000){
+          lastPushId=push.id;
+          // Show browser notification if permission granted
+          if(Notification.permission==='granted'){
+            navigator.serviceWorker.ready.then(function(reg){
+              reg.showNotification(push.title,{
+                body:push.body,
+                icon:'/kensports_logo_round.png',
+                badge:'/kensports_logo_round.png',
+                vibrate:[300,100,300],
+                data:{url:'https://kensports.github.io'},
+                requireInteraction:false
+              });
+            });
+          }
+          // Also show in-app
+          showGoalNotif({title:push.title,body:push.body,cfg:{color:'#00d4ff',bg:'#000d1a',border:'#00d4ff',icon:'📲'}});
+        }
+      }catch(e){}
+    }).catch(function(){});
+  },20000);
+}
 
 // ===== FILTER / NAV =====
 function filterSport(sport,el){curSport=sport;document.querySelectorAll('.sport-cat').forEach(function(c){c.classList.remove('active');});el.classList.add('active');renderMatches();renderChannels();}
