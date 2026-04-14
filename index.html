@@ -191,8 +191,21 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   display:flex;align-items:center;justify-content:center;
 }
 
-/* ===== SCORE TICKER (kept for admin but hidden from display) ===== */
-.score-ticker{display:none!important;}
+/* ===== EVENT BUTTONS ===== */
+.event-btn{border:none;border-radius:10px;padding:12px 8px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.5px;}
+.event-btn:active{transform:scale(.95);}
+.goal-btn{background:linear-gradient(135deg,#00c853,#007a2e);color:#fff;}
+.penalty-btn{background:linear-gradient(135deg,#ff9800,#e65100);color:#fff;}
+.redcard-btn{background:linear-gradient(135deg,#ff1744,#b71c1c);color:#fff;}
+.halftime-btn{background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;}
+.fulltime-btn{background:linear-gradient(135deg,#4a148c,#6a1b9a);color:#fff;}
+.var-btn{background:linear-gradient(135deg,#37474f,#263238);color:#fff;}
+.var-goal-btn{background:linear-gradient(135deg,#00897b,#004d40);color:#fff;}
+.var-cancel-btn{background:linear-gradient(135deg,#c62828,#b71c1c);color:#fff;}
+.var-pen-btn{background:linear-gradient(135deg,#f57f17,#e65100);color:#fff;}
+.yellowcard-btn{background:linear-gradient(135deg,#f9a825,#f57f17);color:#000;}
+.kickoff-btn{background:linear-gradient(135deg,#00d4ff,#0066bb);color:#000;}
+.owngoal-btn{background:linear-gradient(135deg,#78909c,#455a64);color:#fff;}
 
 /* ===== NEWS TICKER ===== */
 .ticker{background:var(--bg3);border-bottom:1px solid var(--border);height:30px;overflow:hidden;display:flex;align-items:center;}
@@ -746,13 +759,13 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 </div>
 
 <!-- GOAL NOTIFICATION POPUP -->
-<div class="goal-notif" id="goalNotif" style="display:none;" onclick="closeGoalNotif()">
+<div class="goal-notif" id="goalNotif" style="display:none;position:fixed;top:60px;left:0;right:0;z-index:9999;padding:10px 12px;" onclick="closeGoalNotif()">
   <div class="goal-notif-inner">
-    <div class="goal-notif-ball">⚽</div>
+    <div class="goal-notif-ball" id="goalNotifBall">⚽</div>
     <div class="goal-notif-body">
       <div class="goal-notif-title" id="goalNotifTitle">GOOOAL! 🔥</div>
       <div class="goal-notif-score" id="goalNotifScore">Barcelona 1 - 0 Atletico</div>
-      <div class="goal-notif-sub" id="goalNotifSub">Tap to dismiss</div>
+      <div class="goal-notif-sub">Tap to dismiss</div>
     </div>
     <button class="goal-notif-close" onclick="closeGoalNotif()">✕</button>
   </div>
@@ -1081,36 +1094,41 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         <button class="sub-btn" onclick="saveTicker()"><i class="fas fa-save"></i> Save Ticker</button>
       </div>
 
-      <!-- GOAL ALERT TAB -->
+      <!-- MATCH EVENTS TAB -->
       <div id="admScores" style="display:none;">
-        <div class="link-tip"><strong>⚽ Goal Alert System:</strong><br>
-        Type the goal update and tap <strong>Send Alert!</strong><br>
-        All users will see a popup with sound + vibration! 🔔</div>
-        <div class="section-label">⚽ Send Goal Alert</div>
-        <div class="fr">
-          <label>Team that scored</label>
-          <input type="text" id="goalTeam" placeholder="e.g. Barcelona"/>
+        <div class="link-tip"><strong>⚡ Match Event Alerts:</strong><br>
+        Tap any event button → all users get popup + sound + vibration instantly! 🔔</div>
+
+        <!-- Match & Score -->
+        <div class="fr"><label>Match (e.g. Barcelona vs Atletico)</label>
+          <input type="text" id="evMatch" placeholder="Barcelona vs Atletico"/></div>
+        <div class="fr"><label>Current Score (e.g. 1-0)</label>
+          <input type="text" id="evScore" placeholder="1-0"/></div>
+        <div class="fr"><label>Minute (e.g. 67')</label>
+          <input type="text" id="evMinute" placeholder="67'"/></div>
+        <div class="fr"><label>Team/Player (for goal/card)</label>
+          <input type="text" id="evTeam" placeholder="e.g. Lewandowski (Barcelona)"/></div>
+
+        <div class="section-label">⚡ Quick Event Buttons</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+          <button class="event-btn goal-btn" onclick="sendEvent('goal')">⚽ GOAL!</button>
+          <button class="event-btn penalty-btn" onclick="sendEvent('penalty')">🎯 PENALTY!</button>
+          <button class="event-btn redcard-btn" onclick="sendEvent('redcard')">🟥 RED CARD!</button>
+          <button class="event-btn halftime-btn" onclick="sendEvent('halftime')">⏸️ HALF TIME</button>
+          <button class="event-btn fulltime-btn" onclick="sendEvent('fulltime')">🏁 FULL TIME</button>
+          <button class="event-btn var-btn" onclick="sendEvent('var')">📺 VAR CHECK</button>
+          <button class="event-btn var-goal-btn" onclick="sendEvent('var_goal')">✅ VAR: GOAL!</button>
+          <button class="event-btn var-cancel-btn" onclick="sendEvent('var_cancel')">❌ VAR: CANCELLED</button>
+          <button class="event-btn var-pen-btn" onclick="sendEvent('var_penalty')">✅ VAR: PENALTY!</button>
+          <button class="event-btn yellowcard-btn" onclick="sendEvent('yellowcard')">🟨 YELLOW CARD</button>
+          <button class="event-btn kickoff-btn" onclick="sendEvent('kickoff')">🔔 KICK OFF!</button>
+          <button class="event-btn owngoal-btn" onclick="sendEvent('owngoal')">😬 OWN GOAL!</button>
         </div>
-        <div class="fr">
-          <label>Score (e.g. 1-0, 2-1)</label>
-          <input type="text" id="goalScore" placeholder="e.g. 1-0"/>
-        </div>
-        <div class="fr">
-          <label>Minute (optional)</label>
-          <input type="text" id="goalMinute" placeholder="e.g. 67'"/>
-        </div>
-        <button class="sub-btn" style="background:linear-gradient(135deg,#00c853,#007a2e);" onclick="sendGoalAlert()">
-          ⚽ SEND GOAL ALERT!
-        </button>
+
         <div class="divider"></div>
-        <div class="section-label">📢 Send Custom Alert</div>
-        <div class="fr">
-          <label>Custom message</label>
-          <input type="text" id="customAlert" placeholder="e.g. HALF TIME! Barcelona 1-0 Atletico"/>
-        </div>
-        <button class="sub-btn" style="background:linear-gradient(135deg,#ff3a3a,#990000);" onclick="sendCustomAlert()">
-          📢 SEND ALERT!
-        </button>
+        <div class="section-label">📢 Custom Alert</div>
+        <div class="fr"><input type="text" id="customAlert" placeholder="Type custom message..."/></div>
+        <button class="event-btn" style="width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);margin-bottom:4px;" onclick="sendEvent('custom')">📢 Send Custom</button>
       </div>
 
       <!-- APK PLANNING TAB (NEW) -->
@@ -1656,72 +1674,139 @@ function renderHL(){
   }).join('');
 }
 
-// ===== GOAL ALERT SYSTEM =====
+// ===== MATCH EVENT ALERT SYSTEM =====
 var goalCheckTimer=null,lastGoalId='';
 
-function sendGoalAlert(){
-  var team=document.getElementById('goalTeam').value.trim();
-  var score=document.getElementById('goalScore').value.trim();
-  var minute=document.getElementById('goalMinute').value.trim();
-  if(!team||!score){toast('Enter team and score!',true);return;}
-  var title='GOOOAL! ⚽ '+team.toUpperCase()+'!';
-  var scoreText=team+' '+score+(minute?' ('+minute+')':'');
-  saveAlert(title,scoreText);
-}
-function sendCustomAlert(){
-  var msg=document.getElementById('customAlert').value.trim();
-  if(!msg){toast('Enter a message!',true);return;}
-  saveAlert('🔔 KenSports TV',msg);
-}
-function saveAlert(title,score){
-  var alert={id:Date.now().toString(),title:title,score:score,time:Date.now()};
+var EVENT_CONFIG={
+  goal:    {icon:'⚽',title:'GOOOAL! 🔥',color:'#00c853',bg:'#0a1a00',border:'#00ff44',vibrate:[300,100,300,100,500],sound:'goal'},
+  penalty: {icon:'🎯',title:'PENALTY!',color:'#ff9800',bg:'#1a0e00',border:'#ff9800',vibrate:[200,100,200],sound:'penalty'},
+  redcard: {icon:'🟥',title:'RED CARD!',color:'#ff1744',bg:'#1a0000',border:'#ff1744',vibrate:[500,100,500],sound:'redcard'},
+  halftime:{icon:'⏸️',title:'HALF TIME',color:'#1565c0',bg:'#000a1a',border:'#1565c0',vibrate:[200,100,200,100,200],sound:'halftime'},
+  fulltime:{icon:'🏁',title:'FULL TIME!',color:'#ce93d8',bg:'#0d001a',border:'#9c27b0',vibrate:[300,100,300,100,300,100,300],sound:'fulltime'},
+  var:     {icon:'📺',title:'VAR CHECK...',color:'#90a4ae',bg:'#0a0f14',border:'#546e7a',vibrate:[100,200,100],sound:'var'},
+  var_goal:{icon:'✅',title:'VAR: GOAL CONFIRMED!',color:'#00e676',bg:'#0a1a00',border:'#00e676',vibrate:[400,100,400],sound:'goal'},
+  var_cancel:{icon:'❌',title:'VAR: GOAL CANCELLED!',color:'#ff5252',bg:'#1a0000',border:'#ff5252',vibrate:[500,200,500],sound:'redcard'},
+  var_penalty:{icon:'✅',title:'VAR: PENALTY AWARDED!',color:'#ffab40',bg:'#1a0e00',border:'#ff9800',vibrate:[300,100,300],sound:'penalty'},
+  yellowcard:{icon:'🟨',title:'YELLOW CARD!',color:'#ffd600',bg:'#1a1400',border:'#ffd600',vibrate:[200],sound:'yellowcard'},
+  kickoff: {icon:'🔔',title:'KICK OFF!',color:'#00d4ff',bg:'#000d1a',border:'#00d4ff',vibrate:[200,100,200],sound:'kickoff'},
+  owngoal: {icon:'😬',title:'OWN GOAL!',color:'#b0bec5',bg:'#0d1117',border:'#78909c',vibrate:[300,100,300],sound:'owngoal'},
+  custom:  {icon:'📢',title:'ALERT',color:'#ff9800',bg:'#0d1117',border:'#ff9800',vibrate:[200,100,200],sound:'custom'}
+};
+
+function sendEvent(type){
+  var cfg=EVENT_CONFIG[type]||EVENT_CONFIG.custom;
+  var match=document.getElementById('evMatch').value.trim();
+  var score=document.getElementById('evScore').value.trim();
+  var minute=document.getElementById('evMinute').value.trim();
+  var team=document.getElementById('evTeam').value.trim();
+  var custom=document.getElementById('customAlert')?document.getElementById('customAlert').value.trim():'';
+
+  var title=cfg.title;
+  var body='';
+
+  if(type==='custom'){
+    if(!custom){toast('Enter a message!',true);return;}
+    body=custom;
+  } else {
+    if(type==='goal'||type==='owngoal'||type==='var_goal'){
+      body=(team?team+' — ':'')+(match||'')+(score?' | '+score:'')+(minute?' ('+minute+')':'');
+    } else if(type==='penalty'||type==='var_penalty'){
+      body=(team?'For: '+team+' — ':'')+(match||'')+(minute?' ('+minute+')':'');
+    } else if(type==='redcard'||type==='yellowcard'){
+      body=(team||match||'')+(minute?' ('+minute+')':'');
+    } else if(type==='halftime'||type==='fulltime'){
+      body=(match||'')+(score?' | Score: '+score:'');
+    } else {
+      body=(match||'')+(score?' | '+score:'')+(minute?' ('+minute+')':'');
+    }
+  }
+
+  var alert={id:Date.now().toString(),type:type,title:title,body:body,cfg:{color:cfg.color,bg:cfg.bg,border:cfg.border,icon:cfg.icon},time:Date.now()};
   sb.from('ks_settings').upsert({key:'goal_alert',value:JSON.stringify(alert)},{onConflict:'key'}).then(function(res){
     if(res.error){toast('Error: '+res.error.message,true);return;}
-    toast('Alert sent! ⚽🔥');
-    // Clear fields
-    ['goalTeam','goalScore','goalMinute','customAlert'].forEach(function(id){
-      var el=document.getElementById(id);if(el)el.value='';
-    });
-    // Show on own screen too
-    showGoalNotif(title,score);
+    toast('Alert sent! '+cfg.icon);
+    showGoalNotif(alert);
   });
 }
-function showGoalNotif(title,score){
+
+// Keep old functions for compatibility
+function sendGoalAlert(){sendEvent('goal');}
+function sendCustomAlert(){sendEvent('custom');}
+
+function showGoalNotif(alert){
+  var cfg=alert.cfg||EVENT_CONFIG[alert.type]||EVENT_CONFIG.custom;
   var notif=document.getElementById('goalNotif');
-  document.getElementById('goalNotifTitle').textContent=title;
-  document.getElementById('goalNotifScore').textContent=score;
-  if(notif)notif.style.display='block';
+  var inner=notif?notif.querySelector('.goal-notif-inner'):null;
+  if(!notif)return;
+
+  // Update content
+  document.getElementById('goalNotifTitle').textContent=alert.title||(cfg.icon+' Alert');
+  document.getElementById('goalNotifScore').textContent=alert.body||'';
+  document.getElementById('goalNotifBall').textContent=cfg.icon||'⚽';
+
+  // Update colors dynamically
+  if(inner){
+    inner.style.background='linear-gradient(135deg,'+cfg.bg+',#0d1117)';
+    inner.style.borderColor=cfg.border||'#00ff44';
+    inner.style.boxShadow='0 0 30px '+cfg.border+'66,0 4px 20px rgba(0,0,0,.6)';
+  }
+  var titleEl=document.getElementById('goalNotifTitle');
+  if(titleEl)titleEl.style.color=cfg.color||'#00ff44';
+
+  notif.style.display='block';
+  // Make sure it shows OVER the video player too
+  notif.style.zIndex='9999';
+
   // Vibrate
-  if(navigator.vibrate)navigator.vibrate([300,100,300,100,500]);
-  // Sound
-  playGoalSound();
+  if(navigator.vibrate){
+    var vib=EVENT_CONFIG[alert.type]?EVENT_CONFIG[alert.type].vibrate:[200,100,200];
+    navigator.vibrate(vib);
+  }
+
+  // Play correct sound
+  var snd=EVENT_CONFIG[alert.type]?EVENT_CONFIG[alert.type].sound:'custom';
+  playEventSound(snd);
+
   // Auto hide after 8 seconds
   setTimeout(function(){closeGoalNotif();},8000);
 }
+
 function closeGoalNotif(){
   var notif=document.getElementById('goalNotif');
   if(notif)notif.style.display='none';
 }
-function playGoalSound(){
+
+function playEventSound(type){
   try{
     var ctx=new (window.AudioContext||window.webkitAudioContext)();
-    // Play exciting goal sound tones
-    var times=[0,.15,.3,.45,.6];
-    var freqs=[523,659,784,1047,1319];
-    times.forEach(function(t,i){
+    var sounds={
+      goal:    [{f:523,t:0,d:.12},{f:659,t:.13,d:.12},{f:784,t:.26,d:.12},{f:1047,t:.39,d:.2},{f:1319,t:.6,d:.3}],
+      penalty: [{f:440,t:0,d:.2},{f:330,t:.25,d:.2},{f:440,t:.5,d:.4}],
+      redcard: [{f:200,t:0,d:.3},{f:150,t:.35,d:.5}],
+      halftime:[{f:440,t:0,d:.15},{f:440,t:.2,d:.15},{f:440,t:.4,d:.4}],
+      fulltime:[{f:523,t:0,d:.15},{f:440,t:.2,d:.15},{f:349,t:.4,d:.15},{f:523,t:.6,d:.5}],
+      var:     [{f:300,t:0,d:.1},{f:350,t:.15,d:.1},{f:300,t:.3,d:.3}],
+      yellowcard:[{f:600,t:0,d:.1},{f:500,t:.15,d:.3}],
+      kickoff: [{f:800,t:0,d:.1},{f:900,t:.12,d:.1},{f:1000,t:.24,d:.3}],
+      owngoal: [{f:400,t:0,d:.2},{f:300,t:.25,d:.2},{f:200,t:.5,d:.4}],
+      custom:  [{f:500,t:0,d:.1},{f:600,t:.15,d:.3}]
+    };
+    var notes=sounds[type]||sounds.custom;
+    notes.forEach(function(n){
       var osc=ctx.createOscillator();
       var gain=ctx.createGain();
       osc.connect(gain);gain.connect(ctx.destination);
-      osc.frequency.value=freqs[i];
+      osc.frequency.value=n.f;
       osc.type='sine';
-      gain.gain.setValueAtTime(0.3,ctx.currentTime+t);
-      gain.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+t+0.14);
-      osc.start(ctx.currentTime+t);
-      osc.stop(ctx.currentTime+t+0.15);
+      gain.gain.setValueAtTime(0.4,ctx.currentTime+n.t);
+      gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+n.t+n.d);
+      osc.start(ctx.currentTime+n.t);
+      osc.stop(ctx.currentTime+n.t+n.d+0.05);
     });
   }catch(e){}
 }
-// Poll for new goal alerts every 15 seconds
+
+// Poll for new alerts every 15 seconds
 function startGoalPolling(){
   if(goalCheckTimer)clearInterval(goalCheckTimer);
   goalCheckTimer=setInterval(function(){
@@ -1730,18 +1815,17 @@ function startGoalPolling(){
       if(!res.data||!res.data.value)return;
       try{
         var alert=JSON.parse(res.data.value);
-        // Only show if it's new (within last 30 seconds) and not already shown
         if(alert.id!==lastGoalId&&(Date.now()-alert.time)<30000){
           lastGoalId=alert.id;
-          showGoalNotif(alert.title,alert.score);
-          addNotification('live',alert.title,alert.score);
+          showGoalNotif(alert);
+          addNotification('live',alert.title,alert.body||'');
         }
       }catch(e){}
     }).catch(function(){});
   },15000);
 }
-function updateScoreTicker(){} // kept for compatibility
-function saveScores(){} // kept for compatibility
+function updateScoreTicker(){}
+function saveScores(){}
 
 // ===== FILTER / NAV =====
 function filterSport(sport,el){curSport=sport;document.querySelectorAll('.sport-cat').forEach(function(c){c.classList.remove('active');});el.classList.add('active');renderMatches();renderChannels();}
