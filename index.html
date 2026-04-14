@@ -809,6 +809,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;" id="quickAddList"></div>
 
         <div class="divider"></div>
+        <div class="section-label">🇺🇬 Uganda Match Templates</div>
+        <div class="link-tip">Tap <strong>Use</strong> to pre-fill the match form. Then add your stream URL and save!</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;" id="ugandaMatchList"></div>
+
+        <div class="divider"></div>
         <div class="section-label">🌐 Best Embed Stream Sites</div>
         <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
           <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;">
@@ -1633,6 +1638,20 @@ function switchAdmTab(tab,el){
 
 // ===== QUICK ADD CHANNELS =====
 var QUICK_CHANNELS=[
+  // ===== 🇺🇬 UGANDA CHANNELS =====
+  {name:'NBS Sport',emoji:'🇺🇬',cat:'football',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/NBS_TV_Uganda_logo.png/200px-NBS_TV_Uganda_logo.png',
+   streams:['https://www.nbstv.ug/live','https://dlhd.sx/embed/stream-nbs.php','https://embedme.top/embed/nbs-sport'],
+   uganda:true},
+  {name:'UBC TV',emoji:'🇺🇬',cat:'general',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Uganda_Broadcasting_Corporation_logo.png/200px-Uganda_Broadcasting_Corporation_logo.png',
+   streams:['https://dlhd.sx/embed/stream-ubc.php','https://embedme.top/embed/ubc-tv'],
+   uganda:true},
+  {name:'StarTimes Sport Uganda',emoji:'⭐',cat:'football',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/StarTimes_Logo.svg/200px-StarTimes_Logo.svg.png',
+   streams:['https://dlhd.sx/embed/stream-startimes.php','https://embedme.top/embed/startimes-sport'],
+   uganda:true},
+  {name:'FUFA TV',emoji:'🦅',cat:'football',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Federation_of_Uganda_Football_Associations_logo.svg/200px-Federation_of_Uganda_Football_Associations_logo.svg.png',
+   streams:['https://www.fufa.co.ug/live','https://embedme.top/embed/fufa-tv'],
+   uganda:true},
+  // ===== 🌍 INTERNATIONAL =====
   {name:'beIN Sports 1',emoji:'📺',cat:'football',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/BeIN_Sports_logo.svg/200px-BeIN_Sports_logo.svg.png',
    streams:['https://dlhd.sx/embed/stream-1.php','https://embedme.top/embed/bein-sports-1','https://sportzzonline.click/embed/bein1']},
   {name:'beIN Sports 2',emoji:'📺',cat:'football',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/BeIN_Sports_logo.svg/200px-BeIN_Sports_logo.svg.png',
@@ -1655,25 +1674,79 @@ var QUICK_CHANNELS=[
    streams:['https://dlhd.sx/embed/stream-79.php','https://embedme.top/embed/espn']},
   {name:'TNT Sports 1',emoji:'💥',cat:'football',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/TNT_Sports_logo.svg/200px-TNT_Sports_logo.svg.png',
    streams:['https://dlhd.sx/embed/stream-80.php','https://embedme.top/embed/tnt-sports-1']},
-  {name:'eurosport 1',emoji:'🇪🇺',cat:'motorsport',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Eurosport_2015_logo.svg/200px-Eurosport_2015_logo.svg.png',
+  {name:'Eurosport 1',emoji:'🇪🇺',cat:'motorsport',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Eurosport_2015_logo.svg/200px-Eurosport_2015_logo.svg.png',
    streams:['https://dlhd.sx/embed/stream-60.php','https://embedme.top/embed/eurosport-1']},
   {name:'Fight Network',emoji:'🥊',cat:'boxing',logo:'',
    streams:['https://dlhd.sx/embed/stream-88.php']},
 ];
+
+// ===== UGANDA MATCHES TEMPLATES =====
+var UGANDA_MATCHES=[
+  {sport:'football',league:'FUFA Big League',team1:'Uganda Cranes',team2:'TBD',emoji:'🦅',
+   info:'Uganda national football team matches'},
+  {sport:'football',league:'StarTimes Uganda Premier League',team1:'KCCA FC',team2:'Express FC',emoji:'⚽',
+   info:'Uganda Premier League top fixture'},
+  {sport:'football',league:'StarTimes Uganda Premier League',team1:'SC Villa',team2:'Vipers SC',emoji:'⚽',
+   info:'Classic Uganda derby'},
+  {sport:'football',league:'FUFA Big League',team1:'Wakiso Giants',team2:'BUL FC',emoji:'⚽',
+   info:'FUFA Big League match'},
+  {sport:'cricket',league:'Uganda Cricket',team1:'Uganda Herons',team2:'TBD',emoji:'🏏',
+   info:'Uganda national cricket team'},
+  {sport:'rugby',league:'Uganda Rugby',team1:'Uganda Rugby 7s',team2:'TBD',emoji:'🏉',
+   info:'Uganda Rugby Sevens'},
+];
+
 function loadQuickAdd(){
   var list=document.getElementById('quickAddList');
   if(!list)return;
-  list.innerHTML=QUICK_CHANNELS.map(function(ch,i){
+  // Uganda channels first
+  var ugandaChs=QUICK_CHANNELS.filter(function(ch){return ch.uganda;});
+  var intlChs=QUICK_CHANNELS.filter(function(ch){return !ch.uganda;});
+  function renderChannelRow(ch,i){
     var alreadyAdded=allChannels.some(function(c){return c.name.toLowerCase()===ch.name.toLowerCase();});
+    var realIdx=QUICK_CHANNELS.indexOf(ch);
     return '<div style="background:var(--bg3);border:1px solid '+(alreadyAdded?'rgba(0,200,83,.3)':'var(--border)')+';border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;">'
       +'<div style="font-size:22px;">'+ch.emoji+'</div>'
       +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;">'+ch.name+'</div>'
       +'<div style="font-size:10px;color:var(--text2);">'+ch.cat+' · '+ch.streams.length+' server(s)</div></div>'
       +(alreadyAdded
         ?'<div style="font-size:11px;color:#00c853;font-weight:600;">✅ Added</div>'
-        :'<button class="quick-add-btn" style="width:auto;padding:6px 12px;" onclick="quickAddChannel('+i+',this)"><i class="fas fa-plus"></i> Add</button>')
+        :'<button class="quick-add-btn" style="width:auto;padding:6px 12px;" onclick="quickAddChannel('+realIdx+',this)"><i class="fas fa-plus"></i> Add</button>')
       +'</div>';
-  }).join('');
+  }
+  var ugandaHtml='<div style="font-size:11px;font-weight:700;color:var(--live);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:flex;align-items:center;gap:6px;"><span>🇺🇬</span> Uganda Channels</div>'
+    +ugandaChs.map(renderChannelRow).join('')
+    +'<div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin:12px 0 6px;display:flex;align-items:center;gap:6px;"><span>🌍</span> International Channels</div>'
+    +intlChs.map(renderChannelRow).join('');
+  list.innerHTML=ugandaHtml;
+
+  // Uganda match templates
+  var matchList=document.getElementById('ugandaMatchList');
+  if(matchList){
+    matchList.innerHTML=UGANDA_MATCHES.map(function(m,i){
+      return '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;">'
+        +'<div style="font-size:20px;">'+m.emoji+'</div>'
+        +'<div style="flex:1;min-width:0;">'
+        +'<div style="font-size:12px;font-weight:700;color:var(--accent);">'+m.league+'</div>'
+        +'<div style="font-size:12px;font-weight:600;">'+m.team1+' vs '+m.team2+'</div>'
+        +'<div style="font-size:10px;color:var(--text2);">'+m.info+'</div></div>'
+        +'<button class="quick-add-btn" style="width:auto;padding:6px 10px;font-size:11px;" onclick="useMatchTemplate('+i+')"><i class="fas fa-copy"></i> Use</button>'
+        +'</div>';
+    }).join('');
+  }
+}
+function useMatchTemplate(idx){
+  var m=UGANDA_MATCHES[idx];
+  if(!m)return;
+  // Switch to Matches tab and prefill
+  switchAdmTab('Matches',document.querySelectorAll('.adm-tab')[1]);
+  setTimeout(function(){
+    document.getElementById('mSport').value=m.sport;
+    document.getElementById('mLeague').value=m.league;
+    document.getElementById('mT1').value=m.team1;
+    document.getElementById('mT2').value=m.team2!=='TBD'?m.team2:'';
+    toast('Template loaded! Add stream URL & save ✅');
+  },200);
 }
 function quickAddChannel(idx,btn){
   var ch=QUICK_CHANNELS[idx];
