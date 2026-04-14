@@ -453,6 +453,16 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
+/* ===== TELEGRAM FLOATING BUTTON ===== */
+.tg-float{position:fixed;left:14px;bottom:72px;z-index:150;display:flex;flex-direction:column;align-items:center;gap:0;}
+.tg-float-btn{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#229ED9,#1a7fb5);box-shadow:0 4px 16px rgba(34,158,217,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;transition:transform .2s;position:relative;}
+.tg-float-btn:active{transform:scale(.92);}
+.tg-float-btn i{font-size:24px;color:#fff;}
+.tg-float-pulse{position:absolute;inset:0;border-radius:50%;background:rgba(34,158,217,.4);animation:tgpulse 2s infinite;}
+@keyframes tgpulse{0%{transform:scale(1);opacity:.7;}70%{transform:scale(1.5);opacity:0;}100%{transform:scale(1.5);opacity:0;}}
+.tg-float-label{background:rgba(34,158,217,.95);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;white-space:nowrap;margin-top:4px;letter-spacing:.3px;}
+.tg-subscribers{background:rgba(0,0,0,.7);color:#fff;font-size:9px;padding:2px 6px;border-radius:8px;margin-top:2px;white-space:nowrap;}
+
 /* Source copy buttons */
 .src-copy-btn{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:var(--accent);font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
 .src-copy-btn:active{background:var(--accent);color:#000;}
@@ -540,6 +550,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div class="sb-item" onclick="closeSidebar();showPage('highlights')"><span class="sb-item-icon"><i class="fas fa-play-circle"></i></span><span class="sb-item-label">Highlights</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-item gold" onclick="closeSidebar();showPage('favorites')"><span class="sb-item-icon"><i class="fas fa-star"></i></span><span class="sb-item-label">My Favorites</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-divider"></div>
+    <div class="sb-item" style="color:#229ED9;" onclick="closeSidebar();location.href='https://t.me/kensportstv'"><span class="sb-item-icon"><i class="fab fa-telegram-plane"></i></span><span class="sb-item-label">Join Telegram Channel</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-item" onclick="closeSidebar();location.href='contact.html'"><span class="sb-item-icon"><i class="fas fa-envelope"></i></span><span class="sb-item-label">Contact Us</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-item" onclick="closeSidebar();location.reload()"><span class="sb-item-icon"><i class="fas fa-sync-alt"></i></span><span class="sb-item-label">Update App</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-divider"></div>
@@ -1033,6 +1044,18 @@ CREATE POLICY "pub" ON ks_settings FOR ALL USING (true) WITH CHECK (true);
   <button class="live-toast-close" onclick="closeLiveToast()"><i class="fas fa-times"></i></button>
 </div>
 
+<!-- TELEGRAM FLOATING BUTTON -->
+<div class="tg-float" id="tgFloat">
+  <a href="https://t.me/kensportstv" target="_blank" rel="noopener" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:0;">
+    <div class="tg-float-btn">
+      <div class="tg-float-pulse"></div>
+      <i class="fab fa-telegram-plane"></i>
+    </div>
+    <div class="tg-float-label">Join Channel</div>
+    <div class="tg-subscribers" id="tgSubCount">🇺🇬 KenSports TV</div>
+  </a>
+</div>
+
 <!-- INSTALL BAR -->
 <div class="install-bar" id="installBar">
   <span style="font-size:20px;">📱</span>
@@ -1482,6 +1505,9 @@ function openPlayer(title,streams,isLive,matchId){
   document.getElementById('playerTitle').textContent=title;
   document.getElementById('playerLiveBadge').style.display=isLive?'inline-flex':'none';
   document.getElementById('playerOverlay').classList.add('active');
+  // Hide telegram button when player is open
+  var tg=document.getElementById('tgFloat');
+  if(tg)tg.style.display='none';
   // Update fav button
   var favBtn=document.getElementById('playerFavBtn');
   if(matchId){favBtn.style.display='flex';favBtn.classList.toggle('active',isFav(matchId));favBtn.setAttribute('data-mid',matchId);}
@@ -1576,6 +1602,9 @@ function closePlayer(){
   document.getElementById('iframeWrap').style.display='none';
   if(hlsInst){hlsInst.destroy();hlsInst=null;}
   if(document.exitFullscreen)document.exitFullscreen().catch(function(){});
+  // Show telegram button again
+  var tg=document.getElementById('tgFloat');
+  if(tg)tg.style.display='flex';
 }
 
 // ===== SIDEBAR =====
