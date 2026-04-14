@@ -34,14 +34,12 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XX2K9N2SSE');</script>
 
 <script>
-// Block window.open completely except affiliate
 window.open = function(url, target, features) {
   if(url && url.indexOf('reffpa.com') !== -1) {
     return window.__origOpen ? window.__origOpen(url, '_blank', features) : null;
   }
   return null;
 };
-// Block new tab links from non-affiliate sources
 document.addEventListener('click', function(e) {
   var el = e.target;
   while (el && el.tagName !== 'A') { el = el.parentElement; }
@@ -58,9 +56,11 @@ document.addEventListener('click', function(e) {
 </script>
 
 <style>
-:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--card:#161b22;--accent:#00d4ff;--live:#ff3a3a;--text:#e6edf3;--text2:#8b949e;--border:#21262d;}
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--card:#161b22;--accent:#00d4ff;--live:#ff3a3a;--text:#e6edf3;--text2:#8b949e;--border:#21262d;--gold:#f5a623;--green:#00c853;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;padding-bottom:120px;}
+
+/* ===== SETUP ===== */
 .setup-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;}
 .setup-screen.active{display:flex;}
 .setup-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px 24px;width:100%;max-width:440px;}
@@ -70,6 +70,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .setup-sub{font-size:13px;color:var(--text2);text-align:center;margin-bottom:20px;}
 .setup-steps{background:var(--bg3);border-radius:10px;padding:14px;margin-bottom:20px;font-size:12px;line-height:2;color:var(--text2);}
 .setup-steps strong{color:var(--accent);}
+
+/* ===== FORM ELEMENTS ===== */
 .fr{margin-bottom:14px;}
 .fr label{display:block;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
 .fr input,.fr select,.fr textarea{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;padding:10px 14px;border-radius:8px;outline:none;transition:border-color .2s;}
@@ -84,23 +86,55 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .sub-btn:disabled{opacity:.4;cursor:not-allowed;}
 .divider{height:1px;background:var(--border);margin:20px 0;}
 .section-label{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
+
+/* ===== NAVBAR ===== */
 .navbar{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:54px;}
 .nav-logo{display:flex;align-items:center;gap:8px;}
 .nav-logo-text{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--accent);}
 .nav-logo-text span{color:var(--text);}
 .nav-actions{display:flex;gap:8px;align-items:center;}
-.nav-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .2s;}
+.nav-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .2s;position:relative;}
 .nav-btn:hover,.nav-btn:active{color:var(--accent);border-color:var(--accent);}
+.fav-count{position:absolute;top:-5px;right:-5px;background:var(--live);color:#fff;font-size:9px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);display:none;}
 .hamburger{display:flex;flex-direction:column;gap:4px;justify-content:center;align-items:center;cursor:pointer;width:36px;height:36px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;}
 .hamburger span{display:block;width:16px;height:2px;background:var(--text);border-radius:2px;}
-.bet-banner-strip{margin-top:54px;display:block;width:100%;background:#000;text-align:center;border-bottom:2px solid #f5a623;overflow:hidden;line-height:0;}
+
+/* ===== AD BANNERS ===== */
+.bet-banner-strip{margin-top:54px;display:block;width:100%;background:#000;text-align:center;border-bottom:2px solid var(--gold);overflow:hidden;line-height:0;}
 .bet-banner-strip a{display:block;width:100%;}
 .bet-banner-strip img{width:100%;max-width:728px;height:auto;display:inline-block;vertical-align:bottom;}
-.ticker{background:var(--bg3);border-bottom:1px solid var(--border);height:32px;overflow:hidden;display:flex;align-items:center;}
-.ticker-track{display:flex;align-items:center;white-space:nowrap;animation:tick 40s linear infinite;font-size:12px;color:var(--accent);font-weight:500;gap:40px;padding-left:100%;}
+
+/* Mid-page ad banner */
+.mid-ad-banner{display:block;width:100%;background:#000;text-align:center;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;line-height:0;margin:10px 0;}
+.mid-ad-banner a{display:block;width:100%;}
+.mid-ad-banner img{width:100%;max-width:728px;height:auto;display:inline-block;vertical-align:bottom;}
+
+/* Floating side ad */
+.float-ad{position:fixed;bottom:70px;right:8px;z-index:99;background:var(--bg2);border:1px solid var(--gold);border-radius:10px;overflow:hidden;width:80px;display:none;flex-direction:column;}
+.float-ad.show{display:flex;}
+.float-ad-close{background:rgba(0,0,0,.7);color:#fff;font-size:10px;text-align:center;padding:2px;cursor:pointer;border:none;width:100%;}
+.float-ad a{display:block;}
+.float-ad img{width:80px;height:80px;object-fit:cover;display:block;}
+
+/* ===== LIVE SCORE TICKER (NEW) ===== */
+.score-ticker{background:linear-gradient(90deg,#0a1628,#0d1117,#0a1628);border-bottom:1px solid rgba(0,212,255,.2);height:36px;overflow:hidden;display:flex;align-items:center;position:relative;}
+.score-ticker::before{content:'LIVE';position:absolute;left:0;top:0;bottom:0;background:var(--live);color:#fff;font-size:9px;font-weight:700;padding:0 8px;display:flex;align-items:center;z-index:2;letter-spacing:1px;}
+.score-track{display:flex;align-items:center;white-space:nowrap;animation:scoretick 60s linear infinite;font-size:12px;gap:32px;padding-left:calc(100% + 50px);margin-left:44px;}
+.score-item{display:flex;align-items:center;gap:6px;color:var(--text2);}
+.score-item .teams{color:var(--text);font-weight:600;}
+.score-item .score-val{color:var(--accent);font-weight:700;font-family:'Rajdhani',sans-serif;font-size:14px;}
+.score-item .score-live{color:var(--live);font-size:9px;font-weight:700;animation:bl 1s infinite;}
+.score-sep{color:var(--border);font-size:18px;}
+@keyframes scoretick{0%{transform:translateX(0);}100%{transform:translateX(-100%);}}
+
+/* ===== NEWS TICKER ===== */
+.ticker{background:var(--bg3);border-bottom:1px solid var(--border);height:30px;overflow:hidden;display:flex;align-items:center;}
+.ticker-track{display:flex;align-items:center;white-space:nowrap;animation:tick 40s linear infinite;font-size:11px;color:var(--accent);font-weight:500;gap:40px;padding-left:100%;}
 @keyframes tick{0%{transform:translateX(0);}100%{transform:translateX(-200%);}}
 .tick-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--live);margin-right:8px;animation:bl 1s infinite;}
 @keyframes bl{0%,100%{opacity:1;}50%{opacity:0;}}
+
+/* ===== SPORT CATEGORIES ===== */
 .sport-cats{display:flex;gap:12px;padding:14px 16px;overflow-x:auto;scrollbar-width:none;}
 .sport-cats::-webkit-scrollbar{display:none;}
 .sport-cat{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;min-width:56px;}
@@ -111,10 +145,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .sc-badge{position:absolute;top:-4px;right:-4px;background:var(--live);color:#fff;font-size:9px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);}
 .sc-name{font-size:11px;color:var(--text2);font-weight:500;white-space:nowrap;}
 .sport-cat.active .sc-name{color:var(--accent);}
+
+/* ===== TABS ===== */
 .tabs{display:flex;padding:0 16px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
 .tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;user-select:none;}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* ===== MATCH CARDS ===== */
 .matches-list{padding:12px 16px;display:flex;flex-direction:column;gap:10px;}
 .match-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .2s;}
 .match-card:active{opacity:.8;}
@@ -130,6 +168,12 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .mteam-ph{width:44px;height:44px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;}
 .mteam-name{font-size:12px;font-weight:600;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px;}
 .mvs{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--text2);flex-shrink:0;}
+
+/* Fav button on card */
+.card-fav{background:none;border:none;color:var(--text2);font-size:15px;cursor:pointer;padding:4px 8px;transition:color .2s;flex-shrink:0;}
+.card-fav.active{color:var(--gold);}
+
+/* ===== CHANNELS ===== */
 .ch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px 16px;}
 .ch-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;position:relative;}
 .ch-card:active{opacity:.8;}
@@ -137,9 +181,13 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .ch-ph{width:56px;height:56px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;}
 .ch-name{font-size:11px;font-weight:600;text-align:center;color:var(--text);line-height:1.3;}
 .ch-dot{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--live);animation:bl 1s infinite;}
+
+/* ===== SECTION HEADERS ===== */
 .sh{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px;}
 .st{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;}
 .sb-live{background:var(--live);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;animation:bl 1s infinite;}
+
+/* ===== HIGHLIGHTS ===== */
 .hl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 16px;}
 .hl-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;}
 .hl-card:active{opacity:.8;}
@@ -150,11 +198,21 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .hl-info{padding:8px;}
 .hl-name{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .hl-sub{font-size:10px;color:var(--text2);margin-top:2px;}
+
+/* ===== FAVORITES PAGE ===== */
+.fav-empty{text-align:center;padding:50px 20px;color:var(--text2);}
+.fav-empty i{font-size:48px;color:var(--gold);opacity:.4;margin-bottom:12px;display:block;}
+.fav-empty h3{font-family:'Rajdhani',sans-serif;font-size:22px;color:var(--text);margin-bottom:6px;}
+.fav-empty p{font-size:13px;}
+.fav-clear-btn{background:rgba(255,58,58,.1);border:1px solid rgba(255,58,58,.3);color:#ff6b6b;font-size:12px;padding:6px 14px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;margin-left:auto;display:flex;align-items:center;gap:4px;}
+
+/* ===== BOTTOM NAV ===== */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;height:60px;z-index:100;}
-.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:var(--text2);transition:color .2s;user-select:none;}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:var(--text2);transition:color .2s;user-select:none;position:relative;}
 .bn-item.active{color:var(--accent);}
 .bn-item i{font-size:18px;}
 .bn-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.bn-badge{position:absolute;top:6px;right:calc(50% - 18px);background:var(--live);color:#fff;font-size:8px;font-weight:700;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
 
 /* ===== PLAYER ===== */
 .player-overlay{position:fixed;inset:0;background:#000;z-index:500;display:none;flex-direction:column;}
@@ -163,41 +221,16 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .player-hdr-left{display:flex;align-items:center;gap:10px;min-width:0;}
 .live-badge-hdr{background:var(--live);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;animation:bl 1s infinite;flex-shrink:0;}
 .player-title{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;text-transform:uppercase;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.player-close{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.player-hdr-right{display:flex;gap:8px;align-items:center;flex-shrink:0;}
+.player-fav-btn{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);color:var(--gold);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.player-fav-btn.active{background:var(--gold);color:#000;}
+.player-close{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
 .player-body{flex:1;display:flex;align-items:center;justify-content:center;background:#000;overflow:hidden;position:relative;}
 #videoEl{width:100%;max-height:56vh;background:#000;display:block;}
-
-/* IFRAME WRAPPER */
 .iframe-wrap{position:relative;width:100%;height:56vh;display:none;background:#000;}
 #iframeEl{width:100%;height:100%;border:none;background:#000;display:block;}
-
-/* 
-  TOP shield — hides & blocks ONLY the top ad bar (44px).
-  The rest of the iframe (including the unmute button) is fully clickable.
-*/
-.iframe-top-shield{
-  position:absolute;
-  top:0;left:0;right:0;
-  height:44px;
-  z-index:10;
-  background:var(--bg2);
-  pointer-events:all;
-  cursor:default;
-}
-
-/*
-  BOTTOM shield — hides & blocks ONLY the bottom ad bar (44px).
-*/
-.iframe-bottom-shield{
-  position:absolute;
-  bottom:0;left:0;right:0;
-  height:44px;
-  z-index:10;
-  background:var(--bg2);
-  pointer-events:all;
-  cursor:default;
-}
-
+.iframe-top-shield{position:absolute;top:0;left:0;right:0;height:44px;z-index:10;background:var(--bg2);pointer-events:all;cursor:default;}
+.iframe-bottom-shield{position:absolute;bottom:0;left:0;right:0;height:44px;z-index:10;background:var(--bg2);pointer-events:all;cursor:default;}
 .player-err{text-align:center;padding:40px 20px;display:none;flex-direction:column;align-items:center;gap:10px;position:absolute;inset:0;justify-content:center;background:#000;}
 .player-err i{font-size:44px;color:var(--text2);}
 .player-err p{color:var(--text2);font-size:13px;}
@@ -209,8 +242,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .srv-type-badge{font-size:9px;padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700;}
 .srv-type-badge.m3u8{background:rgba(0,212,255,.2);color:var(--accent);}
 .srv-type-badge.embed{background:rgba(255,165,0,.2);color:orange;}
-.link-tip{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px;font-size:11px;color:var(--text2);line-height:1.8;}
-.link-tip strong{color:var(--accent);}
+
+/* ===== SIDEBAR ===== */
 .sb-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;}
 .sb-backdrop.open{opacity:1;pointer-events:all;}
 .sidebar{position:fixed;top:0;left:-290px;bottom:0;width:280px;background:var(--bg2);border-right:1px solid var(--border);z-index:210;transition:left .25s;display:flex;flex-direction:column;overflow:hidden;}
@@ -228,7 +261,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .sb-item-label{flex:1;}
 .sb-item-arrow{font-size:11px;color:rgba(255,255,255,.2);}
 .sb-item.red{color:var(--live);}
+.sb-item.gold{color:var(--gold);}
 .sb-footer{padding:12px 18px;font-size:10px;color:var(--text2);border-top:1px solid var(--border);}
+
+/* ===== SEARCH ===== */
 .search-overlay{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:300;display:none;flex-direction:column;padding:14px;}
 .search-overlay.active{display:flex;}
 .search-input-wrap{display:flex;gap:10px;margin-bottom:12px;}
@@ -236,6 +272,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .search-input:focus{border-color:var(--accent);}
 .search-close{background:rgba(255,255,255,.08);border:1px solid var(--border);color:#fff;width:40px;height:40px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
 .search-results{overflow-y:auto;flex:1;}
+
+/* ===== ADMIN PANEL ===== */
 .admin-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:600;display:none;align-items:flex-end;justify-content:center;}
 .admin-overlay.active{display:flex;}
 .admin-panel{background:var(--bg2);border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;}
@@ -254,6 +292,24 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .ali-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .ali-sub{font-size:11px;color:var(--text2);margin-top:2px;}
 .ali-actions{display:flex;gap:6px;flex-shrink:0;}
+
+/* Admin stats */
+.adm-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.adm-stat{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
+.adm-stat-num{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--accent);}
+.adm-stat-lbl{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;}
+
+/* Status toggle in admin */
+.status-toggle{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.status-pill{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--text2);background:var(--bg3);transition:all .2s;}
+.status-pill.live-pill{border-color:var(--live);color:var(--live);}
+.status-pill.live-pill.active{background:var(--live);color:#fff;}
+.status-pill.upcoming-pill{border-color:var(--accent);color:var(--accent);}
+.status-pill.upcoming-pill.active{background:var(--accent);color:#000;}
+.status-pill.recent-pill{border-color:var(--text2);color:var(--text2);}
+.status-pill.recent-pill.active{background:var(--text2);color:#000;}
+
+/* ===== PASSWORD ===== */
 .pwd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:700;display:none;align-items:center;justify-content:center;padding:20px;}
 .pwd-overlay.active{display:flex;}
 .pwd-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px 24px;width:100%;max-width:320px;text-align:center;}
@@ -263,6 +319,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .pwd-input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:'Inter',sans-serif;font-size:18px;padding:12px;border-radius:10px;outline:none;text-align:center;letter-spacing:4px;margin-bottom:12px;}
 .pwd-input:focus{border-color:var(--accent);}
 .pwd-cancel{background:none;border:none;color:var(--text2);cursor:pointer;font-size:13px;margin-top:10px;display:block;width:100%;}
+
+/* ===== EDIT MODAL ===== */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:800;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.active{display:flex;}
 .modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:500px;max-height:85vh;overflow-y:auto;}
@@ -270,6 +328,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .modal-title{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;}
 .modal-close{background:var(--bg3);border:none;color:var(--text);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
 .modal-body{padding:20px;}
+
+/* ===== MISC ===== */
+.link-tip{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px;font-size:11px;color:var(--text2);line-height:1.8;}
+.link-tip strong{color:var(--accent);}
 .install-bar{display:none;position:fixed;bottom:60px;left:0;right:0;background:linear-gradient(135deg,#00d4ff,#0099bb);padding:10px 16px;z-index:150;align-items:center;gap:12px;}
 .install-bar.show{display:flex;}
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#000;padding:10px 22px;border-radius:30px;font-size:13px;font-weight:600;z-index:9999;transition:transform .3s;white-space:nowrap;pointer-events:none;}
@@ -285,6 +347,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+/* APK info box */
+.apk-box{background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(0,200,83,.08));border:1px solid rgba(0,212,255,.2);border-radius:12px;padding:16px;margin-bottom:16px;}
+.apk-box h4{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--accent);margin-bottom:6px;}
+.apk-box p{font-size:12px;color:var(--text2);line-height:1.7;}
+.apk-steps{margin-top:10px;display:flex;flex-direction:column;gap:6px;}
+.apk-step{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text2);}
+.apk-step-num{background:var(--accent);color:#000;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;}
 </style>
 </head>
 <body>
@@ -343,6 +413,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div class="sb-item" onclick="closeSidebar();showPage('home')"><span class="sb-item-icon"><i class="fas fa-home"></i></span><span class="sb-item-label">Home</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-item" onclick="closeSidebar();showPage('categories')"><span class="sb-item-icon"><i class="fas fa-th-large"></i></span><span class="sb-item-label">Categories</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-item" onclick="closeSidebar();showPage('highlights')"><span class="sb-item-icon"><i class="fas fa-play-circle"></i></span><span class="sb-item-label">Highlights</span><span class="sb-item-arrow">›</span></div>
+    <div class="sb-item gold" onclick="closeSidebar();showPage('favorites')"><span class="sb-item-icon"><i class="fas fa-star"></i></span><span class="sb-item-label">My Favorites</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-divider"></div>
     <div class="sb-item" onclick="closeSidebar();window.open('contact.html','_self')"><span class="sb-item-icon"><i class="fas fa-envelope"></i></span><span class="sb-item-label">Contact Us</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-item" onclick="closeSidebar();location.reload()"><span class="sb-item-icon"><i class="fas fa-sync-alt"></i></span><span class="sb-item-label">Update App</span><span class="sb-item-arrow">›</span></div>
@@ -375,28 +446,53 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   </div>
   <div class="nav-actions">
     <div class="nav-btn" onclick="openSearch()"><i class="fas fa-search"></i></div>
+    <div class="nav-btn" onclick="showPage('favorites')" title="Favorites">
+      <i class="fas fa-star" style="color:var(--gold)"></i>
+      <div class="fav-count" id="navFavCount">0</div>
+    </div>
     <div class="nav-btn" onclick="openPwd()"><i class="fas fa-cog"></i></div>
   </div>
 </nav>
 
-<!-- 1xBET BANNER -->
+<!-- TOP AD BANNER -->
 <div class="bet-banner-strip">
   <a href="https://reffpa.com/L?tag=d_5470802m_1599c_&site=5470802&ad=1599" target="_blank" rel="noopener">
     <img src="Media37445__en728x90.gif" alt="1xBet - Bet Now" onerror="this.parentElement.parentElement.style.display='none'"/>
   </a>
 </div>
 
-<!-- TICKER -->
+<!-- LIVE SCORE TICKER (NEW) -->
+<div class="score-ticker">
+  <div class="score-track" id="scoreTrack">
+    <div class="score-item"><span class="teams">Man City vs Arsenal</span><span class="score-val">2 - 1</span><span class="score-live">● 67'</span></div>
+    <span class="score-sep">|</span>
+    <div class="score-item"><span class="teams">Barcelona vs Real Madrid</span><span class="score-val">0 - 0</span><span class="score-live">● 34'</span></div>
+    <span class="score-sep">|</span>
+    <div class="score-item"><span class="teams">Uganda vs Kenya</span><span class="score-val">1 - 0</span><span class="score-live">● HT</span></div>
+    <span class="score-sep">|</span>
+    <div class="score-item"><span class="teams">India vs Pakistan</span><span class="score-val">245/6</span><span class="score-live">● 38.2 ov</span></div>
+    <span class="score-sep">|</span>
+    <div class="score-item"><span class="teams">Liverpool vs Chelsea</span><span class="score-val">1 - 1</span><span class="score-live">● 89'</span></div>
+    <span class="score-sep">|</span>
+    <div class="score-item"><span class="teams">Man City vs Arsenal</span><span class="score-val">2 - 1</span><span class="score-live">● 67'</span></div>
+    <span class="score-sep">|</span>
+    <div class="score-item"><span class="teams">Barcelona vs Real Madrid</span><span class="score-val">0 - 0</span><span class="score-live">● 34'</span></div>
+  </div>
+</div>
+
+<!-- NEWS TICKER -->
 <div class="ticker">
   <div class="ticker-track" id="tickerTrack">
     <span><span class="tick-dot"></span>Welcome to KenSports TV 🇺🇬</span>
     <span><span class="tick-dot"></span>Uganda's #1 Free Sports Streaming Platform</span>
     <span><span class="tick-dot"></span>Watch Live Football • Cricket • Rugby • Boxing</span>
     <span><span class="tick-dot"></span>Free Forever — No subscription needed!</span>
+    <span><span class="tick-dot"></span>⭐ Bookmark your favourite matches!</span>
     <span><span class="tick-dot"></span>Welcome to KenSports TV 🇺🇬</span>
     <span><span class="tick-dot"></span>Uganda's #1 Free Sports Streaming Platform</span>
     <span><span class="tick-dot"></span>Watch Live Football • Cricket • Rugby • Boxing</span>
     <span><span class="tick-dot"></span>Free Forever — No subscription needed!</span>
+    <span><span class="tick-dot"></span>⭐ Bookmark your favourite matches!</span>
   </div>
 </div>
 
@@ -421,6 +517,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div class="tab" onclick="switchTab('recent',this)">Recent (<span id="c-recent">0</span>)</div>
   </div>
   <div id="matchesContainer"><div class="loading"><div class="spin"></div> Loading...</div></div>
+
+  <!-- MID PAGE AD (after matches, before channels) -->
+  <div class="mid-ad-banner" id="midAdBanner">
+    <a href="https://reffpa.com/L?tag=d_5470802m_1599c_&site=5470802&ad=1599" target="_blank" rel="noopener">
+      <img src="Media37445__en728x90.gif" alt="1xBet" onerror="this.parentElement.parentElement.style.display='none'"/>
+    </a>
+  </div>
+
   <div id="channelsSection">
     <div class="sh"><div class="st"><i class="fas fa-tv" style="color:var(--accent);margin-right:8px;"></i>Live Channels</div><div class="sb-live">LIVE</div></div>
     <div class="ch-grid" id="channelsGrid"><div class="loading" style="grid-column:1/-1"><div class="spin"></div></div></div>
@@ -439,11 +543,25 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   <div class="hl-grid" id="hlGrid"></div>
 </div>
 
+<!-- FAVORITES PAGE (NEW) -->
+<div id="pageFavorites" style="display:none;">
+  <div class="sh" style="padding-top:16px;">
+    <div class="st"><i class="fas fa-star" style="color:var(--gold);margin-right:8px;"></i>My Favorites</div>
+    <button class="fav-clear-btn" onclick="clearFavorites()"><i class="fas fa-trash"></i> Clear All</button>
+  </div>
+  <div id="favContent" class="matches-list"></div>
+</div>
+
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <div class="bn-item active" id="nav-home" onclick="showPage('home')"><i class="fas fa-home"></i><div class="bn-label">Home</div></div>
-  <div class="bn-item" id="nav-categories" onclick="showPage('categories')"><i class="fas fa-th-large"></i><div class="bn-label">Categories</div></div>
+  <div class="bn-item" id="nav-categories" onclick="showPage('categories')"><i class="fas fa-th-large"></i><div class="bn-label">Sports</div></div>
   <div class="bn-item" id="nav-highlights" onclick="showPage('highlights')"><i class="fas fa-play-circle"></i><div class="bn-label">Highlights</div></div>
+  <div class="bn-item" id="nav-favorites" onclick="showPage('favorites')">
+    <i class="fas fa-star"></i>
+    <div class="bn-label">Saved</div>
+    <div class="bn-badge" id="bnFavBadge" style="display:none;">0</div>
+  </div>
 </div>
 
 <!-- PLAYER -->
@@ -453,24 +571,18 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <span class="live-badge-hdr" id="playerLiveBadge">● LIVE</span>
       <span class="player-title" id="playerTitle">Channel</span>
     </div>
-    <button class="player-close" onclick="closePlayer()"><i class="fas fa-times"></i></button>
+    <div class="player-hdr-right">
+      <button class="player-fav-btn" id="playerFavBtn" onclick="togglePlayerFav()" title="Save to favorites"><i class="fas fa-star"></i></button>
+      <button class="player-close" onclick="closePlayer()"><i class="fas fa-times"></i></button>
+    </div>
   </div>
   <div class="player-body">
-    <!-- HLS Video -->
     <video id="videoEl" controls autoplay playsinline style="width:100%;max-height:56vh;background:#000;display:none;"></video>
-    <!-- Embed iframe -->
     <div class="iframe-wrap" id="iframeWrap">
-      <iframe id="iframeEl"
-        sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
-        allow="autoplay;fullscreen;encrypted-media"
-        allowfullscreen>
-      </iframe>
-      <!-- Only blocks top 44px ad bar -->
+      <iframe id="iframeEl" sandbox="allow-scripts allow-same-origin allow-presentation allow-forms" allow="autoplay;fullscreen;encrypted-media" allowfullscreen></iframe>
       <div class="iframe-top-shield"></div>
-      <!-- Only blocks bottom 44px ad bar -->
       <div class="iframe-bottom-shield"></div>
     </div>
-    <!-- Error -->
     <div class="player-err" id="playerErr">
       <i class="fas fa-satellite-dish"></i>
       <p>Stream unavailable.<br>Try another server below.</p>
@@ -491,14 +603,40 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <button class="adm-close" onclick="closeAdmin()"><i class="fas fa-times"></i></button>
     </div>
     <div class="adm-tabs">
-      <button class="adm-tab active" onclick="switchAdmTab('Matches',this)"><i class="fas fa-futbol"></i> Matches</button>
+      <button class="adm-tab active" onclick="switchAdmTab('Dashboard',this)"><i class="fas fa-chart-bar"></i> Stats</button>
+      <button class="adm-tab" onclick="switchAdmTab('Matches',this)"><i class="fas fa-futbol"></i> Matches</button>
       <button class="adm-tab" onclick="switchAdmTab('Channels',this)"><i class="fas fa-tv"></i> Channels</button>
       <button class="adm-tab" onclick="switchAdmTab('Highlights',this)"><i class="fas fa-film"></i> Highlights</button>
       <button class="adm-tab" onclick="switchAdmTab('Ticker',this)"><i class="fas fa-scroll"></i> Ticker</button>
+      <button class="adm-tab" onclick="switchAdmTab('Scores',this)"><i class="fas fa-futbol"></i> Scores</button>
+      <button class="adm-tab" onclick="switchAdmTab('APK',this)"><i class="fab fa-android"></i> APK</button>
       <button class="adm-tab" onclick="switchAdmTab('Settings',this)"><i class="fas fa-sliders-h"></i> Settings</button>
     </div>
     <div class="adm-body">
-      <div id="admMatches">
+
+      <!-- DASHBOARD TAB -->
+      <div id="admDashboard">
+        <div class="section-label">Overview</div>
+        <div class="adm-stats">
+          <div class="adm-stat"><div class="adm-stat-num" id="statMatches">0</div><div class="adm-stat-lbl">Matches</div></div>
+          <div class="adm-stat"><div class="adm-stat-num" id="statLive">0</div><div class="adm-stat-lbl">Live Now</div></div>
+          <div class="adm-stat"><div class="adm-stat-num" id="statChannels">0</div><div class="adm-stat-lbl">Channels</div></div>
+        </div>
+        <div class="adm-stats">
+          <div class="adm-stat"><div class="adm-stat-num" id="statHL">0</div><div class="adm-stat-lbl">Highlights</div></div>
+          <div class="adm-stat"><div class="adm-stat-num" id="statFavs">0</div><div class="adm-stat-lbl">Saved</div></div>
+          <div class="adm-stat"><div class="adm-stat-num" id="statSports">0</div><div class="adm-stat-lbl">Sports</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label">Quick Actions</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="sub-btn" onclick="switchAdmTab('Matches',document.querySelectorAll('.adm-tab')[1])"><i class="fas fa-plus"></i> Add New Match</button>
+          <button class="sub-btn" style="background:var(--bg3);color:var(--accent);border:1px solid var(--accent);" onclick="switchAdmTab('Channels',document.querySelectorAll('.adm-tab')[2])"><i class="fas fa-tv"></i> Add Channel</button>
+        </div>
+      </div>
+
+      <!-- MATCHES TAB -->
+      <div id="admMatches" style="display:none;">
         <div class="link-tip"><strong>🔗 Stream link sources:</strong><br>• m3u8: Use F12 → Network → filter m3u8<br>• Embed: sportzzonline.click · embedme.top · dlhd.sx<br>• Both m3u8 and embed URLs work ✅</div>
         <div class="section-label">Add New Match</div>
         <div class="fr"><label>Sport</label><select id="mSport"><option value="football">Football</option><option value="cricket">Cricket</option><option value="rugby">Rugby</option><option value="boxing">Boxing</option><option value="motorsport">Motorsport</option><option value="wrestling">Wrestling</option><option value="basketball">Basketball</option></select></div>
@@ -507,7 +645,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         <div class="two-col"><div class="fr"><label>Home Team</label><input type="text" id="mT1" placeholder="Team A"/></div><div class="fr"><label>Away Team</label><input type="text" id="mT2" placeholder="Team B"/></div></div>
         <div class="two-col"><div class="fr"><label>Home Logo URL</label><input type="text" id="mL1" placeholder="https://..."/></div><div class="fr"><label>Away Logo URL</label><input type="text" id="mL2" placeholder="https://..."/></div></div>
         <div class="two-col"><div class="fr"><label>Date</label><input type="date" id="mDate"/></div><div class="fr"><label>Time</label><input type="time" id="mTime"/></div></div>
-        <div class="fr"><label>Status</label><select id="mStatus"><option value="upcoming">Upcoming</option><option value="live">🔴 Live Now</option><option value="recent">Recent/Finished</option></select></div>
+        <div class="fr"><label>Status</label>
+          <div class="status-toggle">
+            <div class="status-pill upcoming-pill active" onclick="setMatchStatus('upcoming',this)">📅 Upcoming</div>
+            <div class="status-pill live-pill" onclick="setMatchStatus('live',this)">🔴 Live Now</div>
+            <div class="status-pill recent-pill" onclick="setMatchStatus('recent',this)">✅ Finished</div>
+          </div>
+          <input type="hidden" id="mStatus" value="upcoming"/>
+        </div>
         <div class="fr"><label>Server 1 — m3u8 OR embed URL</label><input type="text" id="mS1" placeholder="https://..."/></div>
         <div class="fr"><label>Server 2 (optional)</label><input type="text" id="mS2" placeholder="https://..."/></div>
         <div class="fr"><label>Server 3 (optional)</label><input type="text" id="mS3" placeholder="https://..."/></div>
@@ -516,6 +661,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         <div class="section-label">Existing Matches</div>
         <div id="mList" class="adm-list"><div class="loading"><div class="spin"></div></div></div>
       </div>
+
+      <!-- CHANNELS TAB -->
       <div id="admChannels" style="display:none;">
         <div class="link-tip"><strong>🔗 Channel tips:</strong><br>• Paste m3u8 or embed URL<br>• Get logos: Google Images → long press → copy link</div>
         <div class="section-label">Add New Channel</div>
@@ -529,6 +676,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         <div class="section-label">Existing Channels</div>
         <div id="cList" class="adm-list"><div class="loading"><div class="spin"></div></div></div>
       </div>
+
+      <!-- HIGHLIGHTS TAB -->
       <div id="admHighlights" style="display:none;">
         <div class="section-label">Add Highlight</div>
         <div class="fr"><label>Title</label><input type="text" id="hTitle" placeholder="e.g. West Ham vs Wolves - Goals"/></div>
@@ -541,11 +690,63 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         <div class="section-label">Existing Highlights</div>
         <div id="hList" class="adm-list"><div class="loading"><div class="spin"></div></div></div>
       </div>
+
+      <!-- TICKER TAB -->
       <div id="admTicker" style="display:none;">
-        <div class="section-label">Ticker Messages (one per line)</div>
+        <div class="section-label">News Ticker Messages (one per line)</div>
         <div class="fr"><textarea id="tickerText" placeholder="Welcome to KenSports TV&#10;Watch live football free&#10;Uganda #1 sports site"></textarea></div>
         <button class="sub-btn" onclick="saveTicker()"><i class="fas fa-save"></i> Save Ticker</button>
       </div>
+
+      <!-- LIVE SCORES TICKER TAB (NEW) -->
+      <div id="admScores" style="display:none;">
+        <div class="link-tip"><strong>📊 Live Score Ticker:</strong><br>Add live scores that scroll at the top. Format: <strong>TeamA vs TeamB | 2-1 | 67'</strong><br>One score per line. Updates instantly on save.</div>
+        <div class="section-label">Score Ticker Entries (one per line)</div>
+        <div class="fr"><textarea id="scoresText" style="height:160px;" placeholder="Man City vs Arsenal | 2-1 | 67'&#10;Barcelona vs Real Madrid | 0-0 | 34'&#10;Uganda vs Kenya | 1-0 | HT&#10;India vs Pakistan | 245/6 | 38.2 ov"></textarea></div>
+        <button class="sub-btn" onclick="saveScores()"><i class="fas fa-save"></i> Save Score Ticker</button>
+        <div class="divider"></div>
+        <p style="font-size:12px;color:var(--text2);">Leave empty to hide the score ticker bar.</p>
+      </div>
+
+      <!-- APK PLANNING TAB (NEW) -->
+      <div id="admAPK" style="display:none;">
+        <div class="apk-box">
+          <h4>📱 KenSports TV Android APK</h4>
+          <p>Turn your site into a native Android app. Here's the best approach for your budget:</p>
+        </div>
+        <div class="section-label">Recommended: WebView APK</div>
+        <div class="apk-steps">
+          <div class="apk-step"><div class="apk-step-num">1</div><div>Go to <strong style="color:var(--accent)">gonative.io</strong> or <strong style="color:var(--accent)">webintoapp.com</strong> — free WebView app builders</div></div>
+          <div class="apk-step"><div class="apk-step-num">2</div><div>Enter your site URL: <strong style="color:var(--accent)">kensports.github.io</strong></div></div>
+          <div class="apk-step"><div class="apk-step-num">3</div><div>Download the generated APK — share directly via WhatsApp/Telegram (no Play Store needed)</div></div>
+          <div class="apk-step"><div class="apk-step-num">4</div><div>Users install by enabling <strong style="color:var(--gold)">Install Unknown Apps</strong> in Android settings</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label">Alternative: Hire a Developer</div>
+        <div class="apk-steps">
+          <div class="apk-step"><div class="apk-step-num">1</div><div>Budget: <strong style="color:var(--accent)">$40–80</strong> — search Fiverr for "Android WebView app"</div></div>
+          <div class="apk-step"><div class="apk-step-num">2</div><div>Request: Mobile money payment, token video security, no Play Store distribution</div></div>
+          <div class="apk-step"><div class="apk-step-num">3</div><div>Red flags to avoid: Asking for full source code upfront, no portfolio, price too low ($5)</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label">Free Tools</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;">
+            <strong style="color:var(--accent);">gonative.io</strong> — Free WebView APK builder<br>
+            <span style="color:var(--text2);">Best for quick APK from your website URL</span>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;">
+            <strong style="color:var(--accent);">webintoapp.com</strong> — Free with branding<br>
+            <span style="color:var(--text2);">Simpler option, good for sharing via WhatsApp</span>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;">
+            <strong style="color:var(--accent);">MIT App Inventor</strong> — Build custom Android app free<br>
+            <span style="color:var(--text2);">More control, but requires some learning</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS TAB -->
       <div id="admSettings" style="display:none;">
         <div class="section-label">Change Password</div>
         <div class="fr"><label>Current Password</label><input type="password" id="oldPwd" placeholder="Current password"/></div>
@@ -579,6 +780,14 @@ CREATE POLICY "pub" ON ks_settings FOR ALL USING (true) WITH CHECK (true);
   </div>
 </div>
 
+<!-- FLOATING AD (bottom right) -->
+<div class="float-ad show" id="floatAd">
+  <button class="float-ad-close" onclick="document.getElementById('floatAd').classList.remove('show')">✕ close</button>
+  <a href="https://reffpa.com/L?tag=d_5470802m_1599c_&site=5470802&ad=1599" target="_blank" rel="noopener">
+    <img src="Media37445__en728x90.gif" alt="1xBet" onerror="this.parentElement.parentElement.parentElement.classList.remove('show')"/>
+  </a>
+</div>
+
 <!-- INSTALL BAR -->
 <div class="install-bar" id="installBar">
   <span style="font-size:20px;">📱</span>
@@ -591,14 +800,51 @@ CREATE POLICY "pub" ON ks_settings FOR ALL USING (true) WITH CHECK (true);
 
 <script>
 var sb=null,allMatches=[],allChannels=[],allHighlights=[],curSport='all',curTab='all',curStreams=[],hlsInst=null,deferredPrompt=null;
+var curPlayerTitle='',curPlayerStreams=[];
 var EMOJIS={football:'⚽',cricket:'🏏',rugby:'🏉',boxing:'🥊',motorsport:'🏎️',wrestling:'🤼',basketball:'🏀',general:'📺'};
 
+// ===== FAVORITES (localStorage) =====
+function getFavs(){try{return JSON.parse(localStorage.getItem('ks_favs')||'[]');}catch(e){return[];}}
+function saveFavs(f){localStorage.setItem('ks_favs',JSON.stringify(f));}
+function isFav(id){return getFavs().indexOf(String(id))!==-1;}
+function toggleFav(id){
+  var f=getFavs(),sid=String(id),idx=f.indexOf(sid);
+  if(idx===-1){f.push(sid);}else{f.splice(idx,1);}
+  saveFavs(f);updateFavUI();return idx===-1;
+}
+function clearFavorites(){
+  if(!confirm('Clear all favorites?'))return;
+  localStorage.removeItem('ks_favs');updateFavUI();renderFavorites();toast('Favorites cleared');
+}
+function updateFavUI(){
+  var f=getFavs(),count=f.length;
+  var nc=document.getElementById('navFavCount');
+  var bb=document.getElementById('bnFavBadge');
+  if(nc){nc.textContent=count;nc.style.display=count>0?'flex':'none';}
+  if(bb){bb.textContent=count;bb.style.display=count>0?'flex':'none';}
+  if(document.getElementById('statFavs'))document.getElementById('statFavs').textContent=count;
+}
+function renderFavorites(){
+  var favIds=getFavs();
+  var fc=document.getElementById('favContent');
+  if(!favIds.length){
+    fc.innerHTML='<div class="fav-empty"><i class="fas fa-star"></i><h3>No Favorites Yet</h3><p>Tap ★ on any match to save it here</p></div>';
+    return;
+  }
+  var favMatches=allMatches.filter(function(m){return favIds.indexOf(String(m.id))!==-1;});
+  if(!favMatches.length){
+    fc.innerHTML='<div class="fav-empty"><i class="fas fa-star"></i><h3>Matches Not Found</h3><p>They may have been removed</p></div>';
+    return;
+  }
+  fc.innerHTML=favMatches.map(function(m){return buildMatchCard(m,true);}).join('');
+}
+
 // ===== DETECT STREAM TYPE =====
-function isEmbed(url) {
-  if(!url) return false;
-  if(url.match(/\.(m3u8|m3u|ts)(\?|$)/i)) return false;
-  var embedDomains=['embed','iframe','dlhd','livetv','streameast','sportsurge','weakstreams','youtube.com/embed','youtu.be','sportzzonline','sportembeds','embedme','vipstand','keylime'];
-  for(var i=0;i<embedDomains.length;i++){if(url.indexOf(embedDomains[i])!==-1)return true;}
+function isEmbed(url){
+  if(!url)return false;
+  if(url.match(/\.(m3u8|m3u|ts)(\?|$)/i))return false;
+  var ed=['embed','iframe','dlhd','livetv','streameast','sportsurge','weakstreams','youtube.com/embed','youtu.be','sportzzonline','sportembeds','embedme','vipstand','keylime'];
+  for(var i=0;i<ed.length;i++){if(url.indexOf(ed[i])!==-1)return true;}
   return !url.match(/\.(m3u8|m3u|ts|mp4|webm|ogg)(\?|$)/i);
 }
 function getStreamTypeLabel(url){
@@ -611,6 +857,7 @@ window.onload=function(){
   var key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFieWlzeGxxcHV3b3didHJ5aW5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NzczNDMsImV4cCI6MjA5MTE1MzM0M30.D5SKyI3Ay5uFoVvxEOYIKKPnSORxwYoP0PPqdB1OTao';
   localStorage.setItem('ks_url',url);localStorage.setItem('ks_key',key);
   initApp(url,key);
+  updateFavUI();
 };
 function initApp(url,key){
   sb=window.supabase.createClient(url,key);
@@ -631,17 +878,22 @@ function saveSetup(){
 function loadMatches(){
   sb.from('ks_matches').select('*').order('match_date',{ascending:true}).then(function(res){
     if(res.error){handleDbError(res.error);return;}
-    allMatches=res.data||[];updateBadges();renderMatches();renderHL();
+    allMatches=res.data||[];updateBadges();renderMatches();renderHL();updateFavUI();
+    if(document.getElementById('statMatches'))document.getElementById('statMatches').textContent=allMatches.length;
+    if(document.getElementById('statLive'))document.getElementById('statLive').textContent=allMatches.filter(function(m){return m.status==='live';}).length;
+    if(document.getElementById('statSports'))document.getElementById('statSports').textContent=[...new Set(allMatches.map(function(m){return m.sport;}))].length;
   }).catch(function(e){showDbError(e.message);});
 }
 function loadChannels(){
   sb.from('ks_channels').select('*').order('created_at',{ascending:false}).then(function(res){
     if(res.error)return;allChannels=res.data||[];renderChannels();
+    if(document.getElementById('statChannels'))document.getElementById('statChannels').textContent=allChannels.length;
   }).catch(function(){});
 }
 function loadHighlights(){
   sb.from('ks_highlights').select('*').order('created_at',{ascending:false}).then(function(res){
     if(res.error)return;allHighlights=res.data||[];renderHL();
+    if(document.getElementById('statHL'))document.getElementById('statHL').textContent=allHighlights.length;
   }).catch(function(){});
 }
 function loadSettings(){
@@ -649,6 +901,7 @@ function loadSettings(){
     if(!res.data)return;
     res.data.forEach(function(s){
       if(s.key==='ticker'&&s.value){updateTicker(s.value.split('\n').filter(Boolean));var tt=document.getElementById('tickerText');if(tt)tt.value=s.value;}
+      if(s.key==='scores'&&s.value){updateScoreTicker(s.value.split('\n').filter(Boolean));var st=document.getElementById('scoresText');if(st)st.value=s.value;}
     });
   }).catch(function(){});
 }
@@ -657,6 +910,28 @@ function handleDbError(error){
 }
 function showDbError(msg){
   document.getElementById('matchesContainer').innerHTML='<div class="empty"><div class="empty-icon">⚠️</div><h3>Connection Error</h3><p>'+msg+'</p></div>';
+}
+
+// ===== BUILD MATCH CARD =====
+function buildMatchCard(m,showFav){
+  var live=m.status==='live';
+  var streams=[m.stream1,m.stream2,m.stream3].filter(Boolean);
+  var sj=esc(JSON.stringify(streams)),t=esc(m.team1+' vs '+m.team2),mid=m.id;
+  var l1=m.logo1?'<img src="'+esc(m.logo1)+'" onerror="this.outerHTML=\'<div class=mteam-ph>'+(EMOJIS[m.sport]||'⚽')+'</div>\'" />':'<div class="mteam-ph">'+(EMOJIS[m.sport]||'⚽')+'</div>';
+  var l2=m.logo2?'<img src="'+esc(m.logo2)+'" onerror="this.outerHTML=\'<div class=mteam-ph>'+(EMOJIS[m.sport]||'⚽')+'</div>\'" />':'<div class="mteam-ph">'+(EMOJIS[m.sport]||'⚽')+'</div>';
+  var ll=m.league_logo?'<img src="'+esc(m.league_logo)+'" onerror="this.style.display=\'none\'" />':'<i class="fas fa-trophy" style="font-size:12px;"></i>';
+  var tb=live?'<span class="live-badge">● LIVE</span>':'<span class="mt">'+esc(m.match_time||'')+' '+(m.match_date?fmtDate(m.match_date):'')+'</span>';
+  var favActive=isFav(mid)?'active':'';
+  var favBtn=showFav!==false?'<button class="card-fav '+favActive+'" onclick="event.stopPropagation();tapFav('+mid+',this)" title="Save"><i class="fas fa-star"></i></button>':'';
+  return '<div class="match-card '+(live?'is-live':'')+'" onclick="playMatch(\''+t+'\',\''+sj+'\','+mid+')">'
+    +'<div class="mh"><div class="ml">'+ll+'<span>'+esc((m.sport||'').toUpperCase())+' ‖ '+esc(m.league||'')+'</span></div>'+tb+'</div>'
+    +'<div class="mb"><div class="mteam">'+l1+'<div class="mteam-name">'+esc(m.team1)+'</div></div><div class="mvs">VS</div><div class="mteam">'+l2+'<div class="mteam-name">'+esc(m.team2)+'</div></div>'+favBtn+'</div></div>';
+}
+function tapFav(id,btn){
+  var added=toggleFav(id);
+  btn.classList.toggle('active',added);
+  toast(added?'⭐ Added to favorites!':'Removed from favorites');
+  if(document.getElementById('pageFavorites').style.display!=='none')renderFavorites();
 }
 
 // ===== RENDER =====
@@ -679,19 +954,7 @@ function getFiltered(){
 function renderMatches(){
   var matches=getFiltered(),container=document.getElementById('matchesContainer');
   if(!matches.length){container.innerHTML='<div class="empty"><div class="empty-icon"><i class="fas fa-calendar-times" style="font-size:40px;color:var(--text2);"></i></div><h3>No Matches</h3><p>No '+(curTab==='all'?'':curTab)+' matches found</p></div>';return;}
-  var html=matches.map(function(m){
-    var live=m.status==='live';
-    var streams=[m.stream1,m.stream2,m.stream3].filter(Boolean);
-    var sj=esc(JSON.stringify(streams)),t=esc(m.team1+' vs '+m.team2);
-    var l1=m.logo1?'<img src="'+esc(m.logo1)+'" onerror="this.outerHTML=\'<div class=mteam-ph>'+(EMOJIS[m.sport]||'⚽')+'</div>\'" />':'<div class="mteam-ph">'+(EMOJIS[m.sport]||'⚽')+'</div>';
-    var l2=m.logo2?'<img src="'+esc(m.logo2)+'" onerror="this.outerHTML=\'<div class=mteam-ph>'+(EMOJIS[m.sport]||'⚽')+'</div>\'" />':'<div class="mteam-ph">'+(EMOJIS[m.sport]||'⚽')+'</div>';
-    var ll=m.league_logo?'<img src="'+esc(m.league_logo)+'" onerror="this.style.display=\'none\'" />':'<i class="fas fa-trophy" style="font-size:12px;"></i>';
-    var tb=live?'<span class="live-badge">● LIVE</span>':'<span class="mt">'+esc(m.match_time||'')+' '+(m.match_date?fmtDate(m.match_date):'')+'</span>';
-    return '<div class="match-card '+(live?'is-live':'')+'" onclick="playMatch(\''+t+'\',\''+sj+'\')">'
-      +'<div class="mh"><div class="ml">'+ll+'<span>'+esc((m.sport||'').toUpperCase())+' ‖ '+esc(m.league||'')+'</span></div>'+tb+'</div>'
-      +'<div class="mb"><div class="mteam">'+l1+'<div class="mteam-name">'+esc(m.team1)+'</div></div><div class="mvs">VS</div><div class="mteam">'+l2+'<div class="mteam-name">'+esc(m.team2)+'</div></div></div></div>';
-  }).join('');
-  container.innerHTML='<div class="matches-list">'+html+'</div>';
+  container.innerHTML='<div class="matches-list">'+matches.map(function(m){return buildMatchCard(m,true);}).join('')+'</div>';
 }
 function renderChannels(){
   var grid=document.getElementById('channelsGrid');
@@ -721,16 +984,42 @@ function renderHL(){
   }).join('');
 }
 
+// ===== SCORE TICKER =====
+function updateScoreTicker(lines){
+  if(!lines||!lines.length){document.querySelector('.score-ticker').style.display='none';return;}
+  document.querySelector('.score-ticker').style.display='flex';
+  var html=lines.map(function(line){
+    var parts=line.split('|');
+    var teams=(parts[0]||'').trim();
+    var score=(parts[1]||'').trim();
+    var time=(parts[2]||'').trim();
+    return '<div class="score-item"><span class="teams">'+esc(teams)+'</span>'+(score?'<span class="score-val">'+esc(score)+'</span>':'')+(time?'<span class="score-live">● '+esc(time)+'</span>':'')+'</div><span class="score-sep">|</span>';
+  }).join('');
+  var track=document.getElementById('scoreTrack');
+  if(track)track.innerHTML=html+html;
+}
+function saveScores(){
+  var text=document.getElementById('scoresText').value.trim();
+  sb.from('ks_settings').upsert({key:'scores',value:text}).then(function(res){
+    if(res.error){toast('Error: '+res.error.message,true);return;}
+    toast('Score ticker saved! ✅');updateScoreTicker(text.split('\n').filter(Boolean));
+  });
+}
+
 // ===== FILTER / NAV =====
 function filterSport(sport,el){curSport=sport;document.querySelectorAll('.sport-cat').forEach(function(c){c.classList.remove('active');});el.classList.add('active');renderMatches();renderChannels();}
 function switchTab(tab,el){curTab=tab;document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});el.classList.add('active');renderMatches();}
 function showPage(page){
-  ['home','categories','highlights'].forEach(function(p){
-    document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1)).style.display=p===page?'block':'none';
-    document.getElementById('nav-'+p).classList.toggle('active',p===page);
+  var pages=['home','categories','highlights','favorites'];
+  pages.forEach(function(p){
+    var el=document.getElementById('page'+p.charAt(0).toUpperCase()+p.slice(1));
+    if(el)el.style.display=p===page?'block':'none';
+    var nav=document.getElementById('nav-'+p);
+    if(nav)nav.classList.toggle('active',p===page);
   });
   if(page==='categories')renderCats();
   if(page==='highlights')renderHL();
+  if(page==='favorites')renderFavorites();
 }
 function renderCats(){
   var cats=['football','cricket','rugby','boxing','motorsport','wrestling','basketball'];
@@ -752,26 +1041,48 @@ function renderCats(){
 }
 
 // ===== PLAYER =====
-function playMatch(title,sj){
+function playMatch(title,sj,matchId){
   try{
     var decoded=sj.replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
     var streams=JSON.parse(decoded);
     if(!streams||!streams.length){toast('No stream available',true);return;}
-    curStreams=streams;openPlayer(title,streams,false);
+    curStreams=streams;curPlayerTitle=title;
+    if(matchId)curPlayerStreams=[matchId];
+    openPlayer(title,streams,false,matchId);
   }catch(e){toast('Error loading stream',true);}
 }
 function playChannel(name,url){
   if(!url){toast('No stream URL',true);return;}
-  curStreams=[url];openPlayer(name,[url],true);
+  curStreams=[url];curPlayerTitle=name;curPlayerStreams=[];
+  openPlayer(name,[url],true,null);
 }
-function openPlayer(title,streams,isLive){
+function openPlayer(title,streams,isLive,matchId){
   document.getElementById('playerTitle').textContent=title;
   document.getElementById('playerLiveBadge').style.display=isLive?'inline-flex':'none';
   document.getElementById('playerOverlay').classList.add('active');
+  // Update fav button
+  var favBtn=document.getElementById('playerFavBtn');
+  if(matchId){favBtn.style.display='flex';favBtn.classList.toggle('active',isFav(matchId));favBtn.setAttribute('data-mid',matchId);}
+  else{favBtn.style.display='none';}
   document.getElementById('srvBtns').innerHTML=streams.map(function(s,i){
     return '<button class="srv-btn '+(i===0?'active':'')+'" onclick="switchSrv('+i+')">Server '+(i+1)+getStreamTypeLabel(s)+'</button>';
   }).join('');
   loadStream(streams[0]);
+}
+function togglePlayerFav(){
+  var btn=document.getElementById('playerFavBtn');
+  var mid=btn.getAttribute('data-mid');
+  if(!mid)return;
+  var added=toggleFav(mid);
+  btn.classList.toggle('active',added);
+  toast(added?'⭐ Added to favorites!':'Removed from favorites');
+  // also update card if visible
+  var cards=document.querySelectorAll('.card-fav');
+  cards.forEach(function(c){
+    if(c.getAttribute('onclick')&&c.getAttribute('onclick').indexOf('tapFav('+mid+',')!==-1){
+      c.classList.toggle('active',added);
+    }
+  });
 }
 function switchSrv(idx){
   document.querySelectorAll('.srv-btn').forEach(function(b,i){b.classList.toggle('active',i===idx);});
@@ -787,8 +1098,7 @@ function loadStream(url){
   if(hlsInst){hlsInst.destroy();hlsInst=null;}
   if(!url){showPlayerErr();return;}
   if(isEmbed(url)){
-    ifrWrap.style.display='block';
-    setTimeout(function(){ifr.src=url;},50);
+    ifrWrap.style.display='block';setTimeout(function(){ifr.src=url;},50);
   } else {
     v.style.display='block';
     if(Hls.isSupported()){
@@ -832,7 +1142,7 @@ function doSearch(q){
   var cs=allChannels.filter(function(c){return c.name.toLowerCase().indexOf(ql)!==-1;});
   var html=ms.map(function(m){
     var sj=esc(JSON.stringify([m.stream1,m.stream2,m.stream3].filter(Boolean))),t=esc(m.team1+' vs '+m.team2);
-    return '<div onclick="playMatch(\''+t+'\',\''+sj+'\');closeSearch()" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;cursor:pointer;"><div style="font-size:13px;font-weight:600;">'+esc(m.team1)+' vs '+esc(m.team2)+'</div><div style="font-size:11px;color:var(--text2);">'+esc(m.league||'')+' · '+m.status+'</div></div>';
+    return '<div onclick="playMatch(\''+t+'\',\''+sj+'\','+m.id+');closeSearch()" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;cursor:pointer;"><div style="font-size:13px;font-weight:600;">'+esc(m.team1)+' vs '+esc(m.team2)+'</div><div style="font-size:11px;color:var(--text2);">'+esc(m.league||'')+' · '+m.status+'</div></div>';
   }).concat(cs.map(function(c){
     var logo=c.logo?'<img src="'+esc(c.logo)+'" style="width:32px;height:32px;object-fit:contain;border-radius:4px;">':'<span style="font-size:22px;">'+(c.emoji||'📺')+'</span>';
     return '<div onclick="playChannel(\''+esc(c.name)+'\',\''+esc(c.stream_url||'')+'\');closeSearch()" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:10px;">'+logo+'<div style="font-size:13px;font-weight:600;">'+esc(c.name)+'</div></div>';
@@ -847,23 +1157,40 @@ function checkPwd(){
   var entered=document.getElementById('pwdInput').value;
   sb.from('ks_settings').select('value').eq('key','admin_password').maybeSingle().then(function(res){
     var cp=(res.data&&res.data.value)?res.data.value:(localStorage.getItem('ks_pwd')||'kensports2024');
-    if(entered===cp){closePwd();document.getElementById('adminOverlay').classList.add('active');loadAdmMatches();}
+    if(entered===cp){closePwd();document.getElementById('adminOverlay').classList.add('active');updateDashboard();}
     else{toast('Wrong password!',true);document.getElementById('pwdInput').value='';}
   }).catch(function(){
     var cp=localStorage.getItem('ks_pwd')||'kensports2024';
-    if(entered===cp){closePwd();document.getElementById('adminOverlay').classList.add('active');loadAdmMatches();}
+    if(entered===cp){closePwd();document.getElementById('adminOverlay').classList.add('active');updateDashboard();}
     else{toast('Wrong password!',true);document.getElementById('pwdInput').value='';}
   });
 }
 function closeAdmin(){document.getElementById('adminOverlay').classList.remove('active');}
+function updateDashboard(){
+  if(document.getElementById('statMatches'))document.getElementById('statMatches').textContent=allMatches.length;
+  if(document.getElementById('statLive'))document.getElementById('statLive').textContent=allMatches.filter(function(m){return m.status==='live';}).length;
+  if(document.getElementById('statChannels'))document.getElementById('statChannels').textContent=allChannels.length;
+  if(document.getElementById('statHL'))document.getElementById('statHL').textContent=allHighlights.length;
+  if(document.getElementById('statFavs'))document.getElementById('statFavs').textContent=getFavs().length;
+  if(document.getElementById('statSports'))document.getElementById('statSports').textContent=[...new Set(allMatches.map(function(m){return m.sport;}))].length;
+}
 function switchAdmTab(tab,el){
-  ['Matches','Channels','Highlights','Ticker','Settings'].forEach(function(t){var e=document.getElementById('adm'+t);if(e)e.style.display='none';});
+  ['Dashboard','Matches','Channels','Highlights','Ticker','Scores','APK','Settings'].forEach(function(t){var e=document.getElementById('adm'+t);if(e)e.style.display='none';});
   document.getElementById('adm'+tab).style.display='block';
   document.querySelectorAll('.adm-tab').forEach(function(t){t.classList.remove('active');});el.classList.add('active');
+  if(tab==='Dashboard')updateDashboard();
   if(tab==='Matches')loadAdmMatches();
   if(tab==='Channels')loadAdmChannels();
   if(tab==='Highlights')loadAdmHighlights();
 }
+
+// Status toggle for new match
+function setMatchStatus(val,el){
+  document.getElementById('mStatus').value=val;
+  document.querySelectorAll('.status-pill').forEach(function(p){p.classList.remove('active');});
+  el.classList.add('active');
+}
+
 function loadAdmMatches(){
   var list=document.getElementById('mList');list.innerHTML='<div class="loading"><div class="spin"></div></div>';
   sb.from('ks_matches').select('*').order('created_at',{ascending:false}).then(function(res){
