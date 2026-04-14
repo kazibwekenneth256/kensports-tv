@@ -171,8 +171,67 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .mvs{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--text2);flex-shrink:0;}
 
 /* Fav button on card */
-.card-fav{background:none;border:none;color:var(--text2);font-size:15px;cursor:pointer;padding:4px 8px;transition:color .2s;flex-shrink:0;}
+.card-fav{background:none;border:none;color:var(--text2);font-size:15px;cursor:pointer;padding:4px 6px;transition:color .2s;flex-shrink:0;}
 .card-fav.active{color:var(--gold);}
+
+/* ===== CARD ACTION BUTTONS ROW ===== */
+.card-actions{display:flex;align-items:center;gap:2px;flex-shrink:0;}
+.card-action-btn{background:none;border:none;color:var(--text2);font-size:14px;cursor:pointer;padding:4px 6px;transition:all .2s;border-radius:6px;}
+.card-action-btn:active{background:rgba(255,255,255,.06);}
+.card-action-btn.remind-active{color:var(--accent);}
+.card-action-btn.wa{color:#25d366;}
+
+/* ===== VIEW COUNTER ===== */
+.view-count{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--text2);background:rgba(255,255,255,.05);padding:2px 7px;border-radius:10px;margin-left:6px;}
+.view-count i{font-size:9px;}
+
+/* ===== NOTIFICATION BELL ===== */
+.notif-bell{position:relative;}
+.notif-dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:var(--live);border:2px solid var(--bg);animation:bl .8s infinite;}
+
+/* ===== NOTIFICATION PANEL ===== */
+.notif-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:400;display:none;align-items:flex-start;justify-content:flex-end;padding-top:54px;}
+.notif-overlay.active{display:flex;}
+.notif-panel{background:var(--bg2);border:1px solid var(--border);border-radius:0 0 0 14px;width:300px;max-height:70vh;overflow-y:auto;box-shadow:-4px 4px 20px rgba(0,0,0,.5);}
+.notif-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);}
+.notif-title{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;}
+.notif-close{background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px;}
+.notif-clear{background:none;border:none;color:var(--live);cursor:pointer;font-size:11px;}
+.notif-item{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);transition:background .15s;}
+.notif-item.unread{background:rgba(0,212,255,.04);}
+.notif-item:active{background:rgba(255,255,255,.04);}
+.notif-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.notif-icon.live{background:rgba(255,58,58,.15);border:1px solid rgba(255,58,58,.3);}
+.notif-icon.remind{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);}
+.notif-icon.info{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);}
+.notif-text{flex:1;min-width:0;}
+.notif-msg{font-size:12px;font-weight:500;color:var(--text);line-height:1.4;}
+.notif-time{font-size:10px;color:var(--text2);margin-top:3px;}
+.notif-empty{text-align:center;padding:30px 16px;color:var(--text2);font-size:13px;}
+.notif-empty i{font-size:32px;display:block;margin-bottom:8px;opacity:.3;}
+
+/* ===== REMINDER MODAL ===== */
+.remind-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;}
+.remind-overlay.active{display:flex;}
+.remind-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:320px;text-align:center;}
+.remind-icon{font-size:44px;margin-bottom:10px;}
+.remind-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;margin-bottom:4px;}
+.remind-sub{font-size:12px;color:var(--text2);margin-bottom:18px;line-height:1.5;}
+.remind-options{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.remind-opt{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:13px;font-weight:500;padding:10px;border-radius:9px;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
+.remind-opt:hover,.remind-opt:active{border-color:var(--accent);color:var(--accent);}
+.remind-cancel{background:none;border:none;color:var(--text2);cursor:pointer;font-size:12px;margin-top:4px;}
+
+/* ===== LIVE NOTIFICATION TOAST (big) ===== */
+.live-toast{position:fixed;top:64px;left:12px;right:12px;background:linear-gradient(135deg,#1a0a0a,#2a0808);border:1px solid rgba(255,58,58,.4);border-radius:14px;padding:14px 16px;z-index:450;display:none;align-items:center;gap:12px;box-shadow:0 4px 24px rgba(255,58,58,.2);animation:slideDown .3s ease;}
+.live-toast.show{display:flex;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+.live-toast-icon{width:40px;height:40px;border-radius:50%;background:rgba(255,58,58,.2);border:1px solid rgba(255,58,58,.4);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;animation:bl .8s infinite;}
+.live-toast-body{flex:1;min-width:0;}
+.live-toast-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;}
+.live-toast-sub{font-size:11px;color:rgba(255,255,255,.6);}
+.live-toast-watch{background:var(--live);color:#fff;border:none;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;padding:7px 14px;border-radius:8px;cursor:pointer;flex-shrink:0;}
+.live-toast-close{background:none;border:none;color:rgba(255,255,255,.4);font-size:16px;cursor:pointer;flex-shrink:0;padding:4px;}
 
 /* ===== CHANNELS ===== */
 .ch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px 16px;}
@@ -471,6 +530,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   </div>
   <div class="nav-actions">
     <div class="nav-btn" onclick="openSearch()"><i class="fas fa-search"></i></div>
+    <div class="nav-btn notif-bell" onclick="openNotifications()" title="Notifications">
+      <i class="fas fa-bell"></i>
+      <div class="notif-dot" id="notifDot" style="display:none;"></div>
+    </div>
     <div class="nav-btn" onclick="showPage('favorites')" title="Favorites">
       <i class="fas fa-star" style="color:var(--gold)"></i>
       <div class="fav-count" id="navFavCount">0</div>
@@ -789,6 +852,47 @@ CREATE POLICY "pub" ON ks_settings FOR ALL USING (true) WITH CHECK (true);
   </a>
 </div>
 
+<!-- NOTIFICATION PANEL -->
+<div class="notif-overlay" id="notifOverlay" onclick="if(event.target===this)closeNotifications()">
+  <div class="notif-panel">
+    <div class="notif-hdr">
+      <div class="notif-title"><i class="fas fa-bell" style="color:var(--accent);margin-right:6px;"></i>Notifications</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="notif-clear" onclick="clearNotifications()">Clear all</button>
+        <button class="notif-close" onclick="closeNotifications()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div id="notifList"><div class="notif-empty"><i class="fas fa-bell-slash"></i>No notifications yet</div></div>
+  </div>
+</div>
+
+<!-- REMINDER MODAL -->
+<div class="remind-overlay" id="remindOverlay">
+  <div class="remind-box">
+    <div class="remind-icon">⏰</div>
+    <div class="remind-title" id="remindTitle">Set Reminder</div>
+    <div class="remind-sub" id="remindSub">Get notified before the match starts</div>
+    <div class="remind-options">
+      <button class="remind-opt" onclick="setReminder(5)">⚡ 5 minutes before</button>
+      <button class="remind-opt" onclick="setReminder(15)">🕐 15 minutes before</button>
+      <button class="remind-opt" onclick="setReminder(30)">🕑 30 minutes before</button>
+      <button class="remind-opt" onclick="setReminder(60)">🕐 1 hour before</button>
+    </div>
+    <button class="remind-cancel" onclick="closeRemindModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- LIVE MATCH TOAST -->
+<div class="live-toast" id="liveToast">
+  <div class="live-toast-icon">🔴</div>
+  <div class="live-toast-body">
+    <div class="live-toast-title" id="liveToastTitle">Match is LIVE!</div>
+    <div class="live-toast-sub" id="liveToastSub">Tap Watch to stream now</div>
+  </div>
+  <button class="live-toast-watch" id="liveToastBtn">WATCH</button>
+  <button class="live-toast-close" onclick="closeLiveToast()"><i class="fas fa-times"></i></button>
+</div>
+
 <!-- INSTALL BAR -->
 <div class="install-bar" id="installBar">
   <span style="font-size:20px;">📱</span>
@@ -859,6 +963,14 @@ window.onload=function(){
   localStorage.setItem('ks_url',url);localStorage.setItem('ks_key',key);
   initApp(url,key);
   updateFavUI();
+  updateNotifBadge();
+  // Add welcome notification on first load
+  if(!localStorage.getItem('ks_welcomed')){
+    localStorage.setItem('ks_welcomed','1');
+    addNotification('info','👋 Welcome to KenSports TV!','Uganda\'s #1 free sports streaming platform');
+  }
+  // Refresh matches every 60 seconds to catch new live matches
+  setInterval(function(){loadMatches();},60000);
 };
 function initApp(url,key){
   sb=window.supabase.createClient(url,key);
@@ -880,6 +992,7 @@ function loadMatches(){
   sb.from('ks_matches').select('*').order('match_date',{ascending:true}).then(function(res){
     if(res.error){handleDbError(res.error);return;}
     allMatches=res.data||[];updateBadges();renderMatches();renderHL();updateFavUI();
+    checkLiveMatches();
     if(document.getElementById('statMatches'))document.getElementById('statMatches').textContent=allMatches.length;
     if(document.getElementById('statLive'))document.getElementById('statLive').textContent=allMatches.filter(function(m){return m.status==='live';}).length;
     if(document.getElementById('statSports'))document.getElementById('statSports').textContent=[...new Set(allMatches.map(function(m){return m.sport;}))].length;
@@ -916,23 +1029,170 @@ function showDbError(msg){
 // ===== BUILD MATCH CARD =====
 function buildMatchCard(m,showFav){
   var live=m.status==='live';
+  var upcoming=m.status==='upcoming';
   var streams=[m.stream1,m.stream2,m.stream3].filter(Boolean);
   var sj=esc(JSON.stringify(streams)),t=esc(m.team1+' vs '+m.team2),mid=m.id;
   var l1=m.logo1?'<img src="'+esc(m.logo1)+'" onerror="this.outerHTML=\'<div class=mteam-ph>'+(EMOJIS[m.sport]||'⚽')+'</div>\'" />':'<div class="mteam-ph">'+(EMOJIS[m.sport]||'⚽')+'</div>';
   var l2=m.logo2?'<img src="'+esc(m.logo2)+'" onerror="this.outerHTML=\'<div class=mteam-ph>'+(EMOJIS[m.sport]||'⚽')+'</div>\'" />':'<div class="mteam-ph">'+(EMOJIS[m.sport]||'⚽')+'</div>';
   var ll=m.league_logo?'<img src="'+esc(m.league_logo)+'" onerror="this.style.display=\'none\'" />':'<i class="fas fa-trophy" style="font-size:12px;"></i>';
-  var tb=live?'<span class="live-badge">● LIVE</span>':'<span class="mt">'+esc(m.match_time||'')+' '+(m.match_date?fmtDate(m.match_date):'')+'</span>';
+  // Views
+  var views=getViews(mid);
+  var viewBadge=live||views>0?'<span class="view-count"><i class="fas fa-eye"></i>'+fmtViews(views)+'</span>':'';
+  var tb=live?'<span class="live-badge">● LIVE</span>'+viewBadge:'<span class="mt">'+esc(m.match_time||'')+' '+(m.match_date?fmtDate(m.match_date):'')+'</span>';
+  // Action buttons
   var favActive=isFav(mid)?'active':'';
-  var favBtn=showFav!==false?'<button class="card-fav '+favActive+'" onclick="event.stopPropagation();tapFav('+mid+',this)" title="Save"><i class="fas fa-star"></i></button>':'';
+  var remindActive=hasReminder(mid)?'remind-active':'';
+  var remindBtn=upcoming?'<button class="card-action-btn '+remindActive+'" onclick="event.stopPropagation();openRemindModal('+mid+',\''+esc(m.team1+' vs '+m.team2)+'\',\''+esc(m.match_time||'')+' '+(m.match_date||'')+'\');" title="Remind me"><i class="fas fa-bell"></i></button>':'';
+  var waBtn='<button class="card-action-btn wa" onclick="event.stopPropagation();shareWhatsApp(\''+esc(m.team1)+'\',\''+esc(m.team2)+'\',\''+esc(m.league||'')+'\',\''+esc(m.match_time||'')+' '+(m.match_date||'')+'\','+live+')" title="Share on WhatsApp"><i class="fab fa-whatsapp"></i></button>';
+  var favBtn=showFav!==false?'<button class="card-action-btn card-fav '+favActive+'" onclick="event.stopPropagation();tapFav('+mid+',this)" title="Save"><i class="fas fa-star"></i></button>':'';
+  var actions='<div class="card-actions">'+remindBtn+waBtn+favBtn+'</div>';
   return '<div class="match-card '+(live?'is-live':'')+'" onclick="playMatch(\''+t+'\',\''+sj+'\','+mid+')">'
     +'<div class="mh"><div class="ml">'+ll+'<span>'+esc((m.sport||'').toUpperCase())+' ‖ '+esc(m.league||'')+'</span></div>'+tb+'</div>'
-    +'<div class="mb"><div class="mteam">'+l1+'<div class="mteam-name">'+esc(m.team1)+'</div></div><div class="mvs">VS</div><div class="mteam">'+l2+'<div class="mteam-name">'+esc(m.team2)+'</div></div>'+favBtn+'</div></div>';
+    +'<div class="mb"><div class="mteam">'+l1+'<div class="mteam-name">'+esc(m.team1)+'</div></div><div class="mvs">VS</div><div class="mteam">'+l2+'<div class="mteam-name">'+esc(m.team2)+'</div></div>'+actions+'</div></div>';
 }
 function tapFav(id,btn){
   var added=toggleFav(id);
   btn.classList.toggle('active',added);
   toast(added?'⭐ Added to favorites!':'Removed from favorites');
   if(document.getElementById('pageFavorites').style.display!=='none')renderFavorites();
+}
+
+// ===== VIEW COUNTER =====
+function getViews(mid){try{var v=JSON.parse(localStorage.getItem('ks_views')||'{}');return v[mid]||0;}catch(e){return 0;}}
+function incViews(mid){try{var v=JSON.parse(localStorage.getItem('ks_views')||'{}');v[mid]=(v[mid]||0)+1;localStorage.setItem('ks_views',JSON.stringify(v));}catch(e){}}
+function fmtViews(n){if(n>=1000)return(n/1000).toFixed(1)+'K';return String(n);}
+
+// ===== WHATSAPP SHARE =====
+function shareWhatsApp(t1,t2,league,time,isLive){
+  var status=isLive?'🔴 LIVE NOW':'📅 '+time;
+  var msg='⚽ *'+t1+' vs '+t2+'*\n'
+    +(league?'🏆 '+league+'\n':'')
+    +status+'\n\n'
+    +'📺 Watch FREE on KenSports TV!\n'
+    +'🌐 kensports.github.io\n'
+    +'_Uganda\'s #1 Free Sports Streaming_';
+  var url='https://wa.me/?text='+encodeURIComponent(msg);
+  window.__origOpen=window.__origOpen||window.open.bind(window);
+  window.__origOpen(url,'_blank');
+  toast('Opening WhatsApp... 📲');
+}
+
+// ===== REMINDERS =====
+var pendingRemindId=null,pendingRemindTitle='';
+function getReminders(){try{return JSON.parse(localStorage.getItem('ks_reminders')||'{}');}catch(e){return{};}}
+function saveReminders(r){localStorage.setItem('ks_reminders',JSON.stringify(r));}
+function hasReminder(mid){var r=getReminders();return !!r[mid];}
+function openRemindModal(mid,title,time){
+  pendingRemindId=mid;pendingRemindTitle=title;
+  document.getElementById('remindTitle').textContent=title;
+  document.getElementById('remindSub').textContent='Match time: '+time+'\nYou\'ll be notified before kick-off';
+  document.getElementById('remindOverlay').classList.add('active');
+}
+function closeRemindModal(){document.getElementById('remindOverlay').classList.remove('active');pendingRemindId=null;}
+function setReminder(mins){
+  if(!pendingRemindId)return;
+  var r=getReminders();
+  r[pendingRemindId]={title:pendingRemindTitle,mins:mins,set:Date.now()};
+  saveReminders(r);
+  closeRemindModal();
+  toast('⏰ Reminder set: '+mins+' min before!');
+  addNotification('remind','Reminder set for '+pendingRemindTitle,'You\'ll be notified '+mins+' min before kick-off');
+  // update card bell color
+  renderMatches();
+  scheduleReminder(pendingRemindId,pendingRemindTitle,mins);
+}
+function scheduleReminder(mid,title,mins){
+  // Use setTimeout for in-session reminders (works while page is open)
+  var ms=mins*60*1000;
+  setTimeout(function(){
+    var r=getReminders();
+    if(!r[mid])return;
+    addNotification('live','⏰ Match starting soon!',title+' kicks off in a few minutes!');
+    showLiveToast(title,'Match starting soon! ⚽',mid);
+  },ms);
+}
+
+// ===== NOTIFICATIONS =====
+function getNotifications(){try{return JSON.parse(localStorage.getItem('ks_notifs')||'[]');}catch(e){return[];}}
+function saveNotifications(n){localStorage.setItem('ks_notifs',JSON.stringify(n.slice(0,50)));}
+function addNotification(type,msg,sub){
+  var notifs=getNotifications();
+  notifs.unshift({type:type,msg:msg,sub:sub||'',time:Date.now(),read:false});
+  saveNotifications(notifs);
+  updateNotifBadge();
+}
+function updateNotifBadge(){
+  var notifs=getNotifications();
+  var unread=notifs.filter(function(n){return !n.read;}).length;
+  var dot=document.getElementById('notifDot');
+  if(dot)dot.style.display=unread>0?'block':'none';
+}
+function openNotifications(){
+  // mark all read
+  var notifs=getNotifications();
+  notifs.forEach(function(n){n.read=true;});
+  saveNotifications(notifs);
+  updateNotifBadge();
+  renderNotifications();
+  document.getElementById('notifOverlay').classList.add('active');
+}
+function closeNotifications(){document.getElementById('notifOverlay').classList.remove('active');}
+function clearNotifications(){saveNotifications([]);renderNotifications();updateNotifBadge();}
+function renderNotifications(){
+  var notifs=getNotifications();
+  var list=document.getElementById('notifList');
+  if(!notifs.length){list.innerHTML='<div class="notif-empty"><i class="fas fa-bell-slash"></i>No notifications yet</div>';return;}
+  var icons={live:'🔴',remind:'⏰',info:'ℹ️'};
+  list.innerHTML=notifs.map(function(n){
+    var ago=timeAgo(n.time);
+    return '<div class="notif-item '+(n.read?'':'unread')+'">'
+      +'<div class="notif-icon '+(n.type||'info')+'">'+( icons[n.type]||'ℹ️')+'</div>'
+      +'<div class="notif-text"><div class="notif-msg">'+esc(n.msg)+'</div>'
+      +(n.sub?'<div class="notif-time">'+esc(n.sub)+'</div>':'')
+      +'<div class="notif-time" style="margin-top:4px;opacity:.6;">'+ago+'</div></div></div>';
+  }).join('');
+}
+function timeAgo(ts){
+  var diff=Math.floor((Date.now()-ts)/1000);
+  if(diff<60)return'Just now';
+  if(diff<3600)return Math.floor(diff/60)+'m ago';
+  if(diff<86400)return Math.floor(diff/3600)+'h ago';
+  return Math.floor(diff/86400)+'d ago';
+}
+
+// ===== LIVE MATCH TOAST =====
+var liveToastTimer=null,liveToastMatchId=null;
+function showLiveToast(title,sub,mid){
+  document.getElementById('liveToastTitle').textContent=title;
+  document.getElementById('liveToastSub').textContent=sub||'Tap WATCH to stream now';
+  liveToastMatchId=mid;
+  var btn=document.getElementById('liveToastBtn');
+  btn.onclick=function(){
+    closeLiveToast();
+    var m=allMatches.find(function(x){return String(x.id)===String(mid);});
+    if(m){var streams=[m.stream1,m.stream2,m.stream3].filter(Boolean);if(streams.length)openPlayer(title,streams,true,mid);}
+  };
+  document.getElementById('liveToast').classList.add('show');
+  if(liveToastTimer)clearTimeout(liveToastTimer);
+  liveToastTimer=setTimeout(closeLiveToast,8000);
+}
+function closeLiveToast(){
+  document.getElementById('liveToast').classList.remove('show');
+  if(liveToastTimer){clearTimeout(liveToastTimer);liveToastTimer=null;}
+}
+
+// ===== AUTO-DETECT LIVE MATCHES & NOTIFY =====
+var notifiedLive={};
+function checkLiveMatches(){
+  var liveMatches=allMatches.filter(function(m){return m.status==='live';});
+  liveMatches.forEach(function(m){
+    if(!notifiedLive[m.id]){
+      notifiedLive[m.id]=true;
+      var title=m.team1+' vs '+m.team2;
+      addNotification('live','🔴 LIVE: '+title,(m.league||'')+(m.match_time?' · '+m.match_time:''));
+      showLiveToast('🔴 '+title,'Going LIVE now! Tap WATCH to stream',m.id);
+    }
+  });
 }
 
 // ===== RENDER =====
@@ -1051,7 +1311,7 @@ function playMatch(title,sj,matchId){
     var streams=JSON.parse(decoded);
     if(!streams||!streams.length){toast('No stream available',true);return;}
     curStreams=streams;curPlayerTitle=title;
-    if(matchId)curPlayerStreams=[matchId];
+    if(matchId){curPlayerStreams=[matchId];incViews(matchId);}
     openPlayer(title,streams,false,matchId);
   }catch(e){toast('Error loading stream',true);}
 }
