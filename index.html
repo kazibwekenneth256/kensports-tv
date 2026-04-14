@@ -32,6 +32,36 @@
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XX2K9N2SSE"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XX2K9N2SSE');</script>
+
+<!-- ===== BLOCK ALL POPUPS & NEW TABS ===== -->
+<script>
+// Block window.open completely
+window.open = function(url, target, features) {
+  console.log('Blocked popup:', url);
+  return null;
+};
+// Block all link clicks that try to open new tabs
+document.addEventListener('click', function(e) {
+  var el = e.target;
+  // Walk up DOM tree to find anchor tag
+  while (el && el.tagName !== 'A') { el = el.parentElement; }
+  if (el && el.tagName === 'A') {
+    var href = el.getAttribute('href');
+    var target = el.getAttribute('target');
+    // Only block if it tries to open new tab/window and is NOT our affiliate link
+    if (target === '_blank' && href && href.indexOf('reffpa.com') === -1 && href.indexOf('kensports') === -1) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+  }
+}, true);
+// Block beforeunload redirects from iframes
+window.addEventListener('message', function(e) {
+  // Ignore messages from iframes trying to navigate
+}, false);
+</script>
+
 <style>
 :root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;--card:#161b22;--accent:#00d4ff;--live:#ff3a3a;--text:#e6edf3;--text2:#8b949e;--border:#21262d;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -131,7 +161,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .bn-item i{font-size:18px;}
 .bn-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
 
-/* ===== UPGRADED PLAYER ===== */
+/* ===== PLAYER ===== */
 .player-overlay{position:fixed;inset:0;background:#000;z-index:500;display:none;flex-direction:column;}
 .player-overlay.active{display:flex;}
 .player-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;}
@@ -141,7 +171,23 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .player-close{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .player-body{flex:1;display:flex;align-items:center;justify-content:center;background:#000;overflow:hidden;position:relative;}
 #videoEl{width:100%;max-height:56vh;background:#000;display:block;}
-#iframeEl{width:100%;height:56vh;border:none;display:none;background:#000;}
+
+/* IFRAME WRAPPER - blocks ad clicks */
+.iframe-wrap{position:relative;width:100%;height:56vh;display:none;}
+#iframeEl{width:100%;height:100%;border:none;background:#000;display:block;}
+/* Top shield blocks the ad banner that usually appears at top of embed */
+.iframe-top-shield{
+  position:absolute;top:0;left:0;right:0;height:60px;
+  z-index:10;background:transparent;
+  pointer-events:all;
+}
+/* Bottom shield blocks bottom ad bar */
+.iframe-bottom-shield{
+  position:absolute;bottom:0;left:0;right:0;height:50px;
+  z-index:10;background:transparent;
+  pointer-events:all;
+}
+
 .player-err{text-align:center;padding:40px 20px;display:none;flex-direction:column;align-items:center;gap:10px;position:absolute;inset:0;justify-content:center;background:#000;}
 .player-err i{font-size:44px;color:var(--text2);}
 .player-err p{color:var(--text2);font-size:13px;}
@@ -153,12 +199,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .srv-type-badge{font-size:9px;padding:1px 5px;border-radius:3px;margin-left:4px;font-weight:700;}
 .srv-type-badge.m3u8{background:rgba(0,212,255,.2);color:var(--accent);}
 .srv-type-badge.embed{background:rgba(255,165,0,.2);color:orange;}
-
-/* Link tip box in admin */
 .link-tip{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px;font-size:11px;color:var(--text2);line-height:1.8;}
 .link-tip strong{color:var(--accent);}
-.link-tip a{color:var(--accent);text-decoration:none;}
-
 .sb-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;}
 .sb-backdrop.open{opacity:1;pointer-events:all;}
 .sidebar{position:fixed;top:0;left:-290px;bottom:0;width:280px;background:var(--bg2);border-right:1px solid var(--border);z-index:210;transition:left .25s;display:flex;flex-direction:column;overflow:hidden;}
@@ -292,11 +334,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div class="sb-item" onclick="closeSidebar();showPage('categories')"><span class="sb-item-icon"><i class="fas fa-th-large"></i></span><span class="sb-item-label">Categories</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-item" onclick="closeSidebar();showPage('highlights')"><span class="sb-item-icon"><i class="fas fa-play-circle"></i></span><span class="sb-item-label">Highlights</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-divider"></div>
-    <div class="sb-item" onclick="closeSidebar();window.open('contact.html')"><span class="sb-item-icon"><i class="fas fa-envelope"></i></span><span class="sb-item-label">Contact Us</span><span class="sb-item-arrow">›</span></div>
+    <div class="sb-item" onclick="closeSidebar();window.open('contact.html','_self')"><span class="sb-item-icon"><i class="fas fa-envelope"></i></span><span class="sb-item-label">Contact Us</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-item" onclick="closeSidebar();location.reload()"><span class="sb-item-icon"><i class="fas fa-sync-alt"></i></span><span class="sb-item-label">Update App</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-divider"></div>
-    <div class="sb-item" onclick="closeSidebar();window.open('about.html')"><span class="sb-item-icon"><i class="fas fa-bell"></i></span><span class="sb-item-label">Notice</span><span class="sb-item-arrow">›</span></div>
-    <div class="sb-item" onclick="closeSidebar();window.open('privacy.html')"><span class="sb-item-icon">©</span><span class="sb-item-label">Copyright</span><span class="sb-item-arrow">›</span></div>
+    <div class="sb-item" onclick="closeSidebar();window.open('about.html','_self')"><span class="sb-item-icon"><i class="fas fa-bell"></i></span><span class="sb-item-label">Notice</span><span class="sb-item-arrow">›</span></div>
+    <div class="sb-item" onclick="closeSidebar();window.open('privacy.html','_self')"><span class="sb-item-icon">©</span><span class="sb-item-label">Copyright</span><span class="sb-item-arrow">›</span></div>
     <div class="sb-divider"></div>
     <div class="sb-item red" onclick="closeSidebar()"><span class="sb-item-icon"><i class="fas fa-sign-out-alt"></i></span><span class="sb-item-label">Exit</span><span class="sb-item-arrow">›</span></div>
   </div>
@@ -330,7 +372,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <!-- 1xBET BANNER -->
 <div class="bet-banner-strip">
   <a href="https://reffpa.com/L?tag=d_5470802m_1599c_&site=5470802&ad=1599" target="_blank" rel="noopener">
-    <img src="Media37445__en728x90.gif" alt="1xBet - Bet Now"/>
+    <img src="Media37445__en728x90.gif" alt="1xBet - Bet Now" onerror="this.parentElement.parentElement.style.display='none'"/>
   </a>
 </div>
 
@@ -394,7 +436,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   <div class="bn-item" id="nav-highlights" onclick="showPage('highlights')"><i class="fas fa-play-circle"></i><div class="bn-label">Highlights</div></div>
 </div>
 
-<!-- ===== UPGRADED PLAYER ===== -->
+<!-- PLAYER -->
 <div class="player-overlay" id="playerOverlay">
   <div class="player-hdr">
     <div class="player-hdr-left">
@@ -404,11 +446,21 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <button class="player-close" onclick="closePlayer()"><i class="fas fa-times"></i></button>
   </div>
   <div class="player-body">
-    <!-- HLS Video Player -->
+    <!-- HLS Video -->
     <video id="videoEl" controls autoplay playsinline style="width:100%;max-height:56vh;background:#000;display:none;"></video>
-    <!-- Embed/iframe Player -->
-    <iframe id="iframeEl" allowfullscreen allow="autoplay;fullscreen" style="width:100%;height:56vh;border:none;display:none;background:#000;"></iframe>
-    <!-- Error State -->
+    <!-- Embed iframe with ad shields -->
+    <div class="iframe-wrap" id="iframeWrap">
+      <iframe id="iframeEl"
+        sandbox="allow-scripts allow-same-origin allow-presentation allow-forms allow-popups-to-escape-sandbox"
+        allow="autoplay;fullscreen;encrypted-media"
+        allowfullscreen
+        style="width:100%;height:100%;border:none;background:#000;display:block;">
+      </iframe>
+      <!-- shields block top/bottom ad clicks -->
+      <div class="iframe-top-shield" onclick="return false;"></div>
+      <div class="iframe-bottom-shield" onclick="return false;"></div>
+    </div>
+    <!-- Error -->
     <div class="player-err" id="playerErr">
       <i class="fas fa-satellite-dish"></i>
       <p>Stream unavailable.<br>Try another server below.</p>
@@ -436,17 +488,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <button class="adm-tab" onclick="switchAdmTab('Settings',this)"><i class="fas fa-sliders-h"></i> Settings</button>
     </div>
     <div class="adm-body">
-
-      <!-- MATCHES TAB -->
       <div id="admMatches">
-        <!-- LINK SOURCES TIP -->
-        <div class="link-tip">
-          <strong>🔗 Where to get stream links:</strong><br>
-          • <strong>m3u8:</strong> Use F12 on PC → Network → filter m3u8 on sports sites<br>
-          • <strong>Embed:</strong> Paste full iframe/page URL e.g. <em>https://embedme.top/embed/...</em><br>
-          • <strong>Sites:</strong> dlhd.sx · livetv.sx · sportsurge.net · weakstreams.com<br>
-          • Both m3u8 and embed URLs work as servers! ✅
-        </div>
+        <div class="link-tip"><strong>🔗 Stream link sources:</strong><br>• m3u8: Use F12 → Network → filter m3u8<br>• Embed: sportzzonline.click · embedme.top · dlhd.sx<br>• Both m3u8 and embed URLs work ✅</div>
         <div class="section-label">Add New Match</div>
         <div class="fr"><label>Sport</label><select id="mSport"><option value="football">Football</option><option value="cricket">Cricket</option><option value="rugby">Rugby</option><option value="boxing">Boxing</option><option value="motorsport">Motorsport</option><option value="wrestling">Wrestling</option><option value="basketball">Basketball</option></select></div>
         <div class="fr"><label>League Name</label><input type="text" id="mLeague" placeholder="e.g. Premier League"/></div>
@@ -455,7 +498,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         <div class="two-col"><div class="fr"><label>Home Logo URL</label><input type="text" id="mL1" placeholder="https://..."/></div><div class="fr"><label>Away Logo URL</label><input type="text" id="mL2" placeholder="https://..."/></div></div>
         <div class="two-col"><div class="fr"><label>Date</label><input type="date" id="mDate"/></div><div class="fr"><label>Time</label><input type="time" id="mTime"/></div></div>
         <div class="fr"><label>Status</label><select id="mStatus"><option value="upcoming">Upcoming</option><option value="live">🔴 Live Now</option><option value="recent">Recent/Finished</option></select></div>
-        <div class="fr"><label>Server 1 — m3u8 OR embed URL</label><input type="text" id="mS1" placeholder="https://...m3u8 or https://embedme.top/embed/..."/></div>
+        <div class="fr"><label>Server 1 — m3u8 OR embed URL</label><input type="text" id="mS1" placeholder="https://..."/></div>
         <div class="fr"><label>Server 2 (optional)</label><input type="text" id="mS2" placeholder="https://..."/></div>
         <div class="fr"><label>Server 3 (optional)</label><input type="text" id="mS3" placeholder="https://..."/></div>
         <button class="sub-btn" id="mBtn" onclick="addMatch()"><i class="fas fa-plus"></i> Add Match</button>
@@ -463,49 +506,36 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         <div class="section-label">Existing Matches</div>
         <div id="mList" class="adm-list"><div class="loading"><div class="spin"></div></div></div>
       </div>
-
-      <!-- CHANNELS TAB -->
       <div id="admChannels" style="display:none;">
-        <div class="link-tip">
-          <strong>🔗 Channel stream tips:</strong><br>
-          • Paste m3u8 URL <em>or</em> embed URL — both work!<br>
-          • Get logos from: <a href="https://www.google.com/search?q=channel+logo+png" target="_blank">Google Images</a> → right click → copy image address<br>
-          • Example embed: <em>https://embedme.top/embed/alpha/stream-1/1</em>
-        </div>
+        <div class="link-tip"><strong>🔗 Channel tips:</strong><br>• Paste m3u8 or embed URL<br>• Get logos: Google Images → long press → copy link</div>
         <div class="section-label">Add New Channel</div>
         <div class="fr"><label>Channel Name</label><input type="text" id="cName" placeholder="e.g. beIN Sports 1"/></div>
         <div class="fr"><label>Channel Logo URL (optional)</label><input type="text" id="cLogo" placeholder="https://..."/></div>
         <div class="fr"><label>Emoji (if no logo)</label><input type="text" id="cEmoji" value="📺"/></div>
         <div class="fr"><label>Category</label><select id="cCat"><option value="football">Football</option><option value="cricket">Cricket</option><option value="rugby">Rugby</option><option value="boxing">Boxing</option><option value="motorsport">Motorsport</option><option value="wrestling">Wrestling</option><option value="basketball">Basketball</option><option value="general">General</option></select></div>
-        <div class="fr"><label>Stream URL (m3u8 or embed link)</label><input type="text" id="cStream" placeholder="https://...m3u8 or embed URL"/></div>
+        <div class="fr"><label>Stream URL (m3u8 or embed)</label><input type="text" id="cStream" placeholder="https://..."/></div>
         <button class="sub-btn" id="cBtn" onclick="addChannel()"><i class="fas fa-plus"></i> Add Channel</button>
         <div class="divider"></div>
         <div class="section-label">Existing Channels</div>
         <div id="cList" class="adm-list"><div class="loading"><div class="spin"></div></div></div>
       </div>
-
-      <!-- HIGHLIGHTS TAB -->
       <div id="admHighlights" style="display:none;">
         <div class="section-label">Add Highlight</div>
         <div class="fr"><label>Title</label><input type="text" id="hTitle" placeholder="e.g. West Ham vs Wolves - Goals"/></div>
         <div class="fr"><label>Category</label><select id="hCat"><option value="football">Football</option><option value="cricket">Cricket</option><option value="rugby">Rugby</option><option value="boxing">Boxing</option><option value="motorsport">Motorsport</option><option value="wrestling">Wrestling</option><option value="basketball">Basketball</option></select></div>
         <div class="fr"><label>Thumbnail URL (optional)</label><input type="text" id="hThumb" placeholder="https://..."/></div>
-        <div class="fr"><label>Video/Stream URL (m3u8 or embed)</label><input type="text" id="hStream" placeholder="https://..."/></div>
+        <div class="fr"><label>Video/Stream URL</label><input type="text" id="hStream" placeholder="https://..."/></div>
         <div class="fr"><label>Description (optional)</label><input type="text" id="hDesc" placeholder="e.g. Premier League Round 32"/></div>
         <button class="sub-btn" id="hBtn" onclick="addHighlight()"><i class="fas fa-plus"></i> Add Highlight</button>
         <div class="divider"></div>
         <div class="section-label">Existing Highlights</div>
         <div id="hList" class="adm-list"><div class="loading"><div class="spin"></div></div></div>
       </div>
-
-      <!-- TICKER TAB -->
       <div id="admTicker" style="display:none;">
         <div class="section-label">Ticker Messages (one per line)</div>
         <div class="fr"><textarea id="tickerText" placeholder="Welcome to KenSports TV&#10;Watch live football free&#10;Uganda #1 sports site"></textarea></div>
         <button class="sub-btn" onclick="saveTicker()"><i class="fas fa-save"></i> Save Ticker</button>
       </div>
-
-      <!-- SETTINGS TAB -->
       <div id="admSettings" style="display:none;">
         <div class="section-label">Change Password</div>
         <div class="fr"><label>Current Password</label><input type="password" id="oldPwd" placeholder="Current password"/></div>
@@ -553,75 +583,89 @@ CREATE POLICY "pub" ON ks_settings FOR ALL USING (true) WITH CHECK (true);
 var sb=null,allMatches=[],allChannels=[],allHighlights=[],curSport='all',curTab='all',curStreams=[],hlsInst=null,deferredPrompt=null;
 var EMOJIS={football:'⚽',cricket:'🏏',rugby:'🏉',boxing:'🥊',motorsport:'🏎️',wrestling:'🤼',basketball:'🏀',general:'📺'};
 
+// ===== BLOCK ALL POPUPS FROM IFRAMES =====
+// Override window.open so iframes cannot open new tabs
+var _origOpen = window.open;
+window.open = function(url, name, features) {
+  // Only allow our affiliate link
+  if(url && url.indexOf('reffpa.com') !== -1) {
+    return _origOpen.call(window, url, '_blank', features);
+  }
+  // Block everything else
+  return null;
+};
+
+// Block any navigation attempt from inside iframes
+window.addEventListener('blur', function() {
+  // When window loses focus (ad tried to open something), refocus
+  setTimeout(function() {
+    var ifr = document.getElementById('iframeEl');
+    if(ifr && ifr.style.display !== 'none') {
+      // Don't do anything - just prevent the ad from stealing focus
+    }
+  }, 100);
+});
+
 // ===== DETECT STREAM TYPE =====
-function isEmbed(url){
-  if(!url)return false;
-  // Treat as embed if it's not a raw m3u8/ts stream
-  if(url.indexOf('.m3u8')!==-1||url.indexOf('.m3u')!==-1)return false;
-  if(url.indexOf('.ts')!==-1)return false;
-  // These are known embed/iframe sources
-  if(url.indexOf('embedme')!==-1)return true;
-  if(url.indexOf('sportembeds')!==-1)return true;
-  if(url.indexOf('dlhd')!==-1)return true;
-  if(url.indexOf('livetv')!==-1)return true;
-  if(url.indexOf('iframe')!==-1)return true;
-  if(url.indexOf('embed')!==-1)return true;
-  if(url.indexOf('streameast')!==-1)return true;
-  if(url.indexOf('sportsurge')!==-1)return true;
-  if(url.indexOf('weakstreams')!==-1)return true;
-  if(url.indexOf('youtube.com/embed')!==-1)return true;
-  if(url.indexOf('youtu.be')!==-1)return true;
-  // If URL has no file extension and looks like a webpage, treat as embed
-  var hasExt=url.match(/\.(m3u8|m3u|ts|mp4|webm|ogg)(\?|$)/i);
+function isEmbed(url) {
+  if(!url) return false;
+  if(url.indexOf('.m3u8') !== -1 || url.indexOf('.m3u') !== -1) return false;
+  if(url.indexOf('.ts') !== -1) return false;
+  var embedDomains = ['embed','iframe','dlhd','livetv','streameast','sportsurge','weakstreams','youtube.com/embed','youtu.be','sportzzonline','sportembeds','embedme','vipstand','keylime'];
+  for(var i=0; i<embedDomains.length; i++) {
+    if(url.indexOf(embedDomains[i]) !== -1) return true;
+  }
+  var hasExt = url.match(/\.(m3u8|m3u|ts|mp4|webm|ogg)(\?|$)/i);
   return !hasExt;
 }
 
-function getStreamTypeLabel(url){
-  return isEmbed(url)?'<span class="srv-type-badge embed">EMBED</span>':'<span class="srv-type-badge m3u8">HLS</span>';
+function getStreamTypeLabel(url) {
+  return isEmbed(url) ? '<span class="srv-type-badge embed">EMBED</span>' : '<span class="srv-type-badge m3u8">HLS</span>';
 }
 
 // ===== INIT =====
-window.onload=function(){
-  var url='https://qbyisxlqpuwowbtrying.supabase.co';
-  var key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFieWlzeGxxcHV3b3didHJ5aW5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NzczNDMsImV4cCI6MjA5MTE1MzM0M30.D5SKyI3Ay5uFoVvxEOYIKKPnSORxwYoP0PPqdB1OTao';
-  localStorage.setItem('ks_url',url);localStorage.setItem('ks_key',key);
-  initApp(url,key);
+window.onload = function() {
+  var url = 'https://qbyisxlqpuwowbtrying.supabase.co';
+  var key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFieWlzeGxxcHV3b3didHJ5aW5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NzczNDMsImV4cCI6MjA5MTE1MzM0M30.D5SKyI3Ay5uFoVvxEOYIKKPnSORxwYoP0PPqdB1OTao';
+  localStorage.setItem('ks_url', url);
+  localStorage.setItem('ks_key', key);
+  initApp(url, key);
 };
 
-function initApp(url,key){
-  sb=window.supabase.createClient(url,key);
-  var su=document.getElementById('sUrl'),sk=document.getElementById('sKey');
-  if(su)su.value=url;if(sk)sk.value=key;
-  var md=document.getElementById('mDate');if(md)md.value=new Date().toISOString().split('T')[0];
-  loadMatches();loadChannels();loadHighlights();loadSettings();
+function initApp(url, key) {
+  sb = window.supabase.createClient(url, key);
+  var su=document.getElementById('sUrl'), sk=document.getElementById('sKey');
+  if(su) su.value=url; if(sk) sk.value=key;
+  var md=document.getElementById('mDate'); if(md) md.value=new Date().toISOString().split('T')[0];
+  loadMatches(); loadChannels(); loadHighlights(); loadSettings();
 }
 
-function saveSetup(){
-  var url=document.getElementById('setupUrl').value.trim(),key=document.getElementById('setupKey').value.trim();
+function saveSetup() {
+  var url=document.getElementById('setupUrl').value.trim(), key=document.getElementById('setupKey').value.trim();
   if(!url||!key){toast('Fill in both fields',true);return;}
-  localStorage.setItem('ks_url',url);localStorage.setItem('ks_key',key);
+  localStorage.setItem('ks_url',url); localStorage.setItem('ks_key',key);
   document.getElementById('setupScreen').classList.remove('active');
-  initApp(url,key);toast('Connected! ✅');
+  initApp(url,key); toast('Connected! ✅');
 }
 
 // ===== LOAD =====
-function loadMatches(){
+function loadMatches() {
   sb.from('ks_matches').select('*').order('match_date',{ascending:true}).then(function(res){
     if(res.error){handleDbError(res.error);return;}
-    allMatches=res.data||[];updateBadges();renderMatches();renderHL();
+    allMatches=res.data||[]; updateBadges(); renderMatches(); renderHL();
   }).catch(function(e){showDbError(e.message);});
 }
-function loadChannels(){
+function loadChannels() {
   sb.from('ks_channels').select('*').order('created_at',{ascending:false}).then(function(res){
-    if(res.error)return;allChannels=res.data||[];renderChannels();
+    if(res.error)return; allChannels=res.data||[]; renderChannels();
   }).catch(function(){});
 }
-function loadHighlights(){
+function loadHighlights() {
   sb.from('ks_highlights').select('*').order('created_at',{ascending:false}).then(function(res){
-    if(res.error)return;allHighlights=res.data||[];renderHL();
+    if(res.error)return; allHighlights=res.data||[]; renderHL();
   }).catch(function(){});
 }
-function loadSettings(){
+function loadSettings() {
   sb.from('ks_settings').select('*').then(function(res){
     if(!res.data)return;
     res.data.forEach(function(s){
@@ -629,59 +673,58 @@ function loadSettings(){
     });
   }).catch(function(){});
 }
-function handleDbError(error){
+function handleDbError(error) {
   if(error.code==='42P01'){document.getElementById('matchesContainer').innerHTML='<div class="empty"><div class="empty-icon"><i class="fas fa-database" style="font-size:40px;color:var(--text2);"></i></div><h3>Tables Not Created</h3><p>Go to Admin → Settings for SQL setup</p></div>';}
 }
-function showDbError(msg){document.getElementById('matchesContainer').innerHTML='<div class="empty"><div class="empty-icon">⚠️</div><h3>Connection Error</h3><p>'+msg+'</p></div>';}
+function showDbError(msg) {
+  document.getElementById('matchesContainer').innerHTML='<div class="empty"><div class="empty-icon">⚠️</div><h3>Connection Error</h3><p>'+msg+'</p></div>';
+}
 
 // ===== RENDER =====
-function updateBadges(){
+function updateBadges() {
   ['all','football','cricket','rugby','boxing','motorsport','wrestling','basketball'].forEach(function(cat){
     var el=document.getElementById('b-'+cat);
-    if(el)el.textContent=cat==='all'?allMatches.length:allMatches.filter(function(m){return m.sport===cat;}).length;
+    if(el) el.textContent=cat==='all'?allMatches.length:allMatches.filter(function(m){return m.sport===cat;}).length;
   });
   document.getElementById('c-all').textContent=allMatches.length;
   document.getElementById('c-live').textContent=allMatches.filter(function(m){return m.status==='live';}).length;
   document.getElementById('c-upcoming').textContent=allMatches.filter(function(m){return m.status==='upcoming';}).length;
   document.getElementById('c-recent').textContent=allMatches.filter(function(m){return m.status==='recent';}).length;
 }
-
-function getFiltered(){
+function getFiltered() {
   var m=allMatches;
-  if(curSport!=='all')m=m.filter(function(x){return x.sport===curSport;});
-  if(curTab!=='all')m=m.filter(function(x){return x.status===curTab;});
+  if(curSport!=='all') m=m.filter(function(x){return x.sport===curSport;});
+  if(curTab!=='all') m=m.filter(function(x){return x.status===curTab;});
   return m;
 }
-
-function renderMatches(){
-  var matches=getFiltered(),container=document.getElementById('matchesContainer');
+function renderMatches() {
+  var matches=getFiltered(), container=document.getElementById('matchesContainer');
   if(!matches.length){container.innerHTML='<div class="empty"><div class="empty-icon"><i class="fas fa-calendar-times" style="font-size:40px;color:var(--text2);"></i></div><h3>No Matches</h3><p>No '+(curTab==='all'?'':curTab)+' matches found</p></div>';return;}
   var html=matches.map(function(m){
     var live=m.status==='live';
     var streams=[m.stream1,m.stream2,m.stream3].filter(Boolean);
-    var sj=esc(JSON.stringify(streams));
-    var t=esc(m.team1+' vs '+m.team2);
+    var sj=esc(JSON.stringify(streams)), t=esc(m.team1+' vs '+m.team2);
     var l1=m.logo1?'<img src="'+esc(m.logo1)+'" onerror="this.outerHTML=\'<div class=mteam-ph>'+(EMOJIS[m.sport]||'⚽')+'</div>\'" />':'<div class="mteam-ph">'+(EMOJIS[m.sport]||'⚽')+'</div>';
     var l2=m.logo2?'<img src="'+esc(m.logo2)+'" onerror="this.outerHTML=\'<div class=mteam-ph>'+(EMOJIS[m.sport]||'⚽')+'</div>\'" />':'<div class="mteam-ph">'+(EMOJIS[m.sport]||'⚽')+'</div>';
     var ll=m.league_logo?'<img src="'+esc(m.league_logo)+'" onerror="this.style.display=\'none\'" />':'<i class="fas fa-trophy" style="font-size:12px;"></i>';
     var tb=live?'<span class="live-badge">● LIVE</span>':'<span class="mt">'+esc(m.match_time||'')+' '+(m.match_date?fmtDate(m.match_date):'')+'</span>';
-    return '<div class="match-card '+(live?'is-live':'')+'" onclick="playMatch(\''+t+'\',\''+sj+'\')"><div class="mh"><div class="ml">'+ll+'<span>'+esc((m.sport||'').toUpperCase())+' ‖ '+esc(m.league||'')+'</span></div>'+tb+'</div><div class="mb"><div class="mteam">'+l1+'<div class="mteam-name">'+esc(m.team1)+'</div></div><div class="mvs">VS</div><div class="mteam">'+l2+'<div class="mteam-name">'+esc(m.team2)+'</div></div></div></div>';
+    return '<div class="match-card '+(live?'is-live':'')+'" onclick="playMatch(\''+t+'\',\''+sj+'\')">'
+      +'<div class="mh"><div class="ml">'+ll+'<span>'+esc((m.sport||'').toUpperCase())+' ‖ '+esc(m.league||'')+'</span></div>'+tb+'</div>'
+      +'<div class="mb"><div class="mteam">'+l1+'<div class="mteam-name">'+esc(m.team1)+'</div></div><div class="mvs">VS</div><div class="mteam">'+l2+'<div class="mteam-name">'+esc(m.team2)+'</div></div></div></div>';
   }).join('');
   container.innerHTML='<div class="matches-list">'+html+'</div>';
 }
-
-function renderChannels(){
+function renderChannels() {
   var grid=document.getElementById('channelsGrid');
   var chs=allChannels;
-  if(curSport!=='all')chs=chs.filter(function(c){return c.category===curSport;});
+  if(curSport!=='all') chs=chs.filter(function(c){return c.category===curSport;});
   if(!chs.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1;padding:30px;"><div class="empty-icon"><i class="fas fa-tv" style="font-size:36px;color:var(--text2);"></i></div><h3>No Channels</h3></div>';return;}
   grid.innerHTML=chs.map(function(ch){
     var lh=ch.logo?'<img src="'+esc(ch.logo)+'" class="ch-logo" onerror="this.outerHTML=\'<div class=ch-ph>'+(ch.emoji||'📺')+'</div>\'" />':'<div class="ch-ph">'+(ch.emoji||'📺')+'</div>';
     return '<div class="ch-card" onclick="playChannel(\''+esc(ch.name)+'\',\''+esc(ch.stream_url||'')+'\')">'+'<div class="ch-dot"></div>'+lh+'<div class="ch-name">'+esc(ch.name)+'</div></div>';
   }).join('');
 }
-
-function renderHL(){
+function renderHL() {
   var grid=document.getElementById('hlGrid');
   var items=allHighlights.length>0?allHighlights:allMatches.filter(function(m){return m.status==='recent'&&m.stream1;});
   if(!items.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1;"><div class="empty-icon"><i class="fas fa-film" style="font-size:40px;color:var(--text2);"></i></div><h3>No Highlights</h3><p>Add highlights in Admin</p></div>';return;}
@@ -691,10 +734,11 @@ function renderHL(){
     var sub=isHL?(item.description||item.category):(item.league||'');
     var stream=isHL?item.stream_url:item.stream1;
     var thumb=isHL?item.thumbnail:item.logo1;
-    var sj=esc(JSON.stringify([stream].filter(Boolean)));
-    var t=esc(title);
+    var sj=esc(JSON.stringify([stream].filter(Boolean))), t=esc(title);
     var th=thumb?'<img src="'+esc(thumb)+'" onerror="this.style.display=\'none\'" />':'<div class="hl-thumb-ph">'+(EMOJIS[item.sport||item.category]||'⚽')+'</div>';
-    return '<div class="hl-card" onclick="playMatch(\''+t+'\',\''+sj+'\')"><div class="hl-thumb">'+th+'<div class="hl-play"><i class="fas fa-play"></i></div></div><div class="hl-info"><div class="hl-name">'+esc(title)+'</div><div class="hl-sub">'+esc(sub)+'</div></div></div>';
+    return '<div class="hl-card" onclick="playMatch(\''+t+'\',\''+sj+'\')">'
+      +'<div class="hl-thumb">'+th+'<div class="hl-play"><i class="fas fa-play"></i></div></div>'
+      +'<div class="hl-info"><div class="hl-name">'+esc(title)+'</div><div class="hl-sub">'+esc(sub)+'</div></div></div>';
   }).join('');
 }
 
@@ -709,8 +753,7 @@ function showPage(page){
   if(page==='categories')renderCats();
   if(page==='highlights')renderHL();
 }
-
-function renderCats(){
+function renderCats() {
   var cats=['football','cricket','rugby','boxing','motorsport','wrestling','basketball'];
   var html=cats.map(function(cat){
     var cm=allMatches.filter(function(m){return m.sport===cat;});
@@ -718,93 +761,85 @@ function renderCats(){
     if(!cm.length&&!cc.length)return'';
     var chHtml=cc.slice(0,3).map(function(ch){
       var lh=ch.logo?'<img src="'+esc(ch.logo)+'" style="width:36px;height:36px;object-fit:contain;border-radius:6px;" />':'<div style="width:36px;height:36px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;">'+(ch.emoji||'📺')+'</div>';
-      return '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:8px;cursor:pointer;" onclick="playChannel(\''+esc(ch.name)+'\',\''+esc(ch.stream_url||'')+'\')">'+ lh+'<div style="flex:1;"><div style="font-size:13px;font-weight:600;">'+esc(ch.name)+'</div><div style="font-size:11px;color:var(--text2);">Live Channel</div></div><div style="color:var(--live);font-size:11px;font-weight:600;">● LIVE</div></div>';
+      return '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:8px;cursor:pointer;" onclick="playChannel(\''+esc(ch.name)+'\',\''+esc(ch.stream_url||'')+'\')">'
+        +lh+'<div style="flex:1;"><div style="font-size:13px;font-weight:600;">'+esc(ch.name)+'</div><div style="font-size:11px;color:var(--text2);">Live Channel</div></div>'
+        +'<div style="color:var(--live);font-size:11px;font-weight:600;">● LIVE</div></div>';
     }).join('');
-    return '<div style="margin-bottom:20px;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><div style="font-family:Rajdhani,sans-serif;font-size:18px;font-weight:700;">'+(EMOJIS[cat]||'')+' '+cat.toUpperCase()+'</div><div style="font-size:12px;color:var(--text2);">'+cm.length+' matches · '+cc.length+' channels</div></div>'+chHtml+'</div>';
+    return '<div style="margin-bottom:20px;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
+      +'<div style="font-family:Rajdhani,sans-serif;font-size:18px;font-weight:700;">'+(EMOJIS[cat]||'')+' '+cat.toUpperCase()+'</div>'
+      +'<div style="font-size:12px;color:var(--text2);">'+cm.length+' matches · '+cc.length+' channels</div></div>'+chHtml+'</div>';
   }).join('');
   document.getElementById('catsContent').innerHTML=html||'<div class="empty"><div class="empty-icon">📺</div><h3>No Content Yet</h3><p>Add matches and channels in Admin</p></div>';
 }
 
-// ===== UPGRADED PLAYER =====
-function playMatch(title,sj){
-  try{
+// ===== PLAYER WITH AD BLOCKING =====
+function playMatch(title,sj) {
+  try {
     var decoded=sj.replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
     var streams=JSON.parse(decoded);
     if(!streams||!streams.length){toast('No stream available',true);return;}
-    curStreams=streams;openPlayer(title,streams,false);
-  }catch(e){toast('Error loading stream',true);}
+    curStreams=streams; openPlayer(title,streams,false);
+  } catch(e){toast('Error loading stream',true);}
 }
-
-function playChannel(name,url){
+function playChannel(name,url) {
   if(!url){toast('No stream URL',true);return;}
-  curStreams=[url];openPlayer(name,[url],true);
+  curStreams=[url]; openPlayer(name,[url],true);
 }
-
-function openPlayer(title,streams,isLive){
+function openPlayer(title,streams,isLive) {
   document.getElementById('playerTitle').textContent=title;
   document.getElementById('playerLiveBadge').style.display=isLive?'inline-flex':'none';
   document.getElementById('playerOverlay').classList.add('active');
-  // Build server buttons with type labels
   document.getElementById('srvBtns').innerHTML=streams.map(function(s,i){
     return '<button class="srv-btn '+(i===0?'active':'')+'" onclick="switchSrv('+i+')">Server '+(i+1)+getStreamTypeLabel(s)+'</button>';
   }).join('');
   loadStream(streams[0]);
 }
-
-function switchSrv(idx){
+function switchSrv(idx) {
   document.querySelectorAll('.srv-btn').forEach(function(b,i){b.classList.toggle('active',i===idx);});
   loadStream(curStreams[idx]);
 }
-
-function loadStream(url){
+function loadStream(url) {
   var v=document.getElementById('videoEl');
+  var ifrWrap=document.getElementById('iframeWrap');
   var ifr=document.getElementById('iframeEl');
   var err=document.getElementById('playerErr');
-
-  // Hide all first
-  v.style.display='none';
-  ifr.style.display='none';
-  err.style.display='none';
-  ifr.src='about:blank';
-  v.src='';
+  // Hide all
+  v.style.display='none'; ifrWrap.style.display='none'; err.style.display='none';
+  ifr.src='about:blank'; v.src='';
   if(hlsInst){hlsInst.destroy();hlsInst=null;}
-
   if(!url){showPlayerErr();return;}
-
-  if(isEmbed(url)){
-    // EMBED / IFRAME MODE
-    ifr.style.display='block';
-    ifr.src=url;
+  if(isEmbed(url)) {
+    // EMBED MODE - with ad blocking
+    ifrWrap.style.display='block';
+    // Small delay to ensure blank loaded first
+    setTimeout(function(){ ifr.src=url; }, 50);
   } else {
-    // HLS / M3U8 MODE
+    // HLS MODE
     v.style.display='block';
     if(Hls.isSupported()){
       hlsInst=new Hls({enableWorker:false,lowLatencyMode:true});
-      hlsInst.loadSource(url);
-      hlsInst.attachMedia(v);
+      hlsInst.loadSource(url); hlsInst.attachMedia(v);
       hlsInst.on(Hls.Events.MANIFEST_PARSED,function(){v.play().catch(function(){});});
       hlsInst.on(Hls.Events.ERROR,function(e,d){if(d.fatal)showPlayerErr();});
     } else if(v.canPlayType('application/vnd.apple.mpegurl')){
-      v.src=url;v.play().catch(function(){});
+      v.src=url; v.play().catch(function(){});
     } else {
-      v.src=url;v.play().catch(function(){showPlayerErr();});
+      v.src=url; v.play().catch(function(){showPlayerErr();});
     }
     v.onerror=function(){showPlayerErr();};
   }
 }
-
 function showPlayerErr(){
   document.getElementById('videoEl').style.display='none';
-  document.getElementById('iframeEl').style.display='none';
+  document.getElementById('iframeWrap').style.display='none';
   document.getElementById('playerErr').style.display='flex';
 }
-
 function closePlayer(){
   document.getElementById('playerOverlay').classList.remove('active');
   var v=document.getElementById('videoEl');
   var ifr=document.getElementById('iframeEl');
-  v.pause();v.src='';
-  ifr.src='about:blank';
+  v.pause(); v.src=''; ifr.src='about:blank';
+  document.getElementById('iframeWrap').style.display='none';
   if(hlsInst){hlsInst.destroy();hlsInst=null;}
 }
 
@@ -822,8 +857,7 @@ function doSearch(q){
   var ms=allMatches.filter(function(m){return(m.team1+m.team2+(m.league||'')).toLowerCase().indexOf(ql)!==-1;});
   var cs=allChannels.filter(function(c){return c.name.toLowerCase().indexOf(ql)!==-1;});
   var html=ms.map(function(m){
-    var sj=esc(JSON.stringify([m.stream1,m.stream2,m.stream3].filter(Boolean)));
-    var t=esc(m.team1+' vs '+m.team2);
+    var sj=esc(JSON.stringify([m.stream1,m.stream2,m.stream3].filter(Boolean))), t=esc(m.team1+' vs '+m.team2);
     return '<div onclick="playMatch(\''+t+'\',\''+sj+'\');closeSearch()" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;cursor:pointer;"><div style="font-size:13px;font-weight:600;">'+esc(m.team1)+' vs '+esc(m.team2)+'</div><div style="font-size:11px;color:var(--text2);">'+esc(m.league||'')+' · '+m.status+'</div></div>';
   }).concat(cs.map(function(c){
     var logo=c.logo?'<img src="'+esc(c.logo)+'" style="width:32px;height:32px;object-fit:contain;border-radius:4px;">':'<span style="font-size:22px;">'+(c.emoji||'📺')+'</span>';
@@ -856,7 +890,6 @@ function switchAdmTab(tab,el){
   if(tab==='Channels')loadAdmChannels();
   if(tab==='Highlights')loadAdmHighlights();
 }
-
 function loadAdmMatches(){
   var list=document.getElementById('mList');list.innerHTML='<div class="loading"><div class="spin"></div></div>';
   sb.from('ks_matches').select('*').order('created_at',{ascending:false}).then(function(res){
@@ -881,8 +914,6 @@ function loadAdmHighlights(){
     list.innerHTML=data.map(function(h){return '<div class="ali"><div style="font-size:18px;">'+(EMOJIS[h.category]||'🎬')+'</div><div class="ali-info"><div class="ali-name">'+esc(h.title)+'</div><div class="ali-sub">'+esc(h.category||'')+(h.description?' · '+esc(h.description):'')+'</div></div><div class="ali-actions"><button class="btn-danger" onclick="delHighlight('+h.id+')"><i class="fas fa-trash"></i></button></div></div>';}).join('');
   }).catch(function(){});
 }
-
-// ===== ADD =====
 function addMatch(){
   var t1=document.getElementById('mT1').value.trim(),t2=document.getElementById('mT2').value.trim(),s1=document.getElementById('mS1').value.trim();
   if(!t1||!t2){toast('Enter both team names',true);return;}if(!s1){toast('Enter at least Server 1 URL',true);return;}
@@ -913,15 +944,13 @@ function addHighlight(){
     btn.disabled=false;
   }).catch(function(e){toast('Error: '+e.message,true);btn.disabled=false;});
 }
-
-// ===== EDIT =====
 function editMatch(id){
   sb.from('ks_matches').select('*').eq('id',id).single().then(function(res){
     var m=res.data;if(!m)return;
     var so=['football','cricket','rugby','boxing','motorsport','wrestling','basketball'].map(function(s){return'<option value="'+s+'" '+(m.sport===s?'selected':'')+'>'+s+'</option>';}).join('');
     var sto=['upcoming','live','recent'].map(function(s){return'<option value="'+s+'" '+(m.status===s?'selected':'')+'>'+s+'</option>';}).join('');
     document.getElementById('editModalTitle').textContent='Edit Match';
-    document.getElementById('editModalBody').innerHTML='<div class="fr"><label>Sport</label><select id="em_sport">'+so+'</select></div><div class="fr"><label>League</label><input type="text" id="em_league" value="'+esc(m.league||'')+'" /></div><div class="fr"><label>League Logo URL</label><input type="text" id="em_leagueLogo" value="'+esc(m.league_logo||'')+'" /></div><div class="two-col"><div class="fr"><label>Home Team</label><input type="text" id="em_t1" value="'+esc(m.team1||'')+'" /></div><div class="fr"><label>Away Team</label><input type="text" id="em_t2" value="'+esc(m.team2||'')+'" /></div></div><div class="two-col"><div class="fr"><label>Home Logo</label><input type="text" id="em_l1" value="'+esc(m.logo1||'')+'" /></div><div class="fr"><label>Away Logo</label><input type="text" id="em_l2" value="'+esc(m.logo2||'')+'" /></div></div><div class="two-col"><div class="fr"><label>Date</label><input type="date" id="em_date" value="'+(m.match_date||'')+'" /></div><div class="fr"><label>Time</label><input type="time" id="em_time" value="'+(m.match_time||'')+'" /></div></div><div class="fr"><label>Status</label><select id="em_status">'+sto+'</select></div><div class="fr"><label>Server 1 (m3u8 or embed)</label><input type="text" id="em_s1" value="'+esc(m.stream1||'')+'" /></div><div class="fr"><label>Server 2</label><input type="text" id="em_s2" value="'+esc(m.stream2||'')+'" /></div><div class="fr"><label>Server 3</label><input type="text" id="em_s3" value="'+esc(m.stream3||'')+'" /></div><button class="sub-btn" onclick="saveEditMatch('+id+')"><i class="fas fa-save"></i> Save Changes</button>';
+    document.getElementById('editModalBody').innerHTML='<div class="fr"><label>Sport</label><select id="em_sport">'+so+'</select></div><div class="fr"><label>League</label><input type="text" id="em_league" value="'+esc(m.league||'')+'" /></div><div class="fr"><label>League Logo URL</label><input type="text" id="em_leagueLogo" value="'+esc(m.league_logo||'')+'" /></div><div class="two-col"><div class="fr"><label>Home Team</label><input type="text" id="em_t1" value="'+esc(m.team1||'')+'" /></div><div class="fr"><label>Away Team</label><input type="text" id="em_t2" value="'+esc(m.team2||'')+'" /></div></div><div class="two-col"><div class="fr"><label>Home Logo</label><input type="text" id="em_l1" value="'+esc(m.logo1||'')+'" /></div><div class="fr"><label>Away Logo</label><input type="text" id="em_l2" value="'+esc(m.logo2||'')+'" /></div></div><div class="two-col"><div class="fr"><label>Date</label><input type="date" id="em_date" value="'+(m.match_date||'')+'" /></div><div class="fr"><label>Time</label><input type="time" id="em_time" value="'+(m.match_time||'')+'" /></div></div><div class="fr"><label>Status</label><select id="em_status">'+sto+'</select></div><div class="fr"><label>Server 1</label><input type="text" id="em_s1" value="'+esc(m.stream1||'')+'" /></div><div class="fr"><label>Server 2</label><input type="text" id="em_s2" value="'+esc(m.stream2||'')+'" /></div><div class="fr"><label>Server 3</label><input type="text" id="em_s3" value="'+esc(m.stream3||'')+'" /></div><button class="sub-btn" onclick="saveEditMatch('+id+')"><i class="fas fa-save"></i> Save Changes</button>';
     document.getElementById('editModal').classList.add('active');
   });
 }
@@ -936,7 +965,7 @@ function editChannel(id){
     var ch=res.data;if(!ch)return;
     var co=['football','cricket','rugby','boxing','motorsport','wrestling','basketball','general'].map(function(s){return'<option value="'+s+'" '+(ch.category===s?'selected':'')+'>'+s+'</option>';}).join('');
     document.getElementById('editModalTitle').textContent='Edit Channel';
-    document.getElementById('editModalBody').innerHTML='<div class="fr"><label>Channel Name</label><input type="text" id="ec_name" value="'+esc(ch.name||'')+'" /></div><div class="fr"><label>Logo URL</label><input type="text" id="ec_logo" value="'+esc(ch.logo||'')+'" /></div><div class="fr"><label>Emoji</label><input type="text" id="ec_emoji" value="'+esc(ch.emoji||'📺')+'" /></div><div class="fr"><label>Category</label><select id="ec_cat">'+co+'</select></div><div class="fr"><label>Stream URL (m3u8 or embed)</label><input type="text" id="ec_stream" value="'+esc(ch.stream_url||'')+'" /></div><button class="sub-btn" onclick="saveEditChannel('+id+')"><i class="fas fa-save"></i> Save Changes</button>';
+    document.getElementById('editModalBody').innerHTML='<div class="fr"><label>Channel Name</label><input type="text" id="ec_name" value="'+esc(ch.name||'')+'" /></div><div class="fr"><label>Logo URL</label><input type="text" id="ec_logo" value="'+esc(ch.logo||'')+'" /></div><div class="fr"><label>Emoji</label><input type="text" id="ec_emoji" value="'+esc(ch.emoji||'📺')+'" /></div><div class="fr"><label>Category</label><select id="ec_cat">'+co+'</select></div><div class="fr"><label>Stream URL</label><input type="text" id="ec_stream" value="'+esc(ch.stream_url||'')+'" /></div><button class="sub-btn" onclick="saveEditChannel('+id+')"><i class="fas fa-save"></i> Save Changes</button>';
     document.getElementById('editModal').classList.add('active');
   });
 }
@@ -947,13 +976,9 @@ function saveEditChannel(id){
   });
 }
 function closeEditModal(){document.getElementById('editModal').classList.remove('active');}
-
-// ===== DELETE =====
 function delMatch(id){if(!confirm('Delete this match?'))return;sb.from('ks_matches').delete().eq('id',id).then(function(){toast('Deleted');loadMatches();loadAdmMatches();});}
 function delChannel(id){if(!confirm('Delete this channel?'))return;sb.from('ks_channels').delete().eq('id',id).then(function(){toast('Deleted');loadChannels();loadAdmChannels();});}
 function delHighlight(id){if(!confirm('Delete this highlight?'))return;sb.from('ks_highlights').delete().eq('id',id).then(function(){toast('Deleted');loadHighlights();loadAdmHighlights();});}
-
-// ===== TICKER =====
 function saveTicker(){
   var text=document.getElementById('tickerText').value.trim();
   sb.from('ks_settings').upsert({key:'ticker',value:text}).then(function(res){
@@ -966,8 +991,6 @@ function updateTicker(msgs){
   var html=msgs.map(function(m){return'<span><span class="tick-dot"></span>'+m+'</span>';}).join('');
   document.getElementById('tickerTrack').innerHTML=html+html;
 }
-
-// ===== PASSWORD =====
 function changePwd(){
   var oldVal=document.getElementById('oldPwd').value,newVal=document.getElementById('newPwd').value,confVal=document.getElementById('confPwd').value;
   if(newVal.length<6){toast('Password min 6 characters',true);return;}
@@ -994,13 +1017,9 @@ function saveSupabase(){
   sb=window.supabase.createClient(url,key);toast('Settings saved! ✅');
   loadMatches();loadChannels();loadHighlights();
 }
-
-// ===== PWA =====
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;document.getElementById('installBar').classList.add('show');});
 function installApp(){if(!deferredPrompt)return;deferredPrompt.prompt();deferredPrompt.userChoice.then(function(r){document.getElementById('installBar').classList.remove('show');deferredPrompt=null;if(r.outcome==='accepted')toast('KenSports TV installed! ✅');});}
 window.addEventListener('appinstalled',function(){document.getElementById('installBar').classList.remove('show');toast('App installed! 🎉');});
-
-// ===== UTILS =====
 function fmtDate(d){try{return new Date(d).toLocaleDateString('en-UG',{day:'numeric',month:'short'});}catch(e){return d;}}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function toast(msg,isErr){var t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(isErr?' err':'');t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3000);}
