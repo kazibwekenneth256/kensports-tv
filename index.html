@@ -256,6 +256,22 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .ch-name{font-size:9px;font-weight:600;text-align:center;color:var(--text2);line-height:1.2;}
 .ch-dot{position:absolute;top:4px;right:4px;width:6px;height:6px;border-radius:50%;background:var(--live);animation:bl 1s infinite;}
 
+/* ===== CATEGORY TABS ===== */
+.cat-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
+.cat-tabs::-webkit-scrollbar{display:none;}
+.cat-tab{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;}
+.cat-tab.active{background:var(--accent);border-color:var(--accent);color:#000;}
+
+/* ===== PULL TO REFRESH ===== */
+.ptr-indicator{
+  text-align:center;padding:10px;
+  font-size:12px;color:var(--text2);
+  display:none;
+}
+.ptr-indicator.show{display:block;}
+.ptr-arrow{display:inline-block;transition:transform .3s;font-size:16px;}
+.ptr-arrow.spin-it{animation:sp .7s linear infinite;}
+
 /* ===== SECTION HEADERS ===== */
 .sh{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px;}
 .st{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;}
@@ -640,6 +656,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   </div>
 </nav>
 
+<!-- PULL TO REFRESH -->
+<div class="ptr-indicator" id="ptrIndicator">
+  <span class="ptr-arrow" id="ptrArrow">↓</span> Pull down to refresh
+</div>
+
 <!-- TOP AD BANNER -->
 <div class="bet-banner-strip">
   <a href="https://reffpa.com/L?tag=d_5470802m_1599c_&site=5470802&ad=1599" target="_blank" rel="noopener">
@@ -673,29 +694,38 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <!-- HOME PAGE -->
 <div id="pageHome">
   <div class="tabs">
-    <div class="tab active" onclick="switchTab('all',this)">All (<span id="c-all">0</span>)</div>
+    <div class="tab active" onclick="switchTab('recent',this)"><i class="fas fa-history" style="font-size:8px;margin-right:4px;"></i>Recent (<span id="c-recent">0</span>)</div>
     <div class="tab" onclick="switchTab('live',this)"><i class="fas fa-circle" style="color:var(--live);font-size:8px;margin-right:4px;"></i>Live (<span id="c-live">0</span>)</div>
     <div class="tab" onclick="switchTab('upcoming',this)">Upcoming (<span id="c-upcoming">0</span>)</div>
-    <div class="tab" onclick="switchTab('recent',this)">Recent (<span id="c-recent">0</span>)</div>
+    <div class="tab" onclick="switchTab('all',this)">All (<span id="c-all">0</span>)</div>
   </div>
   <div id="matchesContainer"><div class="loading"><div class="spin"></div> Loading...</div></div>
 
-  <!-- MID PAGE AD (after matches, before channels) -->
+  <!-- MID PAGE AD -->
   <div class="mid-ad-banner" id="midAdBanner">
     <a href="https://reffpa.com/L?tag=d_5470802m_1599c_&site=5470802&ad=1599" target="_blank" rel="noopener">
       <img src="Media37445__en728x90.gif" alt="1xBet" onerror="this.parentElement.parentElement.style.display='none'"/>
     </a>
-  </div>
-
-  <div id="channelsSection">
-    <div class="sh"><div class="st"><i class="fas fa-tv" style="color:var(--accent);margin-right:8px;"></i>Live Channels</div><div class="sb-live">LIVE</div></div>
-    <div class="ch-grid" id="channelsGrid"><div class="loading" style="grid-column:1/-1"><div class="spin"></div></div></div>
   </div>
 </div>
 
 <!-- CATEGORIES PAGE -->
 <div id="pageCategories" style="display:none;">
   <div class="sh" style="padding-top:16px;"><div class="st"><i class="fas fa-th" style="color:var(--accent);margin-right:8px;"></i>Categories</div></div>
+
+  <!-- Channel Categories -->
+  <div style="padding:0 12px 8px;">
+    <div class="cat-tabs" id="catTabs">
+      <div class="cat-tab active" onclick="switchCatTab('sports',this)">⚽ Sports</div>
+      <div class="cat-tab" onclick="switchCatTab('live',this)">🔴 Live Events</div>
+      <div class="cat-tab" onclick="switchCatTab('kids',this)">🧒 Kids</div>
+      <div class="cat-tab" onclick="switchCatTab('general',this)">📺 General</div>
+      <div class="cat-tab" onclick="switchCatTab('all',this)">🌍 All</div>
+    </div>
+    <div class="ch-grid" id="channelsGrid" style="margin-top:10px;"><div class="loading" style="grid-column:1/-1"><div class="spin"></div></div></div>
+  </div>
+
+  <div class="divider" style="margin:8px 0;"></div>
   <div id="catsContent" style="padding:0 16px 16px;"></div>
 </div>
 
@@ -1527,7 +1557,7 @@ function showPage(page){
     var nav=document.getElementById('nav-'+p);
     if(nav)nav.classList.toggle('active',p===page);
   });
-  if(page==='categories')renderCats();
+  if(page==='categories'){renderCats();renderChannelsByCat(curCatTab||'sports');}
   if(page==='highlights')renderHL();
   if(page==='favorites')renderFavorites();
 }
@@ -1570,6 +1600,8 @@ function openPlayer(title,streams,isLive,matchId){
   document.getElementById('playerTitle').textContent=title;
   document.getElementById('playerLiveBadge').style.display=isLive?'inline-flex':'none';
   document.getElementById('playerOverlay').classList.add('active');
+  // Auto rotate to landscape
+  tryAutoRotate();
   // Hide telegram button when player is open
   var tg=document.getElementById('tgFloat');
   if(tg)tg.style.display='none';
@@ -1684,12 +1716,91 @@ function closePlayer(){
   document.getElementById('iframeWrap').style.display='none';
   if(hlsInst){hlsInst.destroy();hlsInst=null;}
   if(document.exitFullscreen)document.exitFullscreen().catch(function(){});
+  // Unlock screen rotation
+  unlockRotate();
   // Show telegram button again
   var tg=document.getElementById('tgFloat');
   if(tg)tg.style.display='flex';
 }
 
-// ===== SECRET ADMIN TAP =====
+// ===== CATEGORY TABS =====
+var curCatTab='sports';
+function switchCatTab(cat,el){
+  curCatTab=cat;
+  document.querySelectorAll('.cat-tab').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active');
+  renderChannelsByCat(cat);
+}
+function renderChannelsByCat(cat){
+  var grid=document.getElementById('channelsGrid');
+  if(!grid)return;
+  var chs=allChannels;
+  if(cat==='sports')chs=chs.filter(function(c){return ['football','cricket','rugby','boxing','motorsport','wrestling','basketball'].indexOf(c.category)!==-1;});
+  else if(cat==='live')chs=chs.filter(function(c){return c.category==='live'||c.name.toLowerCase().indexOf('news')!==-1||c.name.toLowerCase().indexOf('sport')!==-1;});
+  else if(cat==='kids')chs=chs.filter(function(c){return c.category==='kids'||c.name.toLowerCase().indexOf('kid')!==-1||c.name.toLowerCase().indexOf('cartoon')!==-1||c.name.toLowerCase().indexOf('junior')!==-1;});
+  else if(cat==='general')chs=chs.filter(function(c){return c.category==='general'||c.name.toLowerCase().indexOf('news')!==-1||c.name.toLowerCase().indexOf('hollywood')!==-1;});
+  // else 'all' - show all
+  if(!chs.length){
+    grid.innerHTML='<div class="empty" style="grid-column:1/-1;padding:20px;"><div class="empty-icon">📺</div><h3>No Channels</h3><p>Add channels in Admin</p></div>';
+    return;
+  }
+  grid.innerHTML=chs.map(function(ch){
+    var lh=ch.logo?'<img src="'+esc(ch.logo)+'" class="ch-logo" onerror="this.outerHTML=\'<div class=ch-ph>'+(ch.emoji||'📺')+'</div>\'" />':'<div class="ch-ph">'+(ch.emoji||'📺')+'</div>';
+    return '<div class="ch-card" onclick="playChannel(\''+esc(ch.name)+'\',\''+esc(ch.stream_url||'')+'\')">'+'<div class="ch-dot"></div>'+lh+'<div class="ch-name">'+esc(ch.name)+'</div></div>';
+  }).join('');
+}
+
+// ===== AUTO ROTATE VIDEO =====
+function tryAutoRotate(){
+  if(screen.orientation&&screen.orientation.lock){
+    screen.orientation.lock('landscape').catch(function(){});
+  }
+}
+function unlockRotate(){
+  if(screen.orientation&&screen.orientation.unlock){
+    screen.orientation.unlock();
+  }
+}
+
+// ===== PULL TO REFRESH =====
+var ptrStartY=0,ptrActive=false,ptrThreshold=80;
+document.addEventListener('touchstart',function(e){
+  if(window.scrollY===0&&!document.getElementById('playerOverlay').classList.contains('active')){
+    ptrStartY=e.touches[0].clientY;
+    ptrActive=true;
+  }
+},{passive:true});
+document.addEventListener('touchmove',function(e){
+  if(!ptrActive)return;
+  var diff=e.touches[0].clientY-ptrStartY;
+  var ind=document.getElementById('ptrIndicator');
+  var arrow=document.getElementById('ptrArrow');
+  if(diff>20){
+    if(ind)ind.classList.add('show');
+    if(arrow){
+      if(diff>ptrThreshold){arrow.textContent='↑';arrow.style.transform='rotate(180deg)';}
+      else{arrow.textContent='↓';arrow.style.transform='rotate(0deg)';}
+    }
+  }
+},{passive:true});
+document.addEventListener('touchend',function(e){
+  if(!ptrActive)return;
+  ptrActive=false;
+  var diff=e.changedTouches[0].clientY-ptrStartY;
+  var ind=document.getElementById('ptrIndicator');
+  var arrow=document.getElementById('ptrArrow');
+  if(diff>ptrThreshold){
+    if(arrow){arrow.textContent='🔄';arrow.classList.add('spin-it');}
+    loadMatches();loadChannels();loadHighlights();loadSettings();
+    toast('Refreshing... 🔄');
+    setTimeout(function(){
+      if(ind)ind.classList.remove('show');
+      if(arrow){arrow.classList.remove('spin-it');arrow.textContent='↓';arrow.style.transform='';}
+    },2000);
+  } else {
+    if(ind)ind.classList.remove('show');
+  }
+},{passive:true});
 var secretTapCount=0,secretTapTimer=null;
 function secretTap(){
   secretTapCount++;
