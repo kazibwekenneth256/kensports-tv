@@ -453,6 +453,12 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
+/* Source copy buttons */
+.src-copy-btn{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:var(--accent);font-size:11px;font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.src-copy-btn:active{background:var(--accent);color:#000;}
+.quick-add-btn{width:100%;background:rgba(0,200,83,.08);border:1px solid rgba(0,200,83,.2);color:#00c853;font-size:12px;font-weight:600;padding:8px 12px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:8px;transition:all .2s;}
+.quick-add-btn:active{background:#00c853;color:#000;}
+
 /* APK info box */
 .apk-box{background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(0,200,83,.08));border:1px solid rgba(0,212,255,.2);border-radius:12px;padding:16px;margin-bottom:16px;}
 .apk-box h4{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--accent);margin-bottom:6px;}
@@ -719,6 +725,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <button class="adm-tab active" onclick="switchAdmTab('Dashboard',this)"><i class="fas fa-chart-bar"></i> Stats</button>
       <button class="adm-tab" onclick="switchAdmTab('Matches',this)"><i class="fas fa-futbol"></i> Matches</button>
       <button class="adm-tab" onclick="switchAdmTab('Channels',this)"><i class="fas fa-tv"></i> Channels</button>
+      <button class="adm-tab" onclick="switchAdmTab('Sources',this)"><i class="fas fa-link"></i> Sources</button>
       <button class="adm-tab" onclick="switchAdmTab('Highlights',this)"><i class="fas fa-film"></i> Highlights</button>
       <button class="adm-tab" onclick="switchAdmTab('Ticker',this)"><i class="fas fa-scroll"></i> Ticker</button>
       <button class="adm-tab" onclick="switchAdmTab('Scores',this)"><i class="fas fa-futbol"></i> Scores</button>
@@ -790,7 +797,86 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         <div id="cList" class="adm-list"><div class="loading"><div class="spin"></div></div></div>
       </div>
 
-      <!-- HIGHLIGHTS TAB -->
+      <!-- SOURCES TAB -->
+      <div id="admSources" style="display:none;">
+        <div class="link-tip"><strong>📡 How to get embed URLs:</strong><br>
+        1. Open the source site on your phone browser<br>
+        2. Find your channel/match<br>
+        3. Copy the page URL → paste as stream URL<br>
+        4. Or use the ready patterns below ✅</div>
+
+        <div class="section-label">⚡ Quick Add — Popular Channels</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;" id="quickAddList"></div>
+
+        <div class="divider"></div>
+        <div class="section-label">🌐 Best Embed Stream Sites</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:4px;">dlhd.sx</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:8px;">Best for beIN, SuperSport, Sky Sports<br>Format: <span style="color:var(--accent);">https://dlhd.sx/embed/stream-X.php</span> (X = channel number)</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button onclick="quickCopy('https://dlhd.sx/embed/stream-1.php')" class="src-copy-btn">beIN 1</button>
+              <button onclick="quickCopy('https://dlhd.sx/embed/stream-2.php')" class="src-copy-btn">beIN 2</button>
+              <button onclick="quickCopy('https://dlhd.sx/embed/stream-3.php')" class="src-copy-btn">beIN 3</button>
+              <button onclick="quickCopy('https://dlhd.sx/embed/stream-4.php')" class="src-copy-btn">beIN 4</button>
+              <button onclick="quickCopy('https://dlhd.sx/embed/stream-45.php')" class="src-copy-btn">SuperSport 1</button>
+              <button onclick="quickCopy('https://dlhd.sx/embed/stream-46.php')" class="src-copy-btn">SuperSport 2</button>
+              <button onclick="quickCopy('https://dlhd.sx/embed/stream-47.php')" class="src-copy-btn">SuperSport 3</button>
+              <button onclick="quickCopy('https://dlhd.sx/embed/stream-50.php')" class="src-copy-btn">SuperSport 6</button>
+              <button onclick="quickCopy('https://dlhd.sx/embed/stream-77.php')" class="src-copy-btn">Sky Sports 1</button>
+              <button onclick="quickCopy('https://dlhd.sx/embed/stream-78.php')" class="src-copy-btn">Sky Sports 2</button>
+              <button onclick="quickCopy('https://dlhd.sx/embed/stream-79.php')" class="src-copy-btn">ESPN</button>
+              <button onclick="quickCopy('https://dlhd.sx/embed/stream-80.php')" class="src-copy-btn">TNT Sports</button>
+            </div>
+          </div>
+
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:4px;">embedme.top</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:8px;">Good for live matches<br>Format: <span style="color:var(--accent);">https://embedme.top/embed/</span> + channel</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button onclick="quickCopy('https://embedme.top/embed/bein-sports-1')" class="src-copy-btn">beIN 1</button>
+              <button onclick="quickCopy('https://embedme.top/embed/bein-sports-2')" class="src-copy-btn">beIN 2</button>
+              <button onclick="quickCopy('https://embedme.top/embed/supersport-1')" class="src-copy-btn">SS 1</button>
+              <button onclick="quickCopy('https://embedme.top/embed/supersport-2')" class="src-copy-btn">SS 2</button>
+              <button onclick="quickCopy('https://embedme.top/embed/sky-sports-1')" class="src-copy-btn">Sky 1</button>
+              <button onclick="quickCopy('https://embedme.top/embed/espn')" class="src-copy-btn">ESPN</button>
+            </div>
+          </div>
+
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:4px;">sportzzonline.click</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:8px;">Great for live events & matches</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button onclick="quickCopy('https://sportzzonline.click/embed/bein1')" class="src-copy-btn">beIN 1</button>
+              <button onclick="quickCopy('https://sportzzonline.click/embed/bein2')" class="src-copy-btn">beIN 2</button>
+              <button onclick="quickCopy('https://sportzzonline.click/embed/ss1')" class="src-copy-btn">SS 1</button>
+              <button onclick="quickCopy('https://sportzzonline.click/embed/ss2')" class="src-copy-btn">SS 2</button>
+              <button onclick="quickCopy('https://sportzzonline.click/embed/ss3')" class="src-copy-btn">SS 3</button>
+            </div>
+          </div>
+
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:4px;">vipstand.se</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:8px;">Reliable for many sports channels</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button onclick="quickCopy('https://vipstand.se/embed?channel=bein1')" class="src-copy-btn">beIN 1</button>
+              <button onclick="quickCopy('https://vipstand.se/embed?channel=bein2')" class="src-copy-btn">beIN 2</button>
+              <button onclick="quickCopy('https://vipstand.se/embed?channel=supersport1')" class="src-copy-btn">SS 1</button>
+              <button onclick="quickCopy('https://vipstand.se/embed?channel=skysports1')" class="src-copy-btn">Sky 1</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="section-label">💡 Tips</div>
+        <div class="link-tip" style="margin-bottom:0;">
+          <strong>✅ Test before adding:</strong> Paste URL in browser first<br>
+          <strong>✅ Add 3 servers:</strong> Same channel from different sites as backup<br>
+          <strong>✅ Channel logos:</strong> Google "[channel name] logo png" → long press → copy link<br>
+          <strong>⚠️ URLs change:</strong> If stream breaks, replace with new URL from same site<br>
+          <strong>🔄 Best practice:</strong> Check streams weekly and update dead ones
+        </div>
+      </div>
       <div id="admHighlights" style="display:none;">
         <div class="section-label">Add Highlight</div>
         <div class="fr"><label>Title</label><input type="text" id="hTitle" placeholder="e.g. West Ham vs Wolves - Goals"/></div>
@@ -1535,13 +1621,87 @@ function updateDashboard(){
   if(document.getElementById('statSports'))document.getElementById('statSports').textContent=[...new Set(allMatches.map(function(m){return m.sport;}))].length;
 }
 function switchAdmTab(tab,el){
-  ['Dashboard','Matches','Channels','Highlights','Ticker','Scores','APK','Settings'].forEach(function(t){var e=document.getElementById('adm'+t);if(e)e.style.display='none';});
+  ['Dashboard','Matches','Channels','Sources','Highlights','Ticker','Scores','APK','Settings'].forEach(function(t){var e=document.getElementById('adm'+t);if(e)e.style.display='none';});
   document.getElementById('adm'+tab).style.display='block';
   document.querySelectorAll('.adm-tab').forEach(function(t){t.classList.remove('active');});el.classList.add('active');
   if(tab==='Dashboard')updateDashboard();
   if(tab==='Matches')loadAdmMatches();
   if(tab==='Channels')loadAdmChannels();
+  if(tab==='Sources')loadQuickAdd();
   if(tab==='Highlights')loadAdmHighlights();
+}
+
+// ===== QUICK ADD CHANNELS =====
+var QUICK_CHANNELS=[
+  {name:'beIN Sports 1',emoji:'📺',cat:'football',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/BeIN_Sports_logo.svg/200px-BeIN_Sports_logo.svg.png',
+   streams:['https://dlhd.sx/embed/stream-1.php','https://embedme.top/embed/bein-sports-1','https://sportzzonline.click/embed/bein1']},
+  {name:'beIN Sports 2',emoji:'📺',cat:'football',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/BeIN_Sports_logo.svg/200px-BeIN_Sports_logo.svg.png',
+   streams:['https://dlhd.sx/embed/stream-2.php','https://embedme.top/embed/bein-sports-2','https://sportzzonline.click/embed/bein2']},
+  {name:'beIN Sports 3',emoji:'📺',cat:'football',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/BeIN_Sports_logo.svg/200px-BeIN_Sports_logo.svg.png',
+   streams:['https://dlhd.sx/embed/stream-3.php','https://embedme.top/embed/bein-sports-3']},
+  {name:'SuperSport 1',emoji:'🏆',cat:'football',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/SuperSport_logo.svg/200px-SuperSport_logo.svg.png',
+   streams:['https://dlhd.sx/embed/stream-45.php','https://embedme.top/embed/supersport-1','https://sportzzonline.click/embed/ss1']},
+  {name:'SuperSport 2',emoji:'🏆',cat:'football',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/SuperSport_logo.svg/200px-SuperSport_logo.svg.png',
+   streams:['https://dlhd.sx/embed/stream-46.php','https://embedme.top/embed/supersport-2','https://sportzzonline.click/embed/ss2']},
+  {name:'SuperSport 3',emoji:'🏆',cat:'cricket',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/SuperSport_logo.svg/200px-SuperSport_logo.svg.png',
+   streams:['https://dlhd.sx/embed/stream-47.php','https://embedme.top/embed/supersport-3','https://sportzzonline.click/embed/ss3']},
+  {name:'SuperSport 6',emoji:'🏆',cat:'rugby',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/SuperSport_logo.svg/200px-SuperSport_logo.svg.png',
+   streams:['https://dlhd.sx/embed/stream-50.php','https://embedme.top/embed/supersport-6']},
+  {name:'Sky Sports 1',emoji:'🌤️',cat:'football',logo:'https://upload.wikimedia.org/wikipedia/en/thumb/a/a7/Sky_Sports_logo_2020.svg/200px-Sky_Sports_logo_2020.svg.png',
+   streams:['https://dlhd.sx/embed/stream-77.php','https://embedme.top/embed/sky-sports-1','https://vipstand.se/embed?channel=skysports1']},
+  {name:'Sky Sports 2',emoji:'🌤️',cat:'football',logo:'https://upload.wikimedia.org/wikipedia/en/thumb/a/a7/Sky_Sports_logo_2020.svg/200px-Sky_Sports_logo_2020.svg.png',
+   streams:['https://dlhd.sx/embed/stream-78.php','https://embedme.top/embed/sky-sports-2']},
+  {name:'ESPN',emoji:'🏅',cat:'basketball',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/200px-ESPN_wordmark.svg.png',
+   streams:['https://dlhd.sx/embed/stream-79.php','https://embedme.top/embed/espn']},
+  {name:'TNT Sports 1',emoji:'💥',cat:'football',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/TNT_Sports_logo.svg/200px-TNT_Sports_logo.svg.png',
+   streams:['https://dlhd.sx/embed/stream-80.php','https://embedme.top/embed/tnt-sports-1']},
+  {name:'eurosport 1',emoji:'🇪🇺',cat:'motorsport',logo:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Eurosport_2015_logo.svg/200px-Eurosport_2015_logo.svg.png',
+   streams:['https://dlhd.sx/embed/stream-60.php','https://embedme.top/embed/eurosport-1']},
+  {name:'Fight Network',emoji:'🥊',cat:'boxing',logo:'',
+   streams:['https://dlhd.sx/embed/stream-88.php']},
+];
+function loadQuickAdd(){
+  var list=document.getElementById('quickAddList');
+  if(!list)return;
+  list.innerHTML=QUICK_CHANNELS.map(function(ch,i){
+    var alreadyAdded=allChannels.some(function(c){return c.name.toLowerCase()===ch.name.toLowerCase();});
+    return '<div style="background:var(--bg3);border:1px solid '+(alreadyAdded?'rgba(0,200,83,.3)':'var(--border)')+';border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;">'
+      +'<div style="font-size:22px;">'+ch.emoji+'</div>'
+      +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;">'+ch.name+'</div>'
+      +'<div style="font-size:10px;color:var(--text2);">'+ch.cat+' · '+ch.streams.length+' server(s)</div></div>'
+      +(alreadyAdded
+        ?'<div style="font-size:11px;color:#00c853;font-weight:600;">✅ Added</div>'
+        :'<button class="quick-add-btn" style="width:auto;padding:6px 12px;" onclick="quickAddChannel('+i+',this)"><i class="fas fa-plus"></i> Add</button>')
+      +'</div>';
+  }).join('');
+}
+function quickAddChannel(idx,btn){
+  var ch=QUICK_CHANNELS[idx];
+  if(!ch)return;
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>';
+  sb.from('ks_channels').insert([{
+    name:ch.name,
+    logo:ch.logo||null,
+    emoji:ch.emoji,
+    category:ch.cat,
+    stream_url:ch.streams[0]
+  }]).then(function(res){
+    if(res.error){toast('Error: '+res.error.message,true);btn.disabled=false;btn.innerHTML='<i class="fas fa-plus"></i> Add';return;}
+    toast(ch.name+' added! ✅');
+    loadChannels();
+    loadQuickAdd();
+  }).catch(function(e){toast('Error: '+e.message,true);btn.disabled=false;btn.innerHTML='<i class="fas fa-plus"></i> Add';});
+}
+function quickCopy(url){
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(function(){toast('URL copied! 📋');}).catch(function(){fallbackCopy(url);});
+  } else {fallbackCopy(url);}
+}
+function fallbackCopy(url){
+  var el=document.createElement('textarea');
+  el.value=url;document.body.appendChild(el);el.select();
+  document.execCommand('copy');document.body.removeChild(el);
+  toast('URL copied! 📋');
 }
 
 // Status toggle for new match
