@@ -1078,14 +1078,23 @@ CREATE TABLE ks_matches (id BIGSERIAL PRIMARY KEY, sport TEXT, league TEXT, leag
 CREATE TABLE ks_channels (id BIGSERIAL PRIMARY KEY, name TEXT, logo TEXT, emoji TEXT DEFAULT '📺', category TEXT DEFAULT 'general', stream_url TEXT, created_at TIMESTAMPTZ DEFAULT NOW());<br><br>
 CREATE TABLE ks_highlights (id BIGSERIAL PRIMARY KEY, title TEXT, category TEXT, thumbnail TEXT, stream_url TEXT, description TEXT, created_at TIMESTAMPTZ DEFAULT NOW());<br><br>
 CREATE TABLE ks_settings (id BIGSERIAL PRIMARY KEY, key TEXT UNIQUE, value TEXT);<br><br>
+CREATE TABLE ks_views (id BIGSERIAL PRIMARY KEY, match_id TEXT UNIQUE, views INTEGER DEFAULT 0);<br><br>
+CREATE OR REPLACE FUNCTION increment_views(match_id TEXT) RETURNS void AS $$
+BEGIN
+  INSERT INTO ks_views (match_id, views) VALUES (match_id, 1)
+  ON CONFLICT (match_id) DO UPDATE SET views = ks_views.views + 1;
+END;
+$$ LANGUAGE plpgsql;<br><br>
 ALTER TABLE ks_matches ENABLE ROW LEVEL SECURITY;<br>
 ALTER TABLE ks_channels ENABLE ROW LEVEL SECURITY;<br>
 ALTER TABLE ks_highlights ENABLE ROW LEVEL SECURITY;<br>
-ALTER TABLE ks_settings ENABLE ROW LEVEL SECURITY;<br><br>
+ALTER TABLE ks_settings ENABLE ROW LEVEL SECURITY;<br>
+ALTER TABLE ks_views ENABLE ROW LEVEL SECURITY;<br><br>
 CREATE POLICY "pub" ON ks_matches FOR ALL USING (true) WITH CHECK (true);<br>
 CREATE POLICY "pub" ON ks_channels FOR ALL USING (true) WITH CHECK (true);<br>
 CREATE POLICY "pub" ON ks_highlights FOR ALL USING (true) WITH CHECK (true);<br>
-CREATE POLICY "pub" ON ks_settings FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "pub" ON ks_settings FOR ALL USING (true) WITH CHECK (true);<br>
+CREATE POLICY "pub" ON ks_views FOR ALL USING (true) WITH CHECK (true);
         </div>
       </div>
     </div>
@@ -1264,7 +1273,7 @@ function loadMatches(){
   sb.from('ks_matches').select('*').order('match_date',{ascending:true}).then(function(res){
     if(res.error){handleDbError(res.error);return;}
     allMatches=res.data||[];updateBadges();renderMatches();renderHL();updateFavUI();
-    checkLiveMatches();
+    checkLiveMatches();loadViews();
     if(document.getElementById('statMatches'))document.getElementById('statMatches').textContent=allMatches.length;
     if(document.getElementById('statLive'))document.getElementById('statLive').textContent=allMatches.filter(function(m){return m.status==='live';}).length;
     if(document.getElementById('statSports'))document.getElementById('statSports').textContent=[...new Set(allMatches.map(function(m){return m.sport;}))].length;
@@ -1335,10 +1344,31 @@ function tapFav(id,btn){
   if(document.getElementById('pageFavorites').style.display!=='none')renderFavorites();
 }
 
-// ===== VIEW COUNTER =====
-function getViews(mid){try{var v=JSON.parse(localStorage.getItem('ks_views')||'{}');return v[mid]||0;}catch(e){return 0;}}
-function incViews(mid){try{var v=JSON.parse(localStorage.getItem('ks_views')||'{}');v[mid]=(v[mid]||0)+1;localStorage.setItem('ks_views',JSON.stringify(v));}catch(e){}}
+// ===== VIEW COUNTER (Real - Supabase) =====
+var viewsCache={};
+function getViews(mid){return viewsCache[mid]||0;}
 function fmtViews(n){if(n>=1000)return(n/1000).toFixed(1)+'K';return String(n);}
+function incViews(mid){
+  if(!sb||!mid)return;
+  // Increment in Supabase
+  sb.rpc('increment_views',{match_id:String(mid)}).catch(function(){});
+  // Update local cache immediately
+  viewsCache[mid]=(viewsCache[mid]||0)+1;
+  // Update displayed view count on card
+  var cards=document.querySelectorAll('[data-mid="'+mid+'"] .view-count');
+  cards.forEach(function(c){c.innerHTML='<i class="fas fa-eye"></i>'+fmtViews(viewsCache[mid]);});
+}
+function loadViews(){
+  if(!sb)return;
+  sb.from('ks_views').select('match_id,views').then(function(res){
+    if(!res.data)return;
+    res.data.forEach(function(row){
+      viewsCache[row.match_id]=row.views||0;
+    });
+    // Re-render matches to show updated views
+    renderMatches();
+  }).catch(function(){});
+}
 
 // ===== WHATSAPP SHARE =====
 function shareWhatsApp(t1,t2,league,time,isLive){
