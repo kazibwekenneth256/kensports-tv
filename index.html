@@ -696,8 +696,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <!-- HOME PAGE -->
 <div id="pageHome">
   <div class="tabs">
-    <div class="tab active" onclick="switchTab('recent',this)"><i class="fas fa-history" style="font-size:8px;margin-right:4px;"></i>Recent (<span id="c-recent">0</span>)</div>
-    <div class="tab" onclick="switchTab('live',this)"><i class="fas fa-circle" style="color:var(--live);font-size:8px;margin-right:4px;"></i>Live (<span id="c-live">0</span>)</div>
+    <div class="tab" onclick="switchTab('recent',this)"><i class="fas fa-history" style="font-size:8px;margin-right:4px;"></i>Recent (<span id="c-recent">0</span>)</div>
+    <div class="tab active" onclick="switchTab('live',this)"><i class="fas fa-circle" style="color:var(--live);font-size:8px;margin-right:4px;"></i>Live (<span id="c-live">0</span>)</div>
     <div class="tab" onclick="switchTab('upcoming',this)">Upcoming (<span id="c-upcoming">0</span>)</div>
     <div class="tab" onclick="switchTab('all',this)">All (<span id="c-all">0</span>)</div>
   </div>
@@ -1173,7 +1173,7 @@ CREATE POLICY "pub" ON ks_views FOR ALL USING (true) WITH CHECK (true);
 <div class="toast" id="toast"></div>
 
 <script>
-var sb=null,allMatches=[],allChannels=[],allHighlights=[],curSport='all',curTab='all',curStreams=[],hlsInst=null,deferredPrompt=null;
+var sb=null,allMatches=[],allChannels=[],allHighlights=[],curSport='all',curTab='live',curStreams=[],hlsInst=null,deferredPrompt=null;
 var curPlayerTitle='',curPlayerStreams=[];
 var EMOJIS={football:'⚽',cricket:'🏏',rugby:'🏉',boxing:'🥊',motorsport:'🏎️',wrestling:'🤼',basketball:'🏀',general:'📺'};
 
