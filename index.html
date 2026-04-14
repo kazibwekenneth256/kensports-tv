@@ -1944,13 +1944,19 @@ function sendPushToAll(){
   var title = document.getElementById('pushTitle').value.trim();
   var body = document.getElementById('pushBody').value.trim();
   if(!title||!body){toast('Enter title and message!',true);return;}
-  // Save to Supabase - clients will pick it up via polling
-  var push = {id:Date.now().toString(), title:title, body:body, time:Date.now()};
-  sb.from('ks_settings').upsert({key:'push_notification',value:JSON.stringify(push)},{onConflict:'key'}).then(function(res){
-    if(res.error){toast('Error: '+res.error.message,true);return;}
-    toast('Push sent to all users! 📲🔥');
-    document.getElementById('pushTitle').value='';
-    document.getElementById('pushBody').value='';
+  toast('Sending... 📲');
+  sb.from('ks_settings').select('key,value').like('key','fcm_%').then(function(res){
+    if(!res.data||!res.data.length){toast('No subscribers yet!',true);return;}
+    var tokens=res.data.map(function(r){return r.value;}).filter(Boolean);
+    if(!tokens.length){toast('No tokens found!',true);return;}
+    fetch('https://kensportstv-push.kazibwekenneth57.workers.dev',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({tokens:tokens,title:title,body:body})
+    }).then(function(r){return r.json();}).then(function(data){
+      if(data.success){toast('Push sent to '+tokens.length+' users! 🔥');document.getElementById('pushTitle').value='';document.getElementById('pushBody').value='';}
+      else{toast('Error: '+JSON.stringify(data),true);}
+    }).catch(function(e){toast('Worker error: '+e.message,true);});
   });
 }
 
